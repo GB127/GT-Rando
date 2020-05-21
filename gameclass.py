@@ -19,7 +19,9 @@ class ROM:
         """
         if len(data) % 1024 == 512:
             print("Your game has a header! It's removed")
-        self.data = bytearray(data[512:])
+            self.data = bytearray(data[512:])
+        else:
+            self.data = bytearray(data)
     def __getitem__(self,offset):
         return hex(self.data[offset])
     def __setitem__(self,offset, value):
