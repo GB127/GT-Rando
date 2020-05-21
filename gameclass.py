@@ -17,8 +17,10 @@ class ROM:
 
         data should be in bytes
         """
-        self.data = bytearray(data)
+        if len(data) % 1024 == 512:
+            print("Your game has a header! It's removed")
+        self.data = bytearray(data[512:])
     def __getitem__(self,offset):
-        return self.data[offset]
+        return hex(self.data[offset])
     def __setitem__(self,offset, value):
         self.data[offset] = value
