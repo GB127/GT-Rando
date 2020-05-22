@@ -26,14 +26,12 @@ class infos:
         self.adresses = {
             hex(0x143) : "Item 1",
             hex(0x15D) : "Item 2 related to palette?",
-            hex(0x15C) : "Item 2 related to sprite ID?,"
+            hex(0x15C) : "Item 2 related to sprite ID?,",
             hex(0x142) : "Item 2",
             hex(0x110) : "Xpos p1 (2b)",
             hex(0x113) : "Ypos p1 (2b)",
             hex(0xB6) : "world (1b)",
             hex(0xB7) : "lvl (1b)"
-
-
                     }
     def getadresses(self,*strings):
         liste = []
