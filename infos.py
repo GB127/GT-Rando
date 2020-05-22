@@ -24,13 +24,14 @@ class infos:
 
     def __init__(self):
         self.adresses = {
-            hex(0x143) : "Inventory 2 ID",
-            hex(0x142) : "Inventory 1 ID"
+            hex(0x143) : "Item p1",
+            hex(0x142) : "Item p2",
+            hex(0x110) : "Xpos p1 (2b)",
+            hex(0x113) : "Ypos p1 (2b)",
+            hex(0xB6) : "world (1b)",
+            hex(0xB7) : "lvl (1b)"
+
+
                     }
-        self.infos = {
-            "items" 
-
-
-        }
     def getadresses(self,*strings):
         liste = []
