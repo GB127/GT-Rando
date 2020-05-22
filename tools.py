@@ -4,4 +4,4 @@ def gethex(number):
 from infos import *
 
 test = infos()
-test.listadresses("item1", "display")
+test.listadresses("Item1", "display")
