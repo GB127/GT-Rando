@@ -6,6 +6,8 @@ class infos:
     """
     def __init__(self):
         self.infos = {
+            hex(0x143) : "Inventory 2 ID",
+            hex(0x142) : "Inventory 1 ID"
                     }
 
 class ROM:
