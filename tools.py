@@ -1,2 +1,4 @@
 def gethex(number):
-    print(hex(number))
+    print("--------Conversion-----------")
+    print(f'int: {number} Hex: {hex(number)}')
+    print("-----------------------------")
