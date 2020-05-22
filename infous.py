@@ -44,7 +44,6 @@ class infos:
     def listadresses(self,*seeked):
         print("-----------LIST OF ADRESSES-------------------")
         for i in list(self.infos):
-            for key in seeked:
-                if self.infos[i].count(key) > 0:
-                    print(self.check(i))
+            if all(x in self.infos[i] for x in seeked):
+                print(self.check(i))
         print("-----------END OF ADRESSES--------------------")
