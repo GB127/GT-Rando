@@ -1,3 +1,5 @@
+from tools import gethex
+
 
 nothing = 0
 hookshot = 2
@@ -18,6 +20,18 @@ class infos:
         And if I need to get an info during my coding, I'll simply call this class and then ask it to
         Retrieve the things I need.
     """
+    def itemtable(self):
+        nothing = 0
+        hookshot = 2
+        candle = 4
+        greyK = 6
+        goldK = 8
+        shovel = 10
+        bell = 12
+        bridge = 14
+        listitems = [hookshot, candle, greyK, goldK, shovel, bell, bridge, nothing]
+
+        for i in listitems : gethex(i)
 
 
 
