@@ -1,4 +1,3 @@
-from tools import gethex
 
 nothing = 0
 hookshot = 2
@@ -24,7 +23,7 @@ class infos:
 
 
     def __init__(self):
-        self.adresses = {
+        self.infos = {
             hex(0x143) : "Item1 ID",
             hex(0x15A) : "Item1 display",
             hex(0x15B) : "Item1 display",
