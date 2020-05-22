@@ -7,6 +7,8 @@ bell = 12
 bridge = 14
 listitems = [hookshot, candle, greyK, goldK, shovel, bell, bridge]
 
+def itemtable():
+    for i in listitems : print(i)
 
 class infos:
     """
