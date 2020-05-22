@@ -25,16 +25,27 @@ class infos:
 
     def __init__(self):
         self.adresses = {
-            hex(0x143) : "Item 1 ID",
-            hex(0x15A) : "Item 1 display",
-            hex(0x15B) : "Item 1 display",
-            hex(0x15D) : "Item 2 display",
-            hex(0x15C) : "Item 2 display",
-            hex(0x142) : "Item 2 ID",
+            hex(0x143) : "Item1 ID",
+            hex(0x15A) : "Item1 display",
+            hex(0x15B) : "Item1 display",
+            hex(0x15D) : "Item2 display",
+            hex(0x15C) : "Item2 display",
+            hex(0x142) : "Item2 ID",
             hex(0x110) : "Xpos p1 (2b)",
             hex(0x113) : "Ypos p1 (2b)",
             hex(0xB6) : "world (1b)",
             hex(0xB7) : "lvl (1b)"
                     }
-    def getadresses(self,*strings):
-        liste = []
+    def check(self,adress):
+        if isinstance(adress,str):
+            return adress + " : " + self.infos[adress]
+        else:
+            return hex(adress) + " : " + self.infos[hex(adress)]
+
+    def listadresses(self,*seeked):
+        print("-----------LIST OF ADRESSES-------------------")
+        for i in list(self.infos):
+            for key in seeked:
+                if self.infos[i].count(key) > 0:
+                    print(self.check(i))
+        print("-----------END OF ADRESSES--------------------")
