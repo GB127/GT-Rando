@@ -1,3 +1,5 @@
+from tools import gethex
+
 hookshot = 2
 candle = 4
 greyK = 6
@@ -8,7 +10,7 @@ bridge = 14
 listitems = [hookshot, candle, greyK, goldK, shovel, bell, bridge]
 
 def itemtable():
-    for i in listitems : print(i)
+    for i in listitems : gethex(i)
 
 class infos:
     """
