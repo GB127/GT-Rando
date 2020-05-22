@@ -16,7 +16,7 @@ class ROM:
     # NOTE for self : it's a LoROM
     # https://en.wikibooks.org/wiki/Super_NES_Programming/SNES_memory_map
 
-    
+
     def __init__(self,data):
         """
             First, it checks if it has a header.
