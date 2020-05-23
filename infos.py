@@ -7,17 +7,26 @@ class infos:
         And if I need to get an info during my coding, I'll simply call this class and then ask it to
         Retrieve the things I need.
     """
-    def itemids(self):
-        nothing = 0
-        hookshot = 2
-        candle = 4
-        greyK = 6
-        goldK = 8
-        shovel = 10
-        bell = 12
-        bridge = 14
-        listitems = [hookshot, candle, greyK, goldK, shovel, bell, bridge, nothing]
-        for i in listitems : gethex(i)
+    def itemids(self, id=None, adjust=-2):
+        items = {"Hookshot" : 2,
+        "Candle" : 4,
+        "Grey Key" : 6,
+        "Gold Key" : 8,
+        "Shovel" : 10,
+        "Bell" : 12,
+        "Bridge" : 14}
+        if id is None:
+            print("-" * 20)
+            for i in items.keys() :
+                print(i)
+                gethex(items[i])
+                gethex(items[i] -2)
+            print("-" * 20)
+        else:
+            for i in items.keys():
+                if id == items[i] -2:
+                    print(i)
+                    return
 
     def __init__(self):
         self.infos = {
@@ -32,9 +41,8 @@ class infos:
             hex(0xB6) : "world (1b)",
             hex(0xB7) : "lvl (1b)",
             hex(0x140B) : "Level's Item.",
-                # Note : the items aren't always -2, but seems to be mostly -2. 
-                # The bridge in world 1 is C for example.".
-                # For example : the bell will be 10.
+                # Note : the items are always -2. 
+                # For example : the bell will be 10 (or A).
             hex(0x11D) : "P1 Hearts",
             hex(0x157) : "P1 lives",
             hex(0x1144) : "Doors locking related",
