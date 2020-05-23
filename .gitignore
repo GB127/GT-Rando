@@ -1,4 +1,3 @@
-test.py
 test.smc
 __pycache__
 Vanilla.smc
@@ -9,3 +8,4 @@ vanillanoh.smp.sym
 vanillanoh.cpu.sym
 assembly.txt
 vanillanoh.bp
+vanillanoh.smc.bak
