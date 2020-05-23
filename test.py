@@ -20,8 +20,6 @@ with open("Vanilla.smc", "rb") as original:
     # In summary, the functions only need one value and does all
     # the dirty works. Note that I've changed some stuffs to make
     # it load the thing I want.
-
-    # Only need to find the roots how the thing it normally loads is changed.
     game[0x13067] = 169
     game[0x13068] = random.choice([0,2,4,6,8,10,12])
 
