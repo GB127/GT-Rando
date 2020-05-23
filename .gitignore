@@ -3,3 +3,9 @@ test.smc
 __pycache__
 Vanilla.smc
 vanillanoh.smc
+vanillanoh-1.bst
+vanillanoh-trace.log
+vanillanoh.smp.sym
+vanillanoh.cpu.sym
+assembly.txt
+vanillanoh.bp
