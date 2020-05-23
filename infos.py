@@ -7,7 +7,7 @@ class infos:
         And if I need to get an info during my coding, I'll simply call this class and then ask it to
         Retrieve the things I need.
     """
-    def itemids(self, id=None, adjust=-2):
+    def itemids(self, id=None, adjust=2):
         items = {"Hookshot" : 2,
         "Candle" : 4,
         "Grey Key" : 6,
@@ -19,12 +19,11 @@ class infos:
             print("-" * 20)
             for i in items.keys() :
                 print(i)
-                gethex(items[i])
-                gethex(items[i] -2)
+                gethex(items[i] -adjust)
             print("-" * 20)
         else:
             for i in items.keys():
-                if id == items[i] -2:
+                if id == items[i] -adjust:
                     print(i)
                     return
 
