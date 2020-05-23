@@ -21,20 +21,24 @@ class infos:
 
     def __init__(self):
         self.infos = {
-            hex(0x143) : "Item1 ID",
-            hex(0x15A) : "Item1 display",
-            hex(0x15B) : "Item1 display",
-            hex(0x15D) : "Item2 display",
-            hex(0x15C) : "Item2 display",
-            hex(0x142) : "Item2 ID",
-            hex(0x110) : "Xpos p1 (2b)",
-            hex(0x113) : "Ypos p1 (2b)",
+            hex(0x143) : "item1 ID",
+            hex(0x15A) : "item1 display",
+            hex(0x15B) : "item1 display",
+            hex(0x15D) : "item2 display",
+            hex(0x15C) : "item2 display",
+            hex(0x142) : "item2 ID",
+            hex(0x110) : "Xpos P1 (2b)",
+            hex(0x113) : "Ypos P1 (2b)",
             hex(0xB6) : "world (1b)",
             hex(0xB7) : "lvl (1b)",
-            hex(0x140B) : "Level's Item."
+            hex(0x140B) : "Level's Item.",
                 # Note : This is always -2 from the "normal item ID".
                 # For example : the bell will be 10.
+            hex(0x11D) : "P1 Hearts",
+            hex(0x157) : "P1 lives",
+            hex(0x1144) : "Doors locking related"
                     }
+            
     def check(self,adress):
         if isinstance(adress,str):
             return adress + " : " + self.infos[adress]
