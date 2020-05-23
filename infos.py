@@ -32,11 +32,17 @@ class infos:
             hex(0xB6) : "world (1b)",
             hex(0xB7) : "lvl (1b)",
             hex(0x140B) : "Level's Item.",
-                # Note : This is always -2 from the "normal item ID".
+                # Note : the items aren't always -2, but seems to be mostly -2. 
+                # The bridge in world 1 is C for example.".
                 # For example : the bell will be 10.
             hex(0x11D) : "P1 Hearts",
             hex(0x157) : "P1 lives",
-            hex(0x1144) : "Doors locking related"
+            hex(0x1144) : "Doors locking related",
+            hex(0xBD) : "P playing",
+                # 1 = 1 player
+                # 3 = 2 players
+            hex(0x140) : "Item P1 check : 2 if has 2 items, else 0",
+            hex(0x142) : "Item p1 selected : left = 0, right = 2"
                     }
             
     def check(self,adress):
