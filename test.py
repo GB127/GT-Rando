@@ -23,7 +23,7 @@ with open("Vanilla.smc", "rb") as original:
 
     # Only need to find the roots how the thing it normally loads is changed.
     game[0x13067] = 169
-    game[0x13068] = random.randint(0,12,2)
+    game[0x13068] = random.choice([0,2,4,6,8,10,12])
 
     with open("vanillanoh.smc", "wb") as newgame:
         newgame.write(game.data)
