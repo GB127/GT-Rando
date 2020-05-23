@@ -21,12 +21,12 @@ class infos:
 
     def __init__(self):
         self.infos = {
-            hex(0x143) : "item1 ID",
+            hex(0x143) : "item1 ID : infos.itemids()",
             hex(0x15A) : "item1 display",
             hex(0x15B) : "item1 display",
             hex(0x15D) : "item2 display",
             hex(0x15C) : "item2 display",
-            hex(0x142) : "item2 ID",
+            hex(0x142) : "item2 ID : infos.itemids()",
             hex(0x110) : "Xpos P1 (2b)",
             hex(0x113) : "Ypos P1 (2b)",
             hex(0xB6) : "world (1b)",
@@ -38,9 +38,7 @@ class infos:
             hex(0x11D) : "P1 Hearts",
             hex(0x157) : "P1 lives",
             hex(0x1144) : "Doors locking related",
-            hex(0xBD) : "P playing",
-                # 1 = 1 player
-                # 3 = 2 players
+            hex(0xBD) : "P # playing : 1 if 1P, 3 if 2P",
             hex(0x140) : "Item P1 check : 2 if has 2 items, else 0",
             hex(0x142) : "Item p1 selected : left = 0, right = 2"
                     }
