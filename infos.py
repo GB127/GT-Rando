@@ -1,26 +1,13 @@
 from tools import gethex
 
-
-nothing = 0
-hookshot = 2
-candle = 4
-greyK = 6
-goldK = 8
-shovel = 10
-bell = 12
-bridge = 14
-listitems = [hookshot, candle, greyK, goldK, shovel, bell, bridge, nothing]
-
-def itemtable():
-    for i in listitems : gethex(i)
-
+# https://www.vgmaps.com/Atlas/SuperNES/index.htm#GoofTroop
 class infos:
     """
         This class is more of a tool for me. I will store my findings of infos here.
         And if I need to get an info during my coding, I'll simply call this class and then ask it to
         Retrieve the things I need.
     """
-    def itemtable(self):
+    def itemids(self):
         nothing = 0
         hookshot = 2
         candle = 4
@@ -30,11 +17,7 @@ class infos:
         bell = 12
         bridge = 14
         listitems = [hookshot, candle, greyK, goldK, shovel, bell, bridge, nothing]
-
         for i in listitems : gethex(i)
-
-
-
 
     def __init__(self):
         self.infos = {
@@ -47,7 +30,10 @@ class infos:
             hex(0x110) : "Xpos p1 (2b)",
             hex(0x113) : "Ypos p1 (2b)",
             hex(0xB6) : "world (1b)",
-            hex(0xB7) : "lvl (1b)"
+            hex(0xB7) : "lvl (1b)",
+            hex(0x140B) : "Level's Item."
+                # Note : This is always -2 from the "normal item ID".
+                # For example : the bell will be 10.
                     }
     def check(self,adress):
         if isinstance(adress,str):
