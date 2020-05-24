@@ -39,14 +39,27 @@ class infos:
                     print(i)
                     return
 
-    def leveltypes_vs_items(self,type=None):
-        if type is None:
-            raise InfosError("You need to select a level type")
-        if type is "A":
-            print("Hookshot : 88\nCandle : 98\nGrey Key : A8\nGold Key : B8\nShovel : C8\nBell : D8\nBridge : E8")
-        if type is "B":
-            print("Hookshot : 8\nCandle : 9\nGrey Key : A\nGold Key : B\nShovel : C\nBell : D\nBridge : E")
-            # Hookshot : or D8??? I'm not sure anymore
+    def level_items(self,type=None):
+        print("Nothing : 0")
+        print("Hookshot : 8")
+        print("Candle : 9")
+        print("Grey Key : A")
+        print("Gold Key : B")
+        print("Shovel : C")
+        print("Bell : D")
+        print("Bridge : E")
+        # The idea is that some levels will take the first "letter", some will take the second letters.
+        # For example, if the byte read is 0xAC:
+            # One level that read this specific byte will read A and thus will fetch a Grey Key.
+            # The other level that read the same byte will read C and will fetch the Shovel.
+    def world_ranges(self):
+        # These are the vanilla ranges of bytes the world read from.
+        print("World 1 : 0x88160 - 0x1164")
+        print("World 2 : 0x88160 - 0x1165")
+        print("World 3 : 0x88160 - 0x116A")
+        print("World 4 : 0x88160 - 0x1163")
+        print("World 5 : 0x88160 - 0x1168")
+
     def __init__(self):
         self.infos = {
             hex(0x143) : "item1 ID : infos.itemids(2)",
@@ -68,14 +81,7 @@ class infos:
             hex(0xBD) : "P # playing : 1 if 1P, 3 if 2P",
             hex(0x140) : "Item P1 check : 2 if has 2 items, else 0",
             hex(0x142) : "Item p1 selected : left = 0, right = 2"
-                    }
-        self.items140B = {
-
-
-
-            
-        }
-            
+                    }            
     def check(self,adress):
         if isinstance(adress,str):
             return adress + " : " + self.infos[adress]
