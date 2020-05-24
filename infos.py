@@ -1,6 +1,14 @@
 from tools import gethex
 
 # https://www.vgmaps.com/Atlas/SuperNES/index.htm#GoofTroop
+
+"""
+    Start at Stage 2	Banana - Red Diamond - Cherry - Banana - Cherry
+    Start at Stage 3	Cherry - Red Diamond - Blue Diamond - Cherry - Banana
+    Start at Stage 4	Red Diamond - Cherry - Blue Diamond - Blue Diamond - Red Diamond
+    Start at Stage 5	Banana - Cherry - Blue Diamond - Red Diamond - Banana
+"""
+
 class infos:
     """
         This class is more of a tool for me. I will store my findings of infos here.
