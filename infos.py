@@ -40,7 +40,6 @@ class infos:
                     return
 
     def level_items(self):
-        print("Nothing : 0")
         print("Hookshot : 8")
         print("Candle : 9")
         print("Grey Key : A")
@@ -48,20 +47,19 @@ class infos:
         print("Shovel : C")
         print("Bell : D")
         print("Bridge : E")
-        # The idea is that some levels will take the first "letter", some will take the second letters.
-        # For example, if the byte read is 0xAC:
-            # One level that read this specific byte will read A and thus will fetch a Grey Key.
-            # The other level that read the same byte will read C and will fetch the Shovel.
+
     def world_ranges(self):
-        # These are the vanilla ranges of bytes the world read from.
-        print("World 1 : 0x88160 - 0x1164")
-        print("World 2 : 0x88160 - 0x1165")
-        print("World 3 : 0x88160 - 0x116A")
-        print("World 4 : 0x88160 - 0x1163")
-        print("World 5 : 0x88160 - 0x1168")
+        # These are the vanilla ranges of bytes the worlds read from.
+        print("World 1 : 0x1160 - 0x1164")
+        print("World 2 : 0x1160 - 0x1165")
+        print("World 3 : 0x1160 - 0x116A")
+        print("World 4 : 0x1160 - 0x1163")
+        print("World 5 : 0x1160 - 0x1168")
 
     def __init__(self):
         self.infos = {
+
+            # Infos that aren't permanent:
             hex(0x143) : "item1 ID : infos.itemids()",
             hex(0x15A) : "item1 display",
             hex(0x15B) : "item1 display",
@@ -82,7 +80,25 @@ class infos:
             hex(0x140) : "Item P1 check : 2 if has 2 items, else 0",
             hex(0x142) : "Item p1 selected : left = 0, right = 2",
 
-            # These are the world 0's items.
+
+            # See world_ranges()
+                # The idea is that some levels will take the first "letter", some will take the second letters.
+                # For example, if the byte read is 0xAC:
+                    # One level that read this specific byte will read A and thus will fetch a Grey Key.
+                    # The other level that read the same byte will read C and will fetch the Shovel.
+            hex(0x1160) : "World Item X",
+            hex(0x1161) : "World Item X",
+            hex(0x1162) : "World Item X",
+            hex(0x1163) : "World Item X",
+            hex(0x1164) : "World Item X",
+            hex(0x1165) : "World Item X",
+            hex(0x1166) : "World Item X",
+            hex(0x1167) : "World Item X",
+            hex(0x1168) : "World Item X",
+            hex(0x1169) : "World Item X",
+            hex(0x116A) : "World Item X",
+
+            # World 0's items.
             hex(0x6F69): "0-X : Item",
             hex(0x6F72): "0-X : Item",
             hex(0x6F77): "0-X : Item",
