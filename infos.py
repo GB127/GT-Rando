@@ -59,7 +59,7 @@ class infos:
             hex(0x113) : "Ypos P1 (2b)",
             hex(0xB6) : "world (1b)",
             hex(0xB7) : "lvl (1b)",
-            hex(0x140B) : "Level's Item.",
+            hex(0x140B) : "Level's Item : infos.itemds(), infos.items140B",
                 # Note : the items are always -2. 
                 # For example : the bell will be 10 (or A).
             hex(0x11D) : "P1 Hearts",
@@ -69,6 +69,12 @@ class infos:
             hex(0x140) : "Item P1 check : 2 if has 2 items, else 0",
             hex(0x142) : "Item p1 selected : left = 0, right = 2"
                     }
+        self.items140B = {
+
+
+
+            
+        }
             
     def check(self,adress):
         if isinstance(adress,str):
