@@ -82,8 +82,7 @@ class infos:
             hex(0x140) : "Item P1 check : 2 if has 2 items, else 0",
             hex(0x142) : "Item p1 selected : left = 0, right = 2",
 
-            # These are the world 0's items. See self.level_items() for the table.
-                # Reminder : Some will need to be on the "left".
+            # These are the world 0's items.
             hex(0x6F69): "0-X : Item",
             hex(0x6F72): "0-X : Item",
             hex(0x6F77): "0-X : Item",
@@ -94,6 +93,20 @@ class infos:
             hex(0x6FC3): "0-X : Item",
             hex(0x6FCC): "0-X : Item",
             hex(0x6FDD): "0-X : Item",
+
+            # World 1:
+            hex(0x7013): "1-X : Item",
+            hex(0x7018): "1-X : Item",
+            hex(0x701C): "1-X : Item",
+            hex(0x7022): "1-X : Item",
+            hex(0x7027): "1-X : Item",
+            hex(0x702B): "1-X : Item",
+            hex(0x7034): "1-X : Item",
+            hex(0x7038): "1-X : Item",
+            hex(0x7043): "1-X : Item",
+            hex(0x7048): "1-X : Item",
+            hex(0x7050): "1-X : Item",
+            hex(0x7055): "1-X : Item"
 
                     }
     def check(self,adress):
