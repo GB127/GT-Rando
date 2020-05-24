@@ -8,7 +8,8 @@ from tools import gethex
     Start at Stage 4	Red Diamond - Cherry - Blue Diamond - Blue Diamond - Red Diamond
     Start at Stage 5	Banana - Cherry - Blue Diamond - Red Diamond - Banana
 """
-
+class InfosError(BaseException):
+    pass
 class infos:
     """
         This class is more of a tool for me. I will store my findings of infos here.
@@ -16,6 +17,9 @@ class infos:
         Retrieve the things I need.
     """
     def itemids(self, id=None, adjust=2):
+        # The adjust is because the items displayed on the levels are
+        # always -2. For example, in inventory, the bell is 12. On the
+        # level, it will be 10.
         items = {"Hookshot" : 2,
         "Candle" : 4,
         "Grey Key" : 6,
@@ -35,14 +39,22 @@ class infos:
                     print(i)
                     return
 
+    def leveltypes_vs_items(self,type=None):
+        if type is None:
+            raise InfosError("You need to select a level type")
+        if type is "A":
+            print("Hookshot : 88\nCandle : 98\nGrey Key : A8\nGold Key : B8\nShovel : C8\nBell : D8\nBridge : E8")
+        if type is "B":
+            print("Hookshot : 8\nCandle : 9\nGrey Key : A\nGold Key : B\nShovel : C\nBell : D\nBridge : E")
+
     def __init__(self):
         self.infos = {
-            hex(0x143) : "item1 ID : infos.itemids()",
+            hex(0x143) : "item1 ID : infos.itemids(2)",
             hex(0x15A) : "item1 display",
             hex(0x15B) : "item1 display",
             hex(0x15D) : "item2 display",
             hex(0x15C) : "item2 display",
-            hex(0x142) : "item2 ID : infos.itemids()",
+            hex(0x142) : "item2 ID : infos.itemids(2)",
             hex(0x110) : "Xpos P1 (2b)",
             hex(0x113) : "Ypos P1 (2b)",
             hex(0xB6) : "world (1b)",
