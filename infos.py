@@ -41,6 +41,7 @@ class infos:
 
     def level_items(self):
         # These are the actual values that the game will need to select the items.
+        # For placing them in the levels
         print("Hookshot : 8")
         print("Candle : 9")
         print("Grey Key : A")
@@ -51,6 +52,7 @@ class infos:
 
     def world_ranges(self):
         # These are the vanilla ranges of bytes the worlds read from.
+        # hex display is the best
         print("World 1 : 0x1160 - 0x1164")
         print("World 2 : 0x1160 - 0x1165")
         print("World 3 : 0x1160 - 0x116A")
@@ -85,17 +87,17 @@ class infos:
                 # For example, if the byte read is 0xAC:
                     # One level that read this specific byte will read A and thus will fetch a Grey Key.
                     # The other level that read the same byte will read C and will fetch the Shovel.
-            hex(0x1160) : "World Item 1-2",
-            hex(0x1161) : "World Item 3-4",
-            hex(0x1162) : "World Item 5-6",
-            hex(0x1163) : "World Item 7-8",
-            hex(0x1164) : "World Item 9-10",
-            hex(0x1165) : "World Item 11-12",
-            hex(0x1166) : "World Item 13-14",
-            hex(0x1167) : "World Item 15-16",
-            hex(0x1168) : "World Item 17-18",
-            hex(0x1169) : "World Item 19-20",
-            hex(0x116A) : "World Item 21-22",
+            hex(0x1160) : "World Item 1&2",
+            hex(0x1161) : "World Item 3&4",
+            hex(0x1162) : "World Item 5&6",
+            hex(0x1163) : "World Item 7&8",
+            hex(0x1164) : "World Item 9&10",
+            hex(0x1165) : "World Item 11&12",
+            hex(0x1166) : "World Item 13&14",
+            hex(0x1167) : "World Item 15&16",
+            hex(0x1168) : "World Item 17&18",
+            hex(0x1169) : "World Item 19&20",
+            hex(0x116A) : "World Item 21&22",
 
             # World 0's items.
             hex(0x6F69): "0-X : Item",
@@ -121,7 +123,29 @@ class infos:
             hex(0x7043): "1-X : Item",
             hex(0x7048): "1-X : Item",
             hex(0x7050): "1-X : Item",
-            hex(0x7055): "1-X : Item"
+            hex(0x7055): "1-X : Item",
+
+            hex(0x7072): "2-X : Item",
+            hex(0x7077): "2-X : Item",
+            hex(0x707C): "2-X : Item",
+            hex(0x70DB): "2-X : Item",
+            hex(0x70E0): "2-X : Item",
+            hex(0x70E5): "2-X : Item",
+            hex(0x7080): "2-X : Item",
+            hex(0x7084): "2-X : Item",
+            hex(0x708E): "2-X : Item",
+            hex(0x7092): "2-X : Item",
+            hex(0x70BA): "2-X : Item",
+            hex(0x70BE): "2-X : Item",
+            hex(0x70C2): "2-X : Item",
+            hex(0x70CC): "2-X : Item",
+            hex(0x70D6): "2-X : Item",
+            hex(0x7101): "2-X : Item",
+            hex(0x7107): "2-X : Item",
+            hex(0x707D): "2-X : Item",
+            hex(0x70EB): "2-X : Item",
+            hex(0x70EF): "2-X : Item",
+            hex(0x70F5): "2-X : Item",
 
                     }
     def check(self,adress):
