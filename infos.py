@@ -46,7 +46,7 @@ class infos:
             print("Hookshot : 88\nCandle : 98\nGrey Key : A8\nGold Key : B8\nShovel : C8\nBell : D8\nBridge : E8")
         if type is "B":
             print("Hookshot : 8\nCandle : 9\nGrey Key : A\nGold Key : B\nShovel : C\nBell : D\nBridge : E")
-
+            # Hookshot : or D8??? I'm not sure anymore
     def __init__(self):
         self.infos = {
             hex(0x143) : "item1 ID : infos.itemids(2)",
