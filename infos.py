@@ -151,7 +151,36 @@ class infos:
 
 
 
-                    }
+
+
+            # World 3:
+                hex(0x7122): "3-X : Item",
+                hex(0x7126): "3-X : Item",
+                hex(0x7171): "3-X : Item",
+                hex(0x719D): "3-X : Item",
+                hex(0x71A6): "3-X : Item",
+
+            # World 4:
+                hex(0x71D2) : "4-X : Item",
+                hex(0x71E2) : "4-X : Item",
+                hex(0x71EA) : "4-X : Item",
+                hex(0x71F8) : "4-X : Item",
+                hex(0x71FC) : "4-X : Item",
+                hex(0x720B) : "4-X : Item",
+                hex(0x720F) : "4-X : Item",
+                hex(0x721D) : "4-X : Item",
+                hex(0x7221) : "4-X : Item",
+                hex(0x7225) : "4-X : Item",
+                hex(0x723A) : "4-X : Item",
+                hex(0x7260) : "4-X : Item",
+                hex(0x7264) : "4-X : Item",
+                hex(0x726D) : "4-X : Item",
+                hex(0x7272) : "4-X : Item",
+                hex(0x727C) : "4-X : Item",
+                hex(0x7297) : "4-X : Item",
+                hex(0x729B) : "4-X : Item"
+                }
+
     def check(self,adress):
         if isinstance(adress,str):
             return adress + " : " + self.infos[adress]
