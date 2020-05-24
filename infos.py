@@ -40,6 +40,7 @@ class infos:
                     return
 
     def level_items(self):
+        # These are the actual values that the game will need to select the items.
         print("Hookshot : 8")
         print("Candle : 9")
         print("Grey Key : A")
@@ -58,8 +59,6 @@ class infos:
 
     def __init__(self):
         self.infos = {
-
-            # Infos that aren't permanent:
             hex(0x143) : "item1 ID : infos.itemids()",
             hex(0x15A) : "item1 display",
             hex(0x15B) : "item1 display",
@@ -70,7 +69,7 @@ class infos:
             hex(0x113) : "Ypos P1 (2b)",
             hex(0xB6) : "world (1b)",
             hex(0xB7) : "lvl (1b)",
-            hex(0x140B) : "Level's Item : infos.itemds(2), infos.items140B",
+            hex(0x140B) : "Level's Item : infos.items(2)",
                 # Note : the items are always -2. 
                 # For example : the bell will be 10 (or A).
             hex(0x11D) : "P1 Hearts",
@@ -86,17 +85,17 @@ class infos:
                 # For example, if the byte read is 0xAC:
                     # One level that read this specific byte will read A and thus will fetch a Grey Key.
                     # The other level that read the same byte will read C and will fetch the Shovel.
-            hex(0x1160) : "World Item X",
-            hex(0x1161) : "World Item X",
-            hex(0x1162) : "World Item X",
-            hex(0x1163) : "World Item X",
-            hex(0x1164) : "World Item X",
-            hex(0x1165) : "World Item X",
-            hex(0x1166) : "World Item X",
-            hex(0x1167) : "World Item X",
-            hex(0x1168) : "World Item X",
-            hex(0x1169) : "World Item X",
-            hex(0x116A) : "World Item X",
+            hex(0x1160) : "World Item 1-2",
+            hex(0x1161) : "World Item 3-4",
+            hex(0x1162) : "World Item 5-6",
+            hex(0x1163) : "World Item 7-8",
+            hex(0x1164) : "World Item 9-10",
+            hex(0x1165) : "World Item 11-12",
+            hex(0x1166) : "World Item 13-14",
+            hex(0x1167) : "World Item 15-16",
+            hex(0x1168) : "World Item 17-18",
+            hex(0x1169) : "World Item 19-20",
+            hex(0x116A) : "World Item 21-22",
 
             # World 0's items.
             hex(0x6F69): "0-X : Item",
