@@ -5,9 +5,6 @@ import random
 
 info = infos()
 
-gethex(0xA9)  # 169
-gethex(0xE8)  # 232
-gethex(0xEA)  # 234
 
 
 with open("Vanilla.smc", "rb") as original:
@@ -15,8 +12,12 @@ with open("Vanilla.smc", "rb") as original:
     game = ROM(originaldata)
 
     game[0x65DC] = 0xA9
-    game[0x65DD] = 0xE8
+    game[0x65DD] = 0xE
     game[0x65DE] = 0xEA
+
+
+
+    # 3 = Gold key
 
     with open("vanillanoh.smc", "wb") as newgame:
         newgame.write(game.data)
