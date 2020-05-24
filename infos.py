@@ -39,7 +39,7 @@ class infos:
                     print(i)
                     return
 
-    def level_items(self,type=None):
+    def level_items(self):
         print("Nothing : 0")
         print("Hookshot : 8")
         print("Candle : 9")
@@ -80,7 +80,21 @@ class infos:
             hex(0x1144) : "Doors locking related",
             hex(0xBD) : "P # playing : 1 if 1P, 3 if 2P",
             hex(0x140) : "Item P1 check : 2 if has 2 items, else 0",
-            hex(0x142) : "Item p1 selected : left = 0, right = 2"
+            hex(0x142) : "Item p1 selected : left = 0, right = 2",
+
+            # These are the world 0's items. See self.level_items() for the table.
+                # Reminder : Some will need to be on the "left".
+            hex(0x6F69): "0-X : Item",
+            hex(0x6F72): "0-X : Item",
+            hex(0x6F77): "0-X : Item",
+            hex(0x6F7C): "0-X : Item",
+            hex(0x6F8D): "0-X : Item",
+            hex(0x6F9F): "0-X : Item",
+            hex(0x6FB1): "0-X : Item",
+            hex(0x6FC3): "0-X : Item",
+            hex(0x6FCC): "0-X : Item",
+            hex(0x6FDD): "0-X : Item",
+
                     }
     def check(self,adress):
         if isinstance(adress,str):
