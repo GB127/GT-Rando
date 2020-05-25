@@ -129,9 +129,6 @@ class infos:
                 hex(0x7072): "2-X : Item",
                 hex(0x7077): "2-X : Item",
                 hex(0x707C): "2-X : Item",
-                hex(0x70DB): "2-X : Item",
-                hex(0x70E0): "2-X : Item",
-                hex(0x70E5): "2-X : Item",
                 hex(0x7080): "2-X : Item",
                 hex(0x7084): "2-X : Item",
                 hex(0x708E): "2-X : Item",
@@ -141,12 +138,15 @@ class infos:
                 hex(0x70C2): "2-X : Item",
                 hex(0x70CC): "2-X : Item",
                 hex(0x70D6): "2-X : Item",
-                hex(0x7101): "2-X : Item",
-                hex(0x7107): "2-X : Item",
-                hex(0x707D): "2-X : Item",
+                hex(0x70DB): "2-X : Item",
+                hex(0x70E0): "2-X : Item",
+                hex(0x70E5): "2-X : Item",
                 hex(0x70EB): "2-X : Item",
                 hex(0x70EF): "2-X : Item",
                 hex(0x70F5): "2-X : Item",
+                hex(0x70FD): "2-X : Item",
+                hex(0x7101): "2-X : Item",
+                hex(0x7107): "2-X : Item",
 
 
 
