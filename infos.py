@@ -23,6 +23,14 @@ Read_Byte(addr + 1)
 Read_Byte(addr + 3)
 Read_Byte(addr + 4)
 Read_Byte(addr + 5)
+
+
+
+
+
+[3:19 PM] PsychoManiac: The routine at $80:B631 loads the collision tiles
+[3:20 PM] PsychoManiac: There are two layers, the lower layers is saved for when something is removed from the upper layer
+[3:20 PM] PsychoManiac: This routine also calls $82:C235, which loads the exits for the screen you are
 """
 
 
