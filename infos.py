@@ -8,6 +8,28 @@ from tools import gethex
     Start at Stage 4	Red Diamond - Cherry - Blue Diamond - Blue Diamond - Red Diamond
     Start at Stage 5	Banana - Cherry - Blue Diamond - Red Diamond - Banana
 """
+
+
+
+
+"""
+i = world
+j = niveau
+base = Read_Byte(0x83F303 + i)
+addr = Read_Word(0x83F303 + base + 2*j)
+tu vas toruver toutes les infos sur le prochain niveau à loader dans les adresses suivantes:
+Read_Byte(addr + 0)
+Read_Byte(addr + 1)
+Read_Byte(addr + 3)
+Read_Byte(addr + 4)
+Read_Byte(addr + 5)
+"""
+
+
+
+
+
+
 class InfosError(BaseException):
     pass
 class infos:
