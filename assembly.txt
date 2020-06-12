@@ -368,37 +368,37 @@
     80e560 bne $e53c     [80e53c] A:0008 X:0000 Y:ef6d S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:284 F:57
 
 
+80:A789 : changeB7()
+    -- Notes :
+        The values in the registers are reset.
 
-
-80a789 : change_B7()
     Addresses :
-        $B6 is the world #
-        $B7 is the Room #
+    $B6 is the world #
+    $B7 is the Room #
 
-    80a789 lda #$00               A:0d60 X:0080 Y:0033 S:1cfb D:0000 DB:83 nvMXdizc V:  2 H:181 F:10
-    80a78b xba                    A:0d00 X:0080 Y:0033 S:1cfb D:0000 DB:83 nvMXdiZc V:  2 H:184 F:10
-    80a78c lda $b7       [0000b7] A:000d X:0080 Y:0033 S:1cfb D:0000 DB:83 nvMXdizc V:  2 H:189 F:10
-    80a78e asl a                  A:0000 X:0080 Y:0033 S:1cfb D:0000 DB:83 nvMXdiZc V:  2 H:194 F:10
-    80a78f ldx $b6       [0000b6] A:0000 X:0080 Y:0033 S:1cfb D:0000 DB:83 nvMXdiZc V:  2 H:197 F:10
-    80a791 adc $f303,x   [83f303] A:0000 X:0000 Y:0033 S:1cfb D:0000 DB:83 nvMXdiZc V:  2 H:202 F:10
-    80a794 tay                    A:0005 X:0000 Y:0033 S:1cfb D:0000 DB:83 nvMXdizc V:  2 H:208 F:10
-    80a795 lda $b8       [0000b8] A:0005 X:0000 Y:0005 S:1cfb D:0000 DB:83 nvMXdizc V:  2 H:211 F:10
-    80a797 and #$0f               A:0060 X:0000 Y:0005 S:1cfb D:0000 DB:83 nvMXdizc V:  2 H:216 F:10
-    80a799 asl a                  A:0000 X:0000 Y:0005 S:1cfb D:0000 DB:83 nvMXdiZc V:  2 H:219 F:10
-    80a79a sta $00       [000000] A:0000 X:0000 Y:0005 S:1cfb D:0000 DB:83 nvMXdiZc V:  2 H:222 F:10
-    80a79c asl a                  A:0000 X:0000 Y:0005 S:1cfb D:0000 DB:83 nvMXdiZc V:  2 H:227 F:10
-    80a79d adc $00       [000000] A:0000 X:0000 Y:0005 S:1cfb D:0000 DB:83 nvMXdiZc V:  2 H:230 F:10
-    80a79f rep #$31               A:0000 X:0000 Y:0005 S:1cfb D:0000 DB:83 nvMXdiZc V:  2 H:235 F:10
-    80a7a1 adc $f303,y   [83f308] A:0000 X:0000 Y:0005 S:1cfb D:0000 DB:83 nvmxdiZc V:  2 H:239 F:10
-    80a7a4 tax                    A:f3ec X:0000 Y:0005 S:1cfb D:0000 DB:83 Nvmxdizc V:  2 H:248 F:10
-    80a7a5 sta $1a4c     [831a4c] A:f3ec X:f3ec Y:0005 S:1cfb D:0000 DB:83 Nvmxdizc V:  2 H:251 F:10
-    80a7a8 sep #$20               A:f3ec X:f3ec Y:0005 S:1cfb D:0000 DB:83 Nvmxdizc V:  2 H:260 F:10
-    80a7aa lda $0001,x   [83f3ed] A:f3ec X:f3ec Y:0005 S:1cfb D:0000 DB:83 NvMxdizc V:  2 H:264 F:10
-    80a7ad and #$7f               A:f30f X:f3ec Y:0005 S:1cfb D:0000 DB:83 nvMxdizc V:  2 H:272 F:10
-    80a7af sta $b7       [0000b7] A:f30f X:f3ec Y:0005 S:1cfb D:0000 DB:83 nvMxdizc V:  2 H:275 F:10
-    80a7b1 stz $b8       [0000b8] A:f30f X:f3ec Y:0005 S:1cfb D:0000 DB:83 nvMxdizc V:  2 H:280 F:10
-    80a7b3 sep #$10               A:f30f X:f3ec Y:0005 S:1cfb D:0000 DB:83 nvMxdizc V:  2 H:285 F:10
-    80a7b5 rts                    A:f30f X:00ec Y:0005 S:1cfb D:0000 DB:83 nvMXdizc V:  2 H:289 F:10
+    Notes : In this example, I'm going from 0-1 to 0-2
 
-
-Allo
+    80a789 lda #$00               A:0061 X:0003 Y:007b S:1cfb D:0000 DB:83 nvMXdizc V: 25 H: 10 F:56
+    80a78b xba                    A:0000 X:0003 Y:007b S:1cfb D:0000 DB:83 nvMXdiZc V: 25 H: 13 F:56
+    80a78c lda $b7       [0000b7] A:0000 X:0003 Y:007b S:1cfb D:0000 DB:83 nvMXdiZc V: 25 H: 17 F:56
+    80a78e asl a                  A:0001 X:0003 Y:007b S:1cfb D:0000 DB:83 nvMXdizc V: 25 H: 22 F:56
+    80a78f ldx $b6       [0000b6] A:0002 X:0003 Y:007b S:1cfb D:0000 DB:83 nvMXdizc V: 25 H: 25 F:56
+    80a791 adc $f303,x   [83f303] A:0002 X:0000 Y:007b S:1cfb D:0000 DB:83 nvMXdiZc V: 25 H: 30 F:56
+    80a794 tay                    A:0007 X:0000 Y:007b S:1cfb D:0000 DB:83 nvMXdizc V: 25 H: 36 F:56
+    80a795 lda $b8       [0000b8] A:0007 X:0000 Y:0007 S:1cfb D:0000 DB:83 nvMXdizc V: 25 H: 39 F:56
+    80a797 and #$0f               A:0061 X:0000 Y:0007 S:1cfb D:0000 DB:83 nvMXdizc V: 25 H: 44 F:56
+    80a799 asl a                  A:0001 X:0000 Y:0007 S:1cfb D:0000 DB:83 nvMXdizc V: 25 H: 47 F:56
+    80a79a sta $00       [000000] A:0002 X:0000 Y:0007 S:1cfb D:0000 DB:83 nvMXdizc V: 25 H: 50 F:56
+    80a79c asl a                  A:0002 X:0000 Y:0007 S:1cfb D:0000 DB:83 nvMXdizc V: 25 H: 55 F:56
+    80a79d adc $00       [000000] A:0004 X:0000 Y:0007 S:1cfb D:0000 DB:83 nvMXdizc V: 25 H: 58 F:56
+    80a79f rep #$31               A:0006 X:0000 Y:0007 S:1cfb D:0000 DB:83 nvMXdizc V: 25 H: 63 F:56
+    80a7a1 adc $f303,y   [83f30a] A:0006 X:0000 Y:0007 S:1cfb D:0000 DB:83 nvmxdizc V: 25 H: 68 F:56
+    80a7a4 tax                    A:f3ff X:0000 Y:0007 S:1cfb D:0000 DB:83 Nvmxdizc V: 25 H: 77 F:56
+    80a7a5 sta $1a4c     [831a4c] A:f3ff X:f3ff Y:0007 S:1cfb D:0000 DB:83 Nvmxdizc V: 25 H: 80 F:56
+    80a7a8 sep #$20               A:f3ff X:f3ff Y:0007 S:1cfb D:0000 DB:83 Nvmxdizc V: 25 H: 88 F:56
+    80a7aa lda $0001,x   [83f400] A:f3ff X:f3ff Y:0007 S:1cfb D:0000 DB:83 NvMxdizc V: 25 H: 93 F:56
+    80a7ad and #$7f               A:f302 X:f3ff Y:0007 S:1cfb D:0000 DB:83 nvMxdizc V: 25 H:100 F:56
+    80a7af sta $b7       [0000b7] A:f302 X:f3ff Y:0007 S:1cfb D:0000 DB:83 nvMxdizc V: 25 H:103 F:56
+    80a7b1 stz $b8       [0000b8] A:f302 X:f3ff Y:0007 S:1cfb D:0000 DB:83 nvMxdizc V: 25 H:108 F:56
+    80a7b3 sep #$10               A:f302 X:f3ff Y:0007 S:1cfb D:0000 DB:83 nvMxdizc V: 25 H:113 F:56
+    80a7b5 rts                    A:f302 X:00ff Y:0007 S:1cfb D:0000 DB:83 nvMXdizc V: 25 H:118 F:56
