@@ -31,6 +31,13 @@ Read_Byte(addr + 5)
 [3:19 PM] PsychoManiac: The routine at $80:B631 loads the collision tiles
 [3:20 PM] PsychoManiac: There are two layers, the lower layers is saved for when something is removed from the upper layer
 [3:20 PM] PsychoManiac: This routine also calls $82:C235, which loads the exits for the screen you are
+
+[6:54 AM] PsychoManiac: It specifies how the exit's collision tiles are laid down
+[6:54 AM] PsychoManiac: If bit 6 is set (0x20) then it is a vertical line, otherwise it is horizontal or 2x2
+[6:55 AM] PsychoManiac: If bit 6 is not set and bits 1-4 are 0x0F, then the exit is 2x2 (x,y) (x+1,y) (x,y+1) and (x+1,y+1)
+[6:55 AM] PsychoManiac: For horizontal or vertical lines, bits 1-4 specify the length and bit 5 says if it is 1 or 2 tiles thick.
+
+
 """
 
 
