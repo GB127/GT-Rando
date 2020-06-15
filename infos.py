@@ -55,8 +55,8 @@ class infos:
     """
 
     def passwordrange(self):
-        for i in range(0x1C67F, 0x1C690 +1) :
-            print(hex(i))
+        for i in range(0x1C67F, 0x1C692 +1) :
+            print(f"game[{hex(i)}]")
 
     def itemids(self, id=None, adjust=0):
         # The adjust is because the items displayed on the levels are
