@@ -22,6 +22,15 @@ class ROM:
             raise BaseException("Your game seems to be corrupted")
         for n,i in enumerate(self.data[0x7FC0:0x7FFF]):
             assert i == self.header[n]
+
+    def setmulti(self, value, offset1, offset2, jumps=1):
+        # The idea of this method is for cases where you need to change the value
+        # of a bunch of address that are linked together periodically.
+        # I am hoping to make it so that it can use the random module sometimes if this idea is kept.
+        for i in range(offset1, offset2, jumps):
+            self.data[i] = value
+
+
     def __getitem__(self,offset):
         return self.data[offset]
     def __setitem__(self,offset, value):
