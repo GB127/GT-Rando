@@ -53,6 +53,11 @@ class infos:
         And if I need to get an info during my coding, I'll simply call this class and then ask it to
         Retrieve the things I need.
     """
+
+    def passwordrange(self):
+        for i in range(0x1C67F, 0x1C690 +1) :
+            print(hex(i))
+
     def itemids(self, id=None, adjust=0):
         # The adjust is because the items displayed on the levels are
         # always -2. For example, in inventory, the bell is 12. On the
