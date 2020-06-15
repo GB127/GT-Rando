@@ -30,7 +30,7 @@ def password_shuffler(game):
 
     while check is False:
         for i in range(0x1C67F, 0x1C692+1):
-            game[i] = 0 #random.choice(password)
+            game[i] = random.choice(password)
         World_1_pass = [
                         game[0x1c67f],
                         game[0x1c680],
