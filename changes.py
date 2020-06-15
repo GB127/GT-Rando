@@ -1,7 +1,7 @@
 from infos import *
 import random
 
-def password_shuffler(game):
+def password_randomizer(game):
     """
         This is the password shuffler, to make sure one doesn't cheat.
 
@@ -77,10 +77,17 @@ def darkrooms_randomizer(game):
         (I've seen 4 dark rooms in world 1 for example)
 
         FIXME : Make sure *all rooms can be randomized.
-            We need to replace 3 by the highest number a world have
+            We need to replace 3 by the highest number a world have. And make sure the boss room isn't in the range
+
+        I've tried a darkroom in a boss room. It almost works. There is probably something that we have to disable
+        to make it work for bosses.
+            On world 0 boss for example, we see the darkness, then you see the level over everything. 
+            The game still works, so it's not a softlock or crash. You just don't see anything.
+
+        I'd like to have this randomizer randomizes everything that's not boss rooms, AND a mode where bosses could be randomized".
     """
     check = False
-    rooms = {
+    rooms = {  # Format =>  World : highest room number 
             0:3,
             1:3,
             2:3,
