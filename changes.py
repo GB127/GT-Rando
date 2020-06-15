@@ -1,9 +1,6 @@
 from infos import *
 import random
 
-
-info = infos()
-
 def password_shuffler(game):
     """
         This is the password shuffler, to make sure one doesn't cheat.
