@@ -58,6 +58,11 @@ class infos:
         for i in range(0x1C67F, 0x1C692 +1) :
             print(f"game[{hex(i)}]")
 
+    def dark_rooms_range(self):
+        print("worlds - level")
+        for i in range(0x186B5, 0x186BF+1):
+            print(f'{hex(i)} - {hex(i+1)}')
+
     def itemids(self, id=None, adjust=0):
         # The adjust is because the items displayed on the levels are
         # always -2. For example, in inventory, the bell is 12. On the
