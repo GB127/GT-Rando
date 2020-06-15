@@ -71,9 +71,25 @@ def password_shuffler(game):
                 # (From my testing, it's very rare)
 
 def darkrooms_randomizer(game):
-    for i in range(0x186B5, 0x186BF+1 , 2):
-        game[i] = random.randint(0,0x4)
-    for i in range(0x186B6, 0x186C0+1 , 2):
-        game[i] = random.randint(0,0xA)
-    for i in range(0x186B5, 0x186BF +1,2):
-        print(game[i], "-", game[i +1])
+    """
+        This is a dark room randomizer : It randomizes what rooms can be dark!
+
+        FIXME : Make sure *all rooms can be randomized.
+        FIXME : Logic with candle....?
+    """
+    check = False
+    while check is False:
+        for i in range(0x186B5, 0x186BF+1 , 2):
+            game[i] = random.randint(0,0x4)
+        for i in range(0x186B6, 0x186C0+1 , 2):
+            game[i] = random.randint(0,0xA)
+
+        dark_rooms = []
+        for i in range(0x186B5, 0x186BF+1 , 2):
+            dark_rooms.append((game[i], game[i+1]))
+        print(dark_rooms)
+        for i in dark_rooms:
+            if dark_rooms.count(i) == 1:
+                check = True
+            else:
+                check = False
