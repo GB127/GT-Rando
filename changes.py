@@ -97,7 +97,7 @@ def darkrooms_randomizer(game):
     while check is False:
         for i in range(0x186B5, 0x186BF+1 , 2):
             game[i] = random.randint(0,0x4)
-            game[i+1] = random.randint(0,rooms[game[i]+1])
+            game[i+1] = random.randint(0,rooms[game[i]])
         dark_rooms = []
         for i in range(0x186B5, 0x186BF+1 , 2):
             dark_rooms.append((game[i], game[i+1]))
