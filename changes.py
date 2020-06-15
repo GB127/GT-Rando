@@ -60,15 +60,10 @@ def password_randomizer(game):
                 ]
         Worlds_passwords = [World_1_pass, World_2_pass, World_3_pass, World_4_pass]
 
-
         # Let's check if two passwords are identical
-        for i in Worlds_passwords:
-            if Worlds_passwords.count(i) == 1:
-                check = True
-            else:
-                check = False
-                # Do it again please.
-                # (From my testing, it's very rare)
+        check = all([1 == Worlds_passwords.count(x) for x in Worlds_passwords])
+
+
 
 def darkrooms_randomizer(game):
     """
@@ -106,3 +101,7 @@ def darkrooms_randomizer(game):
                 check = True
             else:
                 check = False
+        print(dark_rooms)
+        check = all([1 == dark_rooms.count(x) for x in dark_rooms])
+        print(check)
+
