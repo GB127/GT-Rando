@@ -73,17 +73,24 @@ def password_shuffler(game):
 def darkrooms_randomizer(game):
     """
         This is a dark room randomizer : It randomizes what rooms can be dark!
+        Currently there is NO logic. Any world can have any number of rooms
+        (I've seen 4 dark rooms in world 1 for example)
 
         FIXME : Make sure *all rooms can be randomized.
-        FIXME : Logic with candle....?
+            We need to replace 3 by the highest number a world have
     """
     check = False
+    rooms = {
+            0:3,
+            1:3,
+            2:3,
+            3:3,
+            4:3,
+            }
     while check is False:
         for i in range(0x186B5, 0x186BF+1 , 2):
             game[i] = random.randint(0,0x4)
-        for i in range(0x186B6, 0x186C0+1 , 2):
-            game[i] = random.randint(0,0xA)
-
+            game[i+1] = random.randint(0,rooms[game[i]])
         dark_rooms = []
         for i in range(0x186B5, 0x186BF+1 , 2):
             dark_rooms.append((game[i], game[i+1]))
