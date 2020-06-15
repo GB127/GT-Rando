@@ -69,3 +69,11 @@ def password_shuffler(game):
                 check = False
                 # Do it again please.
                 # (From my testing, it's very rare)
+
+def darkrooms_randomizer(game):
+    for i in range(0x186B5, 0x186BF+1 , 2):
+        game[i] = random.randint(0,0x4)
+    for i in range(0x186B6, 0x186C0+1 , 2):
+        game[i] = random.randint(0,0xA)
+    for i in range(0x186B5, 0x186BF +1,2):
+        print(game[i], "-", game[i +1])
