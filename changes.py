@@ -27,12 +27,12 @@ def password_shuffler(game):
     check = False
 
     while check is False:
+        # Actual randomization of the password
         for i in range(0x1C67F, 0x1C692+1):
             game[i] = random.choice(password)
                 # I've started a new method in the class to allow setting multiple addresses.
-                # The only issue is the current written way don't make it random for each iteration.
+                # The only current issue is the current written way don't make it random for each iteration.
                 # Once that is fixed, these two lines can be replaced by one line.
-
         World_1_pass = [
                         game[0x1c67f],
                         game[0x1c680],
@@ -61,13 +61,14 @@ def password_shuffler(game):
                         game[0x1c691],
                         game[0x1c692]
                 ]
-
         Worlds_passwords = [World_1_pass, World_2_pass, World_3_pass, World_4_pass]
 
 
-
+        # Let's check if two passwords are identical
         for i in Worlds_passwords:
             if Worlds_passwords.count(i) == 1:
                 check = True
             else:
                 check = False
+                # Do it again please.
+                # (From my testing, it's very rare)
