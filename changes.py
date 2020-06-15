@@ -32,7 +32,7 @@ def password_shuffler(game):
                 # I've started a new method in the class to allow setting multiple addresses.
                 # The only issue is the current written way don't make it random for each iteration.
                 # Once that is fixed, these two lines can be replaced by one line.
-                
+
         World_1_pass = [
                         game[0x1c67f],
                         game[0x1c680],
@@ -70,4 +70,4 @@ def password_shuffler(game):
             if Worlds_passwords.count(i) == 1:
                 check = True
             else:
-                check = True
+                check = False
