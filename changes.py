@@ -17,8 +17,6 @@ def password_shuffler(game):
     Summary :
         randomize each box seperately
         check if each set of 5 are the same (one world is 5 boxes)
-
-
     """
     Cherry = 0x0
     Banana = 0x1
@@ -31,6 +29,10 @@ def password_shuffler(game):
     while check is False:
         for i in range(0x1C67F, 0x1C692+1):
             game[i] = random.choice(password)
+                # I've started a new method in the class to allow setting multiple addresses.
+                # The only issue is the current written way don't make it random for each iteration.
+                # Once that is fixed, these two lines can be replaced by one line.
+                
         World_1_pass = [
                         game[0x1c67f],
                         game[0x1c680],
