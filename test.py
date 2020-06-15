@@ -10,6 +10,10 @@ info = infos()
 with open("Vanilla.smc", "rb") as original:
     originaldata = original.read()
     game = ROM(originaldata)
-    password_shuffler(game)
+    darkrooms_randomizer(game)
+    password_randomizer(game)
+    game[0x6F72] = 0xA
+    game[0x6F77] = 0xB
+
     with open("Vanillanoh.smc", "wb") as newgame:
         newgame.write(game.data)
