@@ -4,9 +4,6 @@ from infos import *
 import random
 from changes import *
 
-info = infos()
-
-
 with open("Vanilla.smc", "rb") as original:
     originaldata = original.read()
     game = ROM(originaldata)
