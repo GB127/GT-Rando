@@ -244,6 +244,13 @@ class infos:
                     return
 
 
+
+    def range_dark_rooms(self):
+        print("worlds - level")
+        for i in range(0x186B5, 0x186BF+1,2):
+            print(f'{hex(i)} - {hex(i+1)}')
+
+
     def values_items_World(self, value=None):
         # These are the actual values that the game will need to select the items.
         # For placing them in the levels
@@ -263,11 +270,6 @@ class infos:
             raise InfosError(f"value can only take a value in the range of {list(values.keys())}")            
 
 
-
-    def range_dark_rooms(self):
-        print("worlds - level")
-        for i in range(0x186B5, 0x186BF+1,2):
-            print(f'{hex(i)} - {hex(i+1)}')
 
 
     def range_password(self, world=None):
