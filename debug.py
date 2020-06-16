@@ -6,6 +6,9 @@ def dark_room(game, world, room):
 def test_bosses(game):
     # This code currently changes only the 0-0 up exit to the boss.
     # Eventually it will support all 5 bosses for the 5 worlds.
+    # It will also auto-level select because if you want ot test bosses,
+    # You will want ot go there fast for any worlds!
+    level_select(game)
     game[0x1F3ED] = 14
 
 def test_room_w0(game, value):
