@@ -143,45 +143,45 @@ class infos:
     def __init__(self):
         self.infos = {
             # When searching for a keyword, always use a capital for the first letter.
-
-            hex(0xB6) : "current World (1b)",
-            hex(0xB7) : "current Level (1b)",
-            hex(0xBD) : "P # playing : 1 if 1P, 3 if 2P",
+            # general
+                hex(0xB6) : "current World (1b)",
+                hex(0xB7) : "current Level (1b)",
+                hex(0xBD) : "P # playing : 1 if 1P, 3 if 2P",
 
 
             # Item
-            hex(0x140) : "Item P1 check : 2 if has 2 items, else 0",
-            hex(0x142) : "Item P1 selected : left = 0, right = 2",
-            hex(0x143) : "Item1 ID : infos.itemids()",
-            hex(0x142) : "Item2 ID : infos.itemids()",
-            hex(0x15A) : "Item1 display",
-            hex(0x15B) : "Item1 display",
-            hex(0x15D) : "Item2 display",
-            hex(0x15C) : "Item2 display",
+                hex(0x140) : "Item P1 check : 2 if has 2 items, else 0",
+                hex(0x142) : "Item P1 selected : left = 0, right = 2",
+                hex(0x143) : "Item1 ID : infos.itemids()",
+                hex(0x142) : "Item2 ID : infos.itemids()",
+                hex(0x15A) : "Item1 display",
+                hex(0x15B) : "Item1 display",
+                hex(0x15D) : "Item2 display",
+                hex(0x15C) : "Item2 display",
 
 
             # P1
                 # Related to P1
-            hex(0x11D) : "P1 Hearts",
-            hex(0x157) : "P1 Lives",
-            hex(0x110) : "Xpos P1 (2b)",
-            hex(0x113) : "Ypos P1 (2b)",
+                hex(0x11D) : "P1 Hearts",
+                hex(0x157) : "P1 Lives",
+                hex(0x110) : "Xpos P1 (2b)",
+                hex(0x113) : "Ypos P1 (2b)",
 
-            hex(0x1144) : "Doors locking related",
-            hex(0x140B) : "Level's Item : infos.items(2)",
-                # Note : the items are always -2. 
-                # For example : the bell will be 10 (or A).
+                hex(0x1144) : "Doors locking related",
+                hex(0x140B) : "Level's Item : infos.items(2)",
+                    # Note : the items are always -2. 
+                    # For example : the bell will be 10 (or A).
 
             # Password box
-            hex(0x230) : "Password box 1, infos.password_values()",
-            hex(0x231) : "Password box 2, infos.password_values()",
-            hex(0x232) : "Password box 3, infos.password_values()",
-            hex(0x233) : "Password box 4, infos.password_values()",
-            hex(0x234) : "Password box 5, infos.password_values()",
+                hex(0x230) : "Password box 1, infos.password_values()",
+                hex(0x231) : "Password box 2, infos.password_values()",
+                hex(0x232) : "Password box 3, infos.password_values()",
+                hex(0x233) : "Password box 4, infos.password_values()",
+                hex(0x234) : "Password box 5, infos.password_values()",
 
 
             # Stored items for the World
-                # See world_ranges()
+                # See range_World_Item()
                     # The idea is that some levels will take the first "letter", some will take the second letters.
                     # For example, if the byte read is 0xAC:
                         # One level that read this specific byte will read A and thus will fetch a Grey Key.
