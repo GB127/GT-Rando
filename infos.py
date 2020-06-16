@@ -104,42 +104,60 @@ class infos:
         print("Bell : D")
         print("Bridge : E")
 
-    def world_ranges(self):
-        # These are the vanilla ranges of bytes the worlds read from.
-        # hex display is the best
-        print("World 1 : 0x1160 - 0x1164")
-        print("World 2 : 0x1160 - 0x1165")
-        print("World 3 : 0x1160 - 0x116A")
-        print("World 4 : 0x1160 - 0x1163")
-        print("World 5 : 0x1160 - 0x1168")
+    def range_World_Item(self, world):
+        end = 0
+        if world == 0:
+            end = 0x1164
+        elif world == 1:
+            end = 0x1165
+        elif world == 2:
+            end = 0x116A
+        elif world == 3:
+            end = 0x1163
+        elif world == 4:
+            end = 0x1168
+        print(f'World {world} range location : {hex(0x1160)} - {hex(end)}')
+        return (0x1160, end)
 
     def __init__(self):
         self.infos = {
-            hex(0x143) : "item1 ID : infos.itemids()",
-            hex(0x15A) : "item1 display",
-            hex(0x15B) : "item1 display",
-            hex(0x15D) : "item2 display",
-            hex(0x15C) : "item2 display",
-            hex(0x142) : "item2 ID : infos.itemids()",
+            # When searching for a keyword, always use a capital for the first letter.
+
+            hex(0xB6) : "current World (1b)",
+            hex(0xB7) : "current Level (1b)",
+            hex(0xBD) : "P # playing : 1 if 1P, 3 if 2P",
+
+
+            # Item
+            hex(0x140) : "Item P1 check : 2 if has 2 items, else 0",
+            hex(0x142) : "Item P1 selected : left = 0, right = 2",
+            hex(0x143) : "Item1 ID : infos.itemids()",
+            hex(0x142) : "Item2 ID : infos.itemids()",
+            hex(0x15A) : "Item1 display",
+            hex(0x15B) : "Item1 display",
+            hex(0x15D) : "Item2 display",
+            hex(0x15C) : "Item2 display",
+
+
+            # P1
+                # Related to P1
+            hex(0x11D) : "P1 Hearts",
+            hex(0x157) : "P1 Lives",
             hex(0x110) : "Xpos P1 (2b)",
             hex(0x113) : "Ypos P1 (2b)",
-            hex(0xB6) : "world (1b)",
-            hex(0xB7) : "lvl (1b)",
+
+            hex(0x1144) : "Doors locking related",
             hex(0x140B) : "Level's Item : infos.items(2)",
                 # Note : the items are always -2. 
                 # For example : the bell will be 10 (or A).
-            hex(0x11D) : "P1 Hearts",
-            hex(0x157) : "P1 lives",
-            hex(0x1144) : "Doors locking related",
-            hex(0xBD) : "P # playing : 1 if 1P, 3 if 2P",
-            hex(0x140) : "Item P1 check : 2 if has 2 items, else 0",
-            hex(0x142) : "Item p1 selected : left = 0, right = 2",
 
+            # Password box
             hex(0x230) : "Password box 1: Cherry = 00, Banana = 01, Red Gem = 02, Blue Gem = 03",
             hex(0x231) : "Password box 2: Cherry = 00, Banana = 01, Red Gem = 02, Blue Gem = 03",
             hex(0x232) : "Password box 3: Cherry = 00, Banana = 01, Red Gem = 02, Blue Gem = 03",
             hex(0x233) : "Password box 4: Cherry = 00, Banana = 01, Red Gem = 02, Blue Gem = 03",
             hex(0x234) : "Password box 5: Cherry = 00, Banana = 01, Red Gem = 02, Blue Gem = 03",
+
 
             # Stored items for the World
                 # See world_ranges()
@@ -207,11 +225,6 @@ class infos:
                 hex(0x70FD): "2-X : Item",
                 hex(0x7101): "2-X : Item",
                 hex(0x7107): "2-X : Item",
-
-
-
-
-
 
             # World 3:
                 hex(0x7122): "3-X : Item",
