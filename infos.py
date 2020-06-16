@@ -57,6 +57,10 @@ class infos:
         for i in range(0x1D450,0x1D4BD):
             print(hex(i))
 
+    def boss0_text(self):
+        for i in range(0x5F87B, 0x5F8B8):
+            print(hex(i))
+
     def passwordrange(self):
         for i in range(0x1C67F, 0x1C692 +1) :
             print(f"game[{hex(i)}]")
