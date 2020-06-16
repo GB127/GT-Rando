@@ -9,8 +9,7 @@ def test_bosses(game):
     game[0x1F3ED] = 14
 
 def level_select(game):
-    # Put a banana on the box of the world you want to go    
-        # Banana on the 2nd box = World 1 (2nd world of the game)
+    # Put a banana on the box of the world you want to go. Example below
         # Banana on the 3rd box = World 2 (3rd world of the game)
     # Cherry for all the rest of the boxes
 
