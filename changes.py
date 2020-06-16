@@ -27,9 +27,6 @@ def password_randomizer(game):
         # Actual randomization of the password
         for i in range(0x1C67F, 0x1C692+1):
             game[i] = random.choice(password)
-                # I've started a new method in the class to allow setting multiple addresses.
-                # The only current issue is the current written way don't make it random for each iteration.
-                # Once that is fixed, these two lines can be replaced by one line.
         World_1_pass = [
                         game[0x1c67f],
                         game[0x1c680],
