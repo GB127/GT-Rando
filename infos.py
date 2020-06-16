@@ -104,14 +104,21 @@ class infos:
         print("Bell : D")
         print("Bridge : E")
 
-    def range_World_Item(self, world):
+    def range_World_Item(self, world=None):
         end = {0:0x1164,
                1:0x1165,
                2:0x116A,
                3:0x1163,
                4:0x1168}
-        print(f'World {world} range location : {hex(0x1160)} - {hex(end[world])}')
-        return (0x1160, end[world])
+        if world in range(5):
+            print(f'World {world} range location : {hex(0x1160)} - {hex(end[world])}')
+            return (0x1160, end[world])
+        elif world is None:
+            for i in end.keys():
+                print(f'World {i} range location : {hex(0x1160)} - {hex(end[i])}')
+            return
+        else:
+            raise InfosError("The world can only be a value of [0-1-2-3-4-None]")
 
     def __init__(self):
         self.infos = {
