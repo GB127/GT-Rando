@@ -130,6 +130,7 @@ class infos:
             hex(0xBD) : "P # playing : 1 if 1P, 3 if 2P",
             hex(0x140) : "Item P1 check : 2 if has 2 items, else 0",
             hex(0x142) : "Item p1 selected : left = 0, right = 2",
+
             hex(0x230) : "Password box 1: Cherry = 00, Banana = 01, Red Gem = 02, Blue Gem = 03",
             hex(0x231) : "Password box 2: Cherry = 00, Banana = 01, Red Gem = 02, Blue Gem = 03",
             hex(0x232) : "Password box 3: Cherry = 00, Banana = 01, Red Gem = 02, Blue Gem = 03",
