@@ -185,7 +185,6 @@ class infos:
         for i in range(0x1c67f, 0x1c692 + 1):
             self.infos[hex(i)] = "Password check"
 
-    ############################# self.infos related ##########
     def check(self,adress):
         if isinstance(adress,str):
             return adress + " : " + self.infos[adress]
@@ -198,7 +197,6 @@ class infos:
             if all(x in self.infos[i] for x in seeked):
                 print(self.check(i))
         print("-----------END OF ADRESSES--------------------")
-    #############################################################
 
     def password(self,world=None):
         if world == 1:
@@ -260,7 +258,6 @@ class infos:
 
 
 
-    ####################### RANGES ###############################
     def range_dark_rooms(self):
         print("worlds - level")
         for i in range(0x186B5, 0x186BF+1,2):
@@ -293,8 +290,6 @@ class infos:
             return
         else:
             raise InfosError("The world can only be a value of [0-1-2-3-4-None]")
-
-    ##############################################################
 
     def values_password(self, value=None):
         values = {0:"Cherry",
