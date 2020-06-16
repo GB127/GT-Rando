@@ -275,13 +275,17 @@ class infos:
                 hex(0x729B) : "4-X : Item"
                 }
 
+        for i in range(0x186b5, 0x186bf+1,2):
+            self.infos[hex(i)] = "Dark Room World"
+            self.infos[hex(i + 1)] = "Dark Room Level"
+
     def check(self,adress):
         if isinstance(adress,str):
             return adress + " : " + self.infos[adress]
         else:
             return hex(adress) + " : " + self.infos[hex(adress)]
 
-    def listadresses(self,*seeked):
+    def seek(self,*seeked):
         print("-----------LIST OF ADRESSES-------------------")
         for i in list(self.infos):
             if all(x in self.infos[i] for x in seeked):
