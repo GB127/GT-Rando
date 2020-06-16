@@ -71,10 +71,10 @@ class infos:
                 hex(0x110) : "Xpos P1 (2b)",
                 hex(0x113) : "Ypos P1 (2b)",
 
-                hex(0x1144) : "Doors locking related",
-                hex(0x140B) : "Level's Item : infos.items(2)",
-                    # Note : the items are always -2. 
-                    # For example : the bell will be 10 (or A).
+            hex(0x1144) : "Doors locking related",
+            hex(0x140B) : "Level's Item : infos.items(2)",
+                # Note : the items are always -2. 
+                # For example : the bell will be 10 (or A).
 
             # Password box
                 hex(0x230) : "Password box 1",
@@ -244,17 +244,23 @@ class infos:
                     return
 
 
-    def level_items(self):
+    def values_items_World(self, value=None):
         # These are the actual values that the game will need to select the items.
         # For placing them in the levels
-        print("Hookshot : 8")
-        print("Candle : 9")
-        print("Grey Key : A")
-        print("Gold Key : B")
-        print("Shovel : C")
-        print("Bell : D")
-        print("Bridge : E")
-
+        values = {0x8: "Hookshot",
+                  0x9: "Candle",
+                  0xA: "Grey Key",
+                  0xB: "Gold Key",
+                  0xC: "Shovel",
+                  0xD: "Bell",
+                  0xE: "Bridge"}
+        if value is None:
+            for i in values.keys():
+                print(f"{hex(i)} - {values[i]}")
+        elif value in range(0x8, 0xE +1):
+                print(f"{hex(value)} - {values[value]}")
+        else:
+            raise InfosError(f"value can only take a value in the range of {list(values.keys())}")            
 
 
 
