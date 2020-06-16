@@ -23,7 +23,7 @@ class ROM:
         for n,i in enumerate(self.data[0x7FC0:0x7FFF]):
             assert i == self.header[n]
 
-    def setmulti(self, value, offset1, offset2, jumps=1):
+    def setmulti(self, offset1, offset2, value, jumps=1):
         # The idea of this method is for cases where you need to change the value
         # of a bunch of address that are linked together periodically.
         # I am hoping to make it so that it can use the random module sometimes if this idea is kept.
