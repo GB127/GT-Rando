@@ -27,6 +27,8 @@ def password_randomizer(game):
         # Actual randomization of the password
         for i in range(0x1C67F, 0x1C692+1):
             game[i] = random.choice(password)
+
+        # Let's check if two passwords are identical
         World_1_pass = [
                         game[0x1c67f],
                         game[0x1c680],
@@ -56,8 +58,6 @@ def password_randomizer(game):
                         game[0x1c692]
                 ]
         Worlds_passwords = [World_1_pass, World_2_pass, World_3_pass, World_4_pass]
-
-        # Let's check if two passwords are identical
         check = all([1 == Worlds_passwords.count(x) for x in Worlds_passwords])
 
 
