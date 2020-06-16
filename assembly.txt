@@ -1,5 +1,14 @@
-809de4 : changeB6?():
-    -- C3 already has the new B6
+809de4 : passwords_changeB6($C3):
+    -- C3 already has the new B6.
+
+    -- Addresses:
+        $C3 : New B6 to be
+        $B6 : World
+
+    -- Summary:
+        I don't know what is happening in this function. But I know for sure that
+        C3 needs to contain the new B6. I've changed the LDA $C3 to a fixed Constant and
+        it worked : always loaded that world
 
     809de4 lda #$02               A:8000 X:0000 Y:0008 S:1cfd D:0000 DB:83 nvMXdiZc V:235 H: 26 F:41
     809de6 sta $a0       [0000a0] A:8002 X:0000 Y:0008 S:1cfd D:0000 DB:83 nvMXdizc V:235 H: 29 F:41
@@ -72,9 +81,12 @@
     -- Notes :
         The values in the registers are reset.
 
-    Addresses :
-    $B6 is the world #
-    $B7 is the Room #
+    -- Addresses :
+        $B6 is the world #
+        $B7 is the Room #
+        $0001 : Next room
+
+    -- Summary:
 
     Notes : In this example, I'm going from 0-1 to 0-2
 
@@ -470,9 +482,13 @@
     82b0ff rts                    A:4010 X:0000 Y:000d S:1cf5 D:1040 DB:83 nvMXdizc V:  0 H:180 F: 3
 
 
-82bf0A : changeC3():
-
+82bf0A : password_changeC3():
     -- $C3 is used to set the new world after a successful password
+
+    -- Summary :
+        Check the password boxes with the password stored somewhere
+        if the password fails, go somewhere? (see in pass_nextworld)
+        else, go somewhere?
 
     82bf0a ldy #$01               A:0280 X:0000 Y:0047 S:1cf8 D:0200 DB:83 NvMXdizC V:248 H: 97 F:44
     82bf0c sty $3a       [00023a] A:0280 X:0000 Y:0001 S:1cf8 D:0200 DB:83 nvMXdizC V:248 H:100 F:44
@@ -501,13 +517,13 @@
     82bf14 lda $30,x     [000230] A:0280 X:0000 Y:0005 S:1cf8 D:0200 DB:83 nvMXdiZC V:248 H:116 F:44
     82bf16 cmp $c67a,y   [83c67f] A:0201 X:0000 Y:0005 S:1cf8 D:0200 DB:83 nvMXdizC V:248 H:122 F:44
     82bf19 bne $bf39     [82bf39] A:0201 X:0000 Y:0005 S:1cf8 D:0200 DB:83 nvMXdiZC V:248 H:128 F:44
-        82BF39 : passwordcheck_nextworld()
+        82BF39 : password_nextworld()
     82bf1b iny                    A:0201 X:0000 Y:0005 S:1cf8 D:0200 DB:83 nvMXdiZC V:248 H:131 F:44
     82bf1c inx                    A:0201 X:0000 Y:0006 S:1cf8 D:0200 DB:83 nvMXdizC V:248 H:144 F:44
     82bf1d cpx #$05               A:0201 X:0001 Y:0006 S:1cf8 D:0200 DB:83 nvMXdizC V:248 H:147 F:44
     82bf1f bne $bf14     [82bf14] A:0201 X:0001 Y:0006 S:1cf8 D:0200 DB:83 NvMXdizc V:248 H:150 F:44
 
-82BF39 : passwordcheck_nextworld():
+82BF39 : password_nextworld():
     -- This routine starts the checks for the next world.
 
     -- Addresses:
@@ -532,6 +548,8 @@
     82bf47 : -> I assume that the following code will load the failed password
 
 82BF12 : password_checker():
+    -- Summary : call the loops for checking each box.
+
     82bf12 ldx #$00               A:0280 X:0000 Y:0005 S:1cf8 D:0200 DB:83 nvMXdizC V:248 H:113 F:44
     82BF14 : password_retrieve_loop(0)
     82BF14 : password_retrieve_loop(1)
