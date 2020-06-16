@@ -112,7 +112,7 @@ class infos:
                4:0x1168}
         if world in range(5):
             print(f'World {world} range location : {hex(0x1160)} - {hex(end[world])}')
-            return (0x1160, end[world])
+            return
         elif world is None:
             for i in end.keys():
                 print(f'World {i} range location : {hex(0x1160)} - {hex(end[i])}')
