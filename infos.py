@@ -121,8 +121,6 @@ class infos:
         else:
             raise InfosError(f"Password value can only be a value of {list(values.keys())}")
 
-
-
     def range_World_Item(self, world=None):
         end = {0:0x1164,
                1:0x1165,
@@ -278,6 +276,8 @@ class infos:
         for i in range(0x186b5, 0x186bf+1,2):
             self.infos[hex(i)] = "Dark Room World"
             self.infos[hex(i + 1)] = "Dark Room Level"
+        for i in range(0x1c67f, 0x1c692 + 1):
+            self.infos[hex(i)] = "Password check"
 
     def check(self,adress):
         if isinstance(adress,str):
