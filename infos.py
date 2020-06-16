@@ -67,7 +67,8 @@ class infos:
                 hex(0x110) : "Xpos P1 (2b)",
                 hex(0x113) : "Ypos P1 (2b)",
 
-            hex(0x1144) : "Doors locking related",
+            hex(0x1144) : "Doors unlocked",
+            hex(0x1145) : "Doors unlocked",  # Perhaps 1146? Will have to test further
             hex(0x140B) : "Level's Item : infos.items(2)",
                 # Note : the items are always -2. 
                 # For example : the bell will be 10 (or A).
