@@ -8,6 +8,9 @@ def test_bosses(game):
     # Eventually it will support all 5 bosses for the 5 worlds.
     game[0x1F3ED] = 14
 
+def test_room_w0(game, value):
+    game[0x1F3ED] = value
+
 def level_select(game):
     # Put a banana on the box of the world you want to go. Example  
         # Banana on the 3rd box = World 2 (3rd world of the game)
