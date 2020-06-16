@@ -55,12 +55,12 @@ class infos:
     """
     def range_password(self, world=None):
         if world is None:
-            for x in range(1,5):
-                i = 0x1C67F + 5 *(x-1)
-                print(f'World {x} : {hex(i)} - {hex(i+1)} - {hex(i+2)} - {hex(i+3)} - {hex(i+4)}')
+            for worlds in range(1,5):
+                offset = 0x1C67F + 5 *(worlds-1)
+                print(f'World {worlds} : {hex(offset)} - {hex(offset+1)} - {hex(offset+2)} - {hex(offset+3)} - {hex(offset+4)}')
         elif world in range(1,5):
-            i = 0x1C67F + 5 *(world-1)
-            print(f'World {world} : {hex(i)} - {hex(i+1)} - {hex(i+2)} - {hex(i+3)} - {hex(i+4)}')
+            offset = 0x1C67F + 5 *(world-1)
+            print(f'World {world} : {hex(offset)} - {hex(offset+1)} - {hex(offset+2)} - {hex(offset+3)} - {hex(offset+4)}')
     def range_dark_rooms(self):
         print("worlds - level")
         for i in range(0x186B5, 0x186BF+1):
