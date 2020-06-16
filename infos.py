@@ -105,19 +105,13 @@ class infos:
         print("Bridge : E")
 
     def range_World_Item(self, world):
-        end = 0
-        if world == 0:
-            end = 0x1164
-        elif world == 1:
-            end = 0x1165
-        elif world == 2:
-            end = 0x116A
-        elif world == 3:
-            end = 0x1163
-        elif world == 4:
-            end = 0x1168
-        print(f'World {world} range location : {hex(0x1160)} - {hex(end)}')
-        return (0x1160, end)
+        end = {0:0x1164,
+               1:0x1165,
+               2:0x116A,
+               3:0x1163,
+               4:0x1168}
+        print(f'World {world} range location : {hex(0x1160)} - {hex(end[world])}')
+        return (0x1160, end[world])
 
     def __init__(self):
         self.infos = {
