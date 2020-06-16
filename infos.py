@@ -108,6 +108,20 @@ class infos:
         else:
             raise InfosError("World can only be a value of [None-1-2-3-4]")
 
+    def password_values(self, value=None):
+        values = {0:"Cherry",
+                  1:"Banana",
+                  2:"Red Gem",
+                  3:"Blue Gem",}
+        if value is None:
+            for i in values.keys():
+                print(f'{hex(i)} - {values[i]}')
+        elif value in values.keys():
+            print(f'{hex(value)} - {values[value]}')
+        else:
+            raise InfosError(f"Password value can only be a value of {list(values.keys())}")
+
+
 
     def range_World_Item(self, world=None):
         end = {0:0x1164,
@@ -159,11 +173,11 @@ class infos:
                 # For example : the bell will be 10 (or A).
 
             # Password box
-            hex(0x230) : "Password box 1: Cherry = 00, Banana = 01, Red Gem = 02, Blue Gem = 03",
-            hex(0x231) : "Password box 2: Cherry = 00, Banana = 01, Red Gem = 02, Blue Gem = 03",
-            hex(0x232) : "Password box 3: Cherry = 00, Banana = 01, Red Gem = 02, Blue Gem = 03",
-            hex(0x233) : "Password box 4: Cherry = 00, Banana = 01, Red Gem = 02, Blue Gem = 03",
-            hex(0x234) : "Password box 5: Cherry = 00, Banana = 01, Red Gem = 02, Blue Gem = 03",
+            hex(0x230) : "Password box 1,
+            hex(0x231) : "Password box 2",
+            hex(0x232) : "Password box 3",
+            hex(0x233) : "Password box 4",
+            hex(0x234) : "Password box 5",
 
 
             # Stored items for the World
