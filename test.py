@@ -1,4 +1,3 @@
-from tools import gethex
 from gameclass import ROM
 from infos import *
 import random
