@@ -1,5 +1,3 @@
-from tools import gethex
-
 # https://www.vgmaps.com/Atlas/SuperNES/index.htm#GoofTroop
 
 """
@@ -266,7 +264,6 @@ class infos:
             print("-" * 20)
             for i in items.keys() :
                 print(i)
-                gethex(items[i] -adjust)
             print("-" * 20)
         else:
             for i in items.keys():
