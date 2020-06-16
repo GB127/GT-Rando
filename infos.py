@@ -43,100 +43,6 @@ class infos:
         And if I need to get an info during my coding, I'll simply call this class and then ask it to
         Retrieve the things I need.
     """
-    def range_password(self, world=None):
-        if world is None:
-            for worlds in range(1,5):
-                offset = 0x1C67F + 5 *(worlds-1)
-                print(f'World {worlds} : {hex(offset)} - {hex(offset+1)} - {hex(offset+2)} - {hex(offset+3)} - {hex(offset+4)}')
-        elif world in range(1,5):
-            offset = 0x1C67F + 5 *(world-1)
-            print(f'World {world} : {hex(offset)} - {hex(offset+1)} - {hex(offset+2)} - {hex(offset+3)} - {hex(offset+4)}')
-
-    def range_dark_rooms(self):
-        print("worlds - level")
-        for i in range(0x186B5, 0x186BF+1,2):
-            print(f'{hex(i)} - {hex(i+1)}')
-
-    def itemids(self, id=None, adjust=0):
-        # The adjust is because the items displayed on the levels are
-        # always -2. For example, in inventory, the bell is 12. On the
-        # level, it will be 10.
-        items = {"Hookshot" : 2,
-        "Candle" : 4,
-        "Grey Key" : 6,
-        "Gold Key" : 8,
-        "Shovel" : 10,
-        "Bell" : 12,
-        "Bridge" : 14}
-        if id is None:
-            print("-" * 20)
-            for i in items.keys() :
-                print(i)
-                gethex(items[i] -adjust)
-            print("-" * 20)
-        else:
-            for i in items.keys():
-                if id == items[i] -adjust:
-                    print(i)
-                    return
-
-    def level_items(self):
-        # These are the actual values that the game will need to select the items.
-        # For placing them in the levels
-        print("Hookshot : 8")
-        print("Candle : 9")
-        print("Grey Key : A")
-        print("Gold Key : B")
-        print("Shovel : C")
-        print("Bell : D")
-        print("Bridge : E")
-
-    def password(self,world=None):
-        if world == 1:
-            print("World 1 : Banana - Red Diamond - Cherry - Banana - Cherry")
-        if world == 2:
-            print("World 2 : Cherry - Red Diamond - Blue Diamond - Cherry - Banana")
-        if world == 3:
-            print("World 3 : Red Diamond - Cherry - Blue Diamond - Blue Diamond - Red Diamond")
-        if world == 4:
-            print("world 4 : Banana - Cherry - Blue Diamond - Red Diamond - Banana")
-        elif world is None:
-            print("World 1 : Banana - Red Diamond - Cherry - Banana - Cherry")
-            print("World 2 : Cherry - Red Diamond - Blue Diamond - Cherry - Banana")
-            print("World 3 : Cherry - Blue Diamond - Blue Diamond - Red Diamond")
-            print("World 4 : Banana - Cherry - Blue Diamond - Red Diamond - Banana")
-        else:
-            raise InfosError("World can only be a value of [None-1-2-3-4]")
-
-    def password_values(self, value=None):
-        values = {0:"Cherry",
-                  1:"Banana",
-                  2:"Red Gem",
-                  3:"Blue Gem",}
-        if value is None:
-            for i in values.keys():
-                print(f'{hex(i)} - {values[i]}')
-        elif value in values.keys():
-            print(f'{hex(value)} - {values[value]}')
-        else:
-            raise InfosError(f"Password value can only be a value of {list(values.keys())}")
-
-    def range_World_Item(self, world=None):
-        end = {0:0x1164,
-               1:0x1165,
-               2:0x116A,
-               3:0x1163,
-               4:0x1168}
-        if world in range(5):
-            print(f'World {world} range location : {hex(0x1160)} - {hex(end[world])}')
-            return  # Food for thoughts : On pourrait ptet créer des fonctions quelque part dans la gameclass pour que ça retourne les affaires
-                # De sorte que les autres codes soient plus lisibles ou sauver des lignes?
-        elif world is None:
-            for i in end.keys():
-                print(f'World {i} range location : {hex(0x1160)} - {hex(end[i])}')
-            return
-        else:
-            raise InfosError("The world can only be a value of [0-1-2-3-4-None]")
 
     def __init__(self):
         self.infos = {
@@ -171,11 +77,11 @@ class infos:
                     # For example : the bell will be 10 (or A).
 
             # Password box
-                hex(0x230) : "Password box 1, infos.password_values()",
-                hex(0x231) : "Password box 2, infos.password_values()",
-                hex(0x232) : "Password box 3, infos.password_values()",
-                hex(0x233) : "Password box 4, infos.password_values()",
-                hex(0x234) : "Password box 5, infos.password_values()",
+                hex(0x230) : "Password box 1",
+                hex(0x231) : "Password box 2",
+                hex(0x232) : "Password box 3",
+                hex(0x233) : "Password box 4",
+                hex(0x234) : "Password box 5",
 
 
             # Stored items for the World
@@ -279,6 +185,7 @@ class infos:
         for i in range(0x1c67f, 0x1c692 + 1):
             self.infos[hex(i)] = "Password check"
 
+    ############################# self.infos related ##########
     def check(self,adress):
         if isinstance(adress,str):
             return adress + " : " + self.infos[adress]
@@ -291,3 +198,113 @@ class infos:
             if all(x in self.infos[i] for x in seeked):
                 print(self.check(i))
         print("-----------END OF ADRESSES--------------------")
+    #############################################################
+
+    def password(self,world=None):
+        if world == 1:
+            print("World 1 : Banana - Red Diamond - Cherry - Banana - Cherry")
+        if world == 2:
+            print("World 2 : Cherry - Red Diamond - Blue Diamond - Cherry - Banana")
+        if world == 3:
+            print("World 3 : Red Diamond - Cherry - Blue Diamond - Blue Diamond - Red Diamond")
+        if world == 4:
+            print("world 4 : Banana - Cherry - Blue Diamond - Red Diamond - Banana")
+        elif world is None:
+            print("World 1 : Banana - Red Diamond - Cherry - Banana - Cherry")
+            print("World 2 : Cherry - Red Diamond - Blue Diamond - Cherry - Banana")
+            print("World 3 : Cherry - Blue Diamond - Blue Diamond - Red Diamond")
+            print("World 4 : Banana - Cherry - Blue Diamond - Red Diamond - Banana")
+        else:
+            raise InfosError("World can only be a value of [None-1-2-3-4]")
+
+
+
+
+
+
+    def itemids(self, id=None, adjust=0):
+        # The adjust is because the items displayed on the levels are
+        # always -2. For example, in inventory, the bell is 12. On the
+        # level, it will be 10.
+        items = {"Hookshot" : 2,
+        "Candle" : 4,
+        "Grey Key" : 6,
+        "Gold Key" : 8,
+        "Shovel" : 10,
+        "Bell" : 12,
+        "Bridge" : 14}
+        if id is None:
+            print("-" * 20)
+            for i in items.keys() :
+                print(i)
+                gethex(items[i] -adjust)
+            print("-" * 20)
+        else:
+            for i in items.keys():
+                if id == items[i] -adjust:
+                    print(i)
+                    return
+
+
+    def level_items(self):
+        # These are the actual values that the game will need to select the items.
+        # For placing them in the levels
+        print("Hookshot : 8")
+        print("Candle : 9")
+        print("Grey Key : A")
+        print("Gold Key : B")
+        print("Shovel : C")
+        print("Bell : D")
+        print("Bridge : E")
+
+
+
+
+    ####################### RANGES ###############################
+    def range_dark_rooms(self):
+        print("worlds - level")
+        for i in range(0x186B5, 0x186BF+1,2):
+            print(f'{hex(i)} - {hex(i+1)}')
+
+
+    def range_password(self, world=None):
+        if world is None:
+            for worlds in range(1,5):
+                offset = 0x1C67F + 5 *(worlds-1)
+                print(f'World {worlds} : {hex(offset)} - {hex(offset+1)} - {hex(offset+2)} - {hex(offset+3)} - {hex(offset+4)}')
+        elif world in range(1,5):
+            offset = 0x1C67F + 5 *(world-1)
+            print(f'World {world} : {hex(offset)} - {hex(offset+1)} - {hex(offset+2)} - {hex(offset+3)} - {hex(offset+4)}')
+
+
+    def range_World_Item(self, world=None):
+        end = {0:0x1164,
+               1:0x1165,
+               2:0x116A,
+               3:0x1163,
+               4:0x1168}
+        if world in range(5):
+            print(f'World {world} range location : {hex(0x1160)} - {hex(end[world])}')
+            return  # Food for thoughts : On pourrait ptet créer des fonctions quelque part dans la gameclass pour que ça retourne les affaires
+                # De sorte que les autres codes soient plus lisibles ou sauver des lignes?
+        elif world is None:
+            for i in end.keys():
+                print(f'World {i} range location : {hex(0x1160)} - {hex(end[i])}')
+            return
+        else:
+            raise InfosError("The world can only be a value of [0-1-2-3-4-None]")
+
+    ##############################################################
+
+    def values_password(self, value=None):
+        values = {0:"Cherry",
+                  1:"Banana",
+                  2:"Red Gem",
+                  3:"Blue Gem",}
+        if value is None:
+            for i in values.keys():
+                print(f'{hex(i)} - {values[i]}')
+        elif value in values.keys():
+            print(f'{hex(value)} - {values[value]}')
+        else:
+            raise InfosError(f"Password value can only be a value of {list(values.keys())}")
