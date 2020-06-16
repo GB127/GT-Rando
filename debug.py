@@ -9,7 +9,7 @@ def test_bosses(game):
     game[0x1F3ED] = 14
 
 def level_select(game):
-    # Put a banana on the box of the world you want to go. Example below
+    # Put a banana on the box of the world you want to go. Example  
         # Banana on the 3rd box = World 2 (3rd world of the game)
     # Cherry for all the rest of the boxes
 
@@ -19,12 +19,9 @@ def level_select(game):
     BlueG = 0x3
     password = [Cherry, Banana, RedG, BlueG]
 
-    for i in range(0x1C67F, 0x1C692+1):
-        game[i] = 0
-            # I've started a new method in the class to allow setting multiple addresses.
-            # The only current issue is the current written way don't make it random for each iteration.
-            # Once that is fixed, these two lines can be replaced by one line.
-        game[0x1c680] = 0x1
-        game[0x1c686] = 0x1
-        game[0x1c68c] = 0x1
-        game[0x1c692] = 0x1
+
+    game.setmulti(0x1C67F, 0x1C692, 0x0)
+    game[0x1c680] = 0x1
+    game[0x1c686] = 0x1
+    game[0x1c68c] = 0x1
+    game[0x1c692] = 0x1
