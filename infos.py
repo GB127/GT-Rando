@@ -173,11 +173,11 @@ class infos:
                 # For example : the bell will be 10 (or A).
 
             # Password box
-            hex(0x230) : "Password box 1,
-            hex(0x231) : "Password box 2",
-            hex(0x232) : "Password box 3",
-            hex(0x233) : "Password box 4",
-            hex(0x234) : "Password box 5",
+            hex(0x230) : "Password box 1, infos.password_values()",
+            hex(0x231) : "Password box 2, infos.password_values()",
+            hex(0x232) : "Password box 3, infos.password_values()",
+            hex(0x233) : "Password box 4, infos.password_values()",
+            hex(0x234) : "Password box 5, infos.password_values()",
 
 
             # Stored items for the World
