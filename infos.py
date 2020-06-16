@@ -3,16 +3,6 @@ from tools import gethex
 # https://www.vgmaps.com/Atlas/SuperNES/index.htm#GoofTroop
 
 """
-    Start at Stage 2	Banana - Red Diamond - Cherry - Banana - Cherry
-    Start at Stage 3	Cherry - Red Diamond - Blue Diamond - Cherry - Banana
-    Start at Stage 4	Red Diamond - Cherry - Blue Diamond - Blue Diamond - Red Diamond
-    Start at Stage 5	Banana - Cherry - Blue Diamond - Red Diamond - Banana
-"""
-
-
-
-
-"""
 i = world
 j = niveau
 base = Read_Byte(0x83F303 + i)
@@ -100,6 +90,24 @@ class infos:
         print("Shovel : C")
         print("Bell : D")
         print("Bridge : E")
+
+    def password(self,world=None):
+        if world == 1:
+            print("World 1 : Banana - Red Diamond - Cherry - Banana - Cherry")
+        if world == 2:
+            print("World 2 : Cherry - Red Diamond - Blue Diamond - Cherry - Banana")
+        if world == 3:
+            print("World 3 : Red Diamond - Cherry - Blue Diamond - Blue Diamond - Red Diamond")
+        if world == 4:
+            print("world 4 : Banana - Cherry - Blue Diamond - Red Diamond - Banana")
+        elif world is None:
+            print("World 1 : Banana - Red Diamond - Cherry - Banana - Cherry")
+            print("World 2 : Cherry - Red Diamond - Blue Diamond - Cherry - Banana")
+            print("World 3 : Cherry - Blue Diamond - Blue Diamond - Red Diamond")
+            print("World 4 : Banana - Cherry - Blue Diamond - Red Diamond - Banana")
+        else:
+            raise InfosError("World can only be a value of [None-1-2-3-4]")
+
 
     def range_World_Item(self, world=None):
         end = {0:0x1164,
