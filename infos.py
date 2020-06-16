@@ -229,7 +229,8 @@ class infos:
         elif world in range(1,5):
             offset = 0x1C67F + 5 *(world-1)
             print(f'World {world} : {hex(offset)} - {hex(offset+1)} - {hex(offset+2)} - {hex(offset+3)} - {hex(offset+4)}')
-
+        else:
+            raise InfosError("world can only take a value of [None-1-2-3-4]")
 
     def range_World_Item(self, world=None):
         end = {0:0x1164,
