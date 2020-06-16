@@ -1,5 +1,3 @@
-# https://www.vgmaps.com/Atlas/SuperNES/index.htm#GoofTroop
-
 """
 i = world
 j = niveau
@@ -195,6 +193,9 @@ class infos:
             if all(x in self.infos[i] for x in seeked):
                 print(self.check(i))
         print("-----------END OF ADRESSES--------------------")
+
+    def maps(self):
+        print("https://www.vgmaps.com/Atlas/SuperNES/index.htm#GoofTroop")
 
     def password(self,world=None):
         if world == 1:
