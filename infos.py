@@ -282,8 +282,7 @@ class infos:
                4:0x1168}
         if world in range(5):
             print(f'World {world} range location : {hex(0x1160)} - {hex(end[world])}')
-            return  # Food for thoughts : On pourrait ptet créer des fonctions quelque part dans la gameclass pour que ça retourne les affaires
-                # De sorte que les autres codes soient plus lisibles ou sauver des lignes?
+            return
         elif world is None:
             for i in end.keys():
                 print(f'World {i} range location : {hex(0x1160)} - {hex(end[i])}')
