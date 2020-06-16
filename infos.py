@@ -61,9 +61,10 @@ class infos:
         elif world in range(1,5):
             offset = 0x1C67F + 5 *(world-1)
             print(f'World {world} : {hex(offset)} - {hex(offset+1)} - {hex(offset+2)} - {hex(offset+3)} - {hex(offset+4)}')
+
     def range_dark_rooms(self):
         print("worlds - level")
-        for i in range(0x186B5, 0x186BF+1):
+        for i in range(0x186B5, 0x186BF+1,2):
             print(f'{hex(i)} - {hex(i+1)}')
 
     def itemids(self, id=None, adjust=0):
