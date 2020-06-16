@@ -53,19 +53,15 @@ class infos:
         And if I need to get an info during my coding, I'll simply call this class and then ask it to
         Retrieve the things I need.
     """
-    def introtext_range(self):
-        for i in range(0x1D450,0x1D4BD):
-            print(hex(i))
-
-    def boss0_text(self):
-        for i in range(0x5F87B, 0x5F8B8):
-            print(hex(i))
-
-    def passwordrange(self):
-        for i in range(0x1C67F, 0x1C692 +1) :
-            print(f"game[{hex(i)}]")
-
-    def dark_rooms_range(self):
+    def range_password(self, world=None):
+        if world is None:
+            for x in range(1,5):
+                i = 0x1C67F + 5 *(x-1)
+                print(f'World {x} : {hex(i)} - {hex(i+1)} - {hex(i+2)} - {hex(i+3)} - {hex(i+4)}')
+        elif world in range(1,5):
+            i = 0x1C67F + 5 *(world-1)
+            print(f'World {world} : {hex(i)} - {hex(i+1)} - {hex(i+2)} - {hex(i+3)} - {hex(i+4)}')
+    def range_dark_rooms(self):
         print("worlds - level")
         for i in range(0x186B5, 0x186BF+1):
             print(f'{hex(i)} - {hex(i+1)}')
@@ -112,7 +108,8 @@ class infos:
                4:0x1168}
         if world in range(5):
             print(f'World {world} range location : {hex(0x1160)} - {hex(end[world])}')
-            return
+            return  # Food for thoughts : On pourrait ptet créer des fonctions quelque part dans la gameclass pour que ça retourne les affaires
+                # De sorte que les autres codes soient plus lisibles ou sauver des lignes?
         elif world is None:
             for i in end.keys():
                 print(f'World {i} range location : {hex(0x1160)} - {hex(end[i])}')
