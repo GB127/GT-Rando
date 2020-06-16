@@ -1,3 +1,8 @@
+def dark_room(game, world, room):
+    # Currently this sets the darkness in the specific room.
+    game[0x186B5] = world
+    game[0x186B6] = room
+
 def test_bosses(game):
     # This code currently changes only the 0-0 up exit to the boss.
     # Eventually it will support all 5 bosses for the 5 worlds.
