@@ -3,6 +3,10 @@ def dark_room(game, world, room):
     game[0x186B5] = world
     game[0x186B6] = room
 
+def auto_bosses(game):
+    # Currently only boss #5
+    game[0xC563] = 0x1
+
 def test_bosses(game):
     level_select(game)
     game[0x1F3ED] = 14
