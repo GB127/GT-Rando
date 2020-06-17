@@ -10,6 +10,10 @@ def test_bosses(game):
     # You will want ot go there fast for any worlds!
     level_select(game)
     game[0x1F3ED] = 14
+    game[0x1F4C3] = 15
+    game[0x1F58D] = 25
+
+    game[0x1F877] = 25
 
 def test_room_w0(game, value):
     game[0x1F3ED] = value
