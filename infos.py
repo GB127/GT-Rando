@@ -46,7 +46,7 @@ class infos:
             # general
                 hex(0xB6) : "current World (1b)",
                 hex(0xB7) : "current Level (1b)",
-                hex(0xBD) : "P # playing : 1 if 1P, 3 if 2P",
+                hex(0xBD) : "Player count : 1 if 1P, 3 if 2P",
                 hex(0xF0) : "Current world 'milliseconds'",
                 hex(0xF1) : "Current world seconds",
                 hex(0xF2) : "Current world minutes",
