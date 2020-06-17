@@ -55,6 +55,9 @@ class infos:
                 hex(0xF6) : "Total Minutes played",
                 hex(0xF7) : "Total Hours played",
 
+                hex(0x21C) : "Current(?) boss HP",
+                hex(0x21D) : "Current(?) boss HP",
+
             # Item
                 hex(0x140) : "Item P1 check : 2 if has 2 items, else 0",
                 hex(0x142) : "Item P1 selected : left = 0, right = 2",
