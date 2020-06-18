@@ -23,7 +23,7 @@ for self.infos:
     # Red Gems
     # Blue Gems
 
-def add_credits(game, text):
+def add_credits(game, text, center=True):
     # Format :
     # Nombre de "return"/Alignement/Nombre de lettres/couleur/Lettres x Nb/
     # FF will call the "THE END sprites if it's at "nombre de return"
@@ -37,7 +37,7 @@ def add_credits(game, text):
     game[offset] = 0x04  # Nb de returns
     offset += 1
     assert offset <= 0x5FFFF, "Too much text added"
-    game[offset] = 16  # Alignement
+    game[offset] = 16 - len(text) // 2 if center else 1 # Alignement
     offset += 1
     assert offset <= 0x5FFFF, "Too much text added"
     game[offset] = len(text)
@@ -60,9 +60,10 @@ with open("Vanilla.smc", "rb") as original:
     test_bosses(game)
     auto_bosses(game)
 
-    add_credits(game, "?")
-    add_credits(game, "1              ?")
-    print(len("1              ?"))
+    add_credits(game, "Allo")
+    add_credits(game, "Allo", False)
+
+
 
     with open("Vanillanoh.smc", "wb") as newgame:
         print(f"Testing case have been created! {datetime.datetime.now()}")
