@@ -22,9 +22,11 @@ def writetext(game, text,offset):
         game[offset + order] = ord(letter.upper())
 
 def credits_writter(game):
-    free_credits_space = 0x5DFF - 0x5FBD4
-    print(free_credits_space)
-    #game[0x14137] = 30  # This works
+    #game[0x14137] = 30  # This works. It's where the THE END will stops"
+
+
+    free_credits_space = 0x5FBD4 - 0x5FDFF
+    keeper = game[0x5FBC0:0x5FBD3 +1]  # These are the text that scrolls under the THE END
 
 
 
