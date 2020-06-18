@@ -36,21 +36,21 @@ def add_credits(game, text):
 
     game[offset] = 0x04  # Nb de returns
     offset += 1
-    assert offset < 0x5FFFF, "Too much text added"
-    game[offset] = 0x00  # Alignement
+    assert offset <= 0x5FFFF, "Too much text added"
+    game[offset] = 16  # Alignement
     offset += 1
-    assert offset < 0x5FFFF, "Too much text added"
+    assert offset <= 0x5FFFF, "Too much text added"
     game[offset] = len(text)
     offset += 1
-    assert offset < 0x5FFFF, "Too much text added"
+    assert offset <= 0x5FFFF, "Too much text added"
     game[offset] = 0x30
     for letter in text:
         offset += 1
-        assert offset < 0x5FFFF, "Too much text added"
+        assert offset <= 0x5FFFF, "Too much text added"
         game[offset] = ord(letter.upper())
     for value in stats:
         offset += 1
-        assert offset < 0x5FFFF, "Too much text added"
+        assert offset <= 0x5FFFF, "Too much text added"
         game[offset] = value
 
 
@@ -60,7 +60,9 @@ with open("Vanilla.smc", "rb") as original:
     test_bosses(game)
     auto_bosses(game)
 
-    add_credits(game, "Allo charles!")
+    add_credits(game, "?")
+    add_credits(game, "1              ?")
+    print(len("1              ?"))
 
     with open("Vanillanoh.smc", "wb") as newgame:
         print(f"Testing case have been created! {datetime.datetime.now()}")
