@@ -1,0 +1,96 @@
+82bfd8 : credit starter?
+
+82c065 - 82C077 : credits_loop_getletter(Y)
+    -- Addresses:
+        -> $32 : Nombre de lettres
+        -> $37 : Color of the letters!
+        -> $0000,Y : Letters infos : which letter
+
+    -- Registers:
+        -> A register is overwrote.
+        -> X register ???
+        -> Y register points to the byte to load to add it on the credits
+
+    82c065 lda $0000,y   [8bf9a2] A:0124 X:0154 Y:f9a2 S:1cf7 D:0200 DB:8b NvMxdizc V:  2 H: 10 F:10
+    82c068 sta $7fe800,x [7fe954] A:0147 X:0154 Y:f9a2 S:1cf7 D:0200 DB:8b nvMxdizc V:  2 H: 17 F:10
+        -> Display related (Noping this will display NOTHING =D )
+    82c06c lda $37       [000237] A:0147 X:0154 Y:f9a2 S:1cf7 D:0200 DB:8b nvMxdizc V:  2 H: 25 F:10
+    82c06e sta $7fe801,x [7fe955] A:0124 X:0154 Y:f9a2 S:1cf7 D:0200 DB:8b nvMxdizc V:  2 H: 30 F:10
+        -> Color related  (Noping this means no colors, but all displays correctly)
+    82c072 inx                    A:0124 X:0154 Y:f9a2 S:1cf7 D:0200 DB:8b nvMxdizc V:  2 H: 38 F:10
+    82c073 inx                    A:0124 X:0155 Y:f9a2 S:1cf7 D:0200 DB:8b nvMxdizc V:  2 H: 41 F:10
+    82c074 iny                    A:0124 X:0156 Y:f9a2 S:1cf7 D:0200 DB:8b nvMxdizc V:  2 H: 44 F:10
+    82c075 dec $32       [000232] A:0124 X:0156 Y:f9a3 S:1cf7 D:0200 DB:8b NvMxdizc V:  2 H: 47 F:10
+    82c077 bne $c065     [82c065] A:0124 X:0156 Y:f9a3 S:1cf7 D:0200 DB:8b nvMxdizc V:  2 H: 56 F:10
+        82c065 - 82C077 : credits_loop_getletter(Y)
+
+
+82C05C : credits_fetchline(A):   -> INCOMPLETE ANALYSIS
+    -- Registers
+        A already has the number of letters to fetch
+        Y register will point to the orientation of the letter already
+            from what I see, it's always at the start of the lines.
+            pointed value should be 0x24
+        X 
+    -- Addresses:
+        -- $0000,Y : Letters infos
+        -- $37 : Stored info of $0000,Y
+        -- $32 : Number of letters to read?
+
+    82c05c sta $32       [000232] A:010b X:0154 Y:f9a0 S:1cf7 D:0200 DB:8b nvMxdizc V:  1 H:327 F:10
+    82c05e iny                    A:010b X:0154 Y:f9a0 S:1cf7 D:0200 DB:8b nvMxdizc V:  1 H:331 F:10
+    82c05f lda $0000,y   [8bf9a1] A:010b X:0154 Y:f9a1 S:1cf7 D:0200 DB:8b NvMxdizc V:  1 H:334 F:10
+    82c062 sta $37       [000237] A:0124 X:0154 Y:f9a1 S:1cf7 D:0200 DB:8b nvMxdizc V:  2 H:  2 F:10
+    82c064 iny                    A:0124 X:0154 Y:f9a1 S:1cf7 D:0200 DB:8b nvMxdizc V:  2 H:  7 F:10
+    82c065 - 82C077 : credits_loop_getletter(Y)
+
+    82c079 lda $0000,y   [8bf9ad] A:0124 X:016a Y:f9ad S:1cf7 D:0200 DB:8b nvMxdiZc V:  3 H:243 F:10
+    82c07c bpl $c089     [82c089] A:0101 X:016a Y:f9ad S:1cf7 D:0200 DB:8b nvMxdizc V:  3 H:250 F:10
+    82c089 sta $31       [000231] A:0101 X:016a Y:f9ad S:1cf7 D:0200 DB:8b nvMxdizc V:  3 H:255 F:10
+    82c08b stz $30       [000230] A:0101 X:016a Y:f9ad S:1cf7 D:0200 DB:8b nvMxdizc V:  3 H:260 F:10
+    82c08d iny                    A:0101 X:016a Y:f9ad S:1cf7 D:0200 DB:8b nvMxdizc V:  3 H:265 F:10
+    82c08e sty $34       [000234] A:0101 X:016a Y:f9ae S:1cf7 D:0200 DB:8b NvMxdizc V:  3 H:268 F:10
+    82c090 sep #$10               A:0101 X:016a Y:f9ae S:1cf7 D:0200 DB:8b NvMxdizc V:  3 H:275 F:10
+    82c092 plb                    A:0101 X:006a Y:00ae S:1cf7 D:0200 DB:8b NvMXdizc V:  3 H:279 F:10
+    82c093 lda #$05               A:0101 X:006a Y:00ae S:1cf8 D:0200 DB:83 NvMXdizc V:  3 H:286 F:10
+    82c095 jsl $80af8e   [80af8e] A:0105 X:006a Y:00ae S:1cf8 D:0200 DB:83 nvMXdizc V:  3 H:289 F:10
+        80af8e tax                    A:0105 X:006a Y:00ae S:1cf5 D:0200 DB:83 nvMXdizc V:  3 H:302 F:10
+        80af8f phd                    A:0105 X:0005 Y:00ae S:1cf5 D:0200 DB:83 nvMXdizc V:  3 H:305 F:10
+        80af90 lda #$00               A:0105 X:0005 Y:00ae S:1cf3 D:0200 DB:83 nvMXdizc V:  3 H:312 F:10
+        80af92 xba                    A:0100 X:0005 Y:00ae S:1cf3 D:0200 DB:83 nvMXdiZc V:  3 H:315 F:10
+        80af93 lda #$00               A:0001 X:0005 Y:00ae S:1cf3 D:0200 DB:83 nvMXdizc V:  3 H:320 F:10
+        80af95 tcd                    A:0000 X:0005 Y:00ae S:1cf3 D:0200 DB:83 nvMXdiZc V:  3 H:323 F:10
+        80af96 txa                    A:0000 X:0005 Y:00ae S:1cf3 D:0000 DB:83 nvMXdiZc V:  3 H:325 F:10
+        80af97 jsr $af9c     [80af9c] A:0005 X:0005 Y:00ae S:1cf3 D:0000 DB:83 nvMXdizc V:  3 H:328 F:10
+            80af9c sta $00       [000000] A:0005 X:0005 Y:00ae S:1cf1 D:0000 DB:83 nvMXdizc V:  3 H:338 F:10
+            80af9e stz $01       [000001] A:0005 X:0005 Y:00ae S:1cf1 D:0000 DB:83 nvMXdizc V:  4 H:  3 F:10
+            80afa0 ldx $40       [000040] A:0005 X:0005 Y:00ae S:1cf1 D:0000 DB:83 nvMXdizc V:  4 H:  8 F:10
+            80afa2 rep #$30               A:0005 X:0000 Y:00ae S:1cf1 D:0000 DB:83 nvMXdiZc V:  4 H: 13 F:10
+            80afa4 and #$00ff             A:0005 X:0000 Y:00ae S:1cf1 D:0000 DB:83 nvmxdiZc V:  4 H: 17 F:10
+            80afa7 asl a                  A:0005 X:0000 Y:00ae S:1cf1 D:0000 DB:83 nvmxdizc V:  4 H: 22 F:10
+            80afa8 asl a                  A:000a X:0000 Y:00ae S:1cf1 D:0000 DB:83 nvmxdizc V:  4 H: 25 F:10
+            80afa9 asl a                  A:0014 X:0000 Y:00ae S:1cf1 D:0000 DB:83 nvmxdizc V:  4 H: 28 F:10
+            80afaa sec                    A:0028 X:0000 Y:00ae S:1cf1 D:0000 DB:83 nvmxdizc V:  4 H: 31 F:10
+            80afab sbc $00       [000000] A:0028 X:0000 Y:00ae S:1cf1 D:0000 DB:83 nvmxdizC V:  4 H: 34 F:10
+            80afad tay                    A:0023 X:0000 Y:00ae S:1cf1 D:0000 DB:83 nvmxdizC V:  4 H: 41 F:10
+            80afae lda $8b9c,y   [838bbf] A:0023 X:0000 Y:0023 S:1cf1 D:0000 DB:83 nvmxdizC V:  4 H: 44 F:10
+            80afb1 sta $1801,x   [831801] A:4c00 X:0000 Y:0023 S:1cf1 D:0000 DB:83 nvmxdizC V:  4 H: 53 F:10
+            80afb4 lda $8b9e,y   [838bc1] A:4c00 X:0000 Y:0023 S:1cf1 D:0000 DB:83 nvmxdizC V:  4 H: 63 F:10
+            80afb7 sta $1803,x   [831803] A:0800 X:0000 Y:0023 S:1cf1 D:0000 DB:83 nvmxdizC V:  4 H: 72 F:10
+            80afba lda $8ba0,y   [838bc3] A:0800 X:0000 Y:0023 S:1cf1 D:0000 DB:83 nvmxdizC V:  4 H: 82 F:10
+            80afbd sta $1805,x   [831805] A:e800 X:0000 Y:0023 S:1cf1 D:0000 DB:83 NvmxdizC V:  4 H: 91 F:10
+            80afc0 sep #$31               A:e800 X:0000 Y:0023 S:1cf1 D:0000 DB:83 NvmxdizC V:  4 H:101 F:10
+            80afc2 lda $8ba2,y   [838bc5] A:e800 X:0000 Y:0023 S:1cf1 D:0000 DB:83 NvMXdizC V:  4 H:105 F:10
+            80afc5 sta $1807,x   [831807] A:e87f X:0000 Y:0023 S:1cf1 D:0000 DB:83 nvMXdizC V:  4 H:111 F:10
+            80afc8 lda #$01               A:e87f X:0000 Y:0023 S:1cf1 D:0000 DB:83 nvMXdizC V:  4 H:119 F:10
+            80afca sta $1800,x   [831800] A:e801 X:0000 Y:0023 S:1cf1 D:0000 DB:83 nvMXdizC V:  4 H:122 F:10
+            80afcd txa                    A:e801 X:0000 Y:0023 S:1cf1 D:0000 DB:83 nvMXdizC V:  4 H:130 F:10
+            80afce adc #$07               A:e800 X:0000 Y:0023 S:1cf1 D:0000 DB:83 nvMXdiZC V:  4 H:143 F:10
+            80afd0 sta $40       [000040] A:e808 X:0000 Y:0023 S:1cf1 D:0000 DB:83 nvMXdizc V:  4 H:146 F:10
+            80afd2 rts                    A:e808 X:0000 Y:0023 S:1cf1 D:0000 DB:83 nvMXdizc V:  4 H:151 F:10
+        80af9a pld                    A:e808 X:0000 Y:0023 S:1cf3 D:0000 DB:83 nvMXdizc V:  4 H:161 F:10
+        80af9b rtl                    A:e808 X:0000 Y:0023 S:1cf5 D:0200 DB:83 nvMXdizc V:  4 H:170 F:10
+    82c099 rts                    A:e808 X:0000 Y:0023 S:1cf8 D:0200 DB:83 nvMXdizc V:  4 H:180 F:10
+
+
+

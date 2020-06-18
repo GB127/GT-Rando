@@ -21,7 +21,7 @@ def writetext(game, text,offset):
     for order, letter in enumerate(text):
         game[offset + order] = ord(letter.upper())
 
-def credits_writter(game):
+def text_writter(game):
     #game[0x14137] = 30  # This works. It's where the THE END will stops"
     vanilla_credits = game[0x5F99E:0x5FbbF +1]
     stats = game[0x5FBC0:0x5FBD3 +1]  # These are the text that scrolls under the THE END
@@ -43,7 +43,7 @@ with open("Vanilla.smc", "rb") as original:
     auto_bosses(game)
 
 
-    credits_writter(game)
+    text_writter(game)
 
     with open("Vanillanoh.smc", "wb") as newgame:
         print(f"Testing case have been created! {datetime.datetime.now()}")
