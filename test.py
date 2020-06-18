@@ -18,15 +18,17 @@ for self.infos:
     # FF will call the "THE END sprites if it's at "nombre de return"
 
 def writetext(game, text,offset):
+
+
     for order, letter in enumerate(text):
         game[offset + order] = ord(letter.upper())
 
 def credits_writter(game):
     #game[0x14137] = 30  # This works. It's where the THE END will stops"
+    keeper = game[0x5FBC0:0x5FBD3 +1]  # These are the text that scrolls under the THE END
 
 
     free_credits_space = 0x5FBD4 - 0x5FDFF
-    keeper = game[0x5FBC0:0x5FBD3 +1]  # These are the text that scrolls under the THE END
 
 
 
