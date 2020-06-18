@@ -10,19 +10,35 @@ info = infos()
 """
 for self.infos:
     hex(0x1414F) : "Speed of the THE END Credits",
-    hex(0x14137) : "Where the THE END should stop"
+    hex(0x14137) : "Where the THE END should stop if password used"
 """
 
 # Format :
     # Nombre de "return"/Alignement/Nombre de lettres/couleur/Lettres x Nb/
     # FF will call the "THE END sprites if it's at "nombre de return"
 
+
+# Credits ideas:
+    # Developpers
+    # Eventually, if it gets popular : discord link?
+
+
+# Stats sccreen:
+    # Version number
+    # Flags
+    # Worlds times
+    # Deaths
+    # Hits
+    # Cherries
+    # Bananas
+    # Redd Gems
+    # Blue Gems
+
 def writetext(game, text,offset):
     for order, letter in enumerate(text):
         game[offset + order] = ord(letter.upper())
 
-def text_writter(game):
-    #game[0x14137] = 30  # This works. It's where the THE END will stops"
+def credits_writter(game):
     vanilla_credits = game[0x5F99E:0x5FbbF +1]
     stats = game[0x5FBC0:0x5FBD3 +1]  # These are the text that scrolls under the THE END
     offset = 0x5f99D
