@@ -31,26 +31,36 @@ for self.infos:
     # Hits
     # Cherries
     # Bananas
-    # Redd Gems
+    # Red Gems
     # Blue Gems
 
-def writetext(game, text,offset):
-    for order, letter in enumerate(text):
-        game[offset + order] = ord(letter.upper())
+def add_credits(game, text):
 
-def credits_writter(game):
-    vanilla_credits = game[0x5F99E:0x5FbbF +1]
-    stats = game[0x5FBC0:0x5FBD3 +1]  # These are the text that scrolls under the THE END
-    offset = 0x5f99D
-    for value in vanilla_credits:  # Useless, since we rewrite everything back on it but hey I wrote it...
+    credits_range = game[0x5F99E: 0x5FFFF +1]
+    offset = credits_range.index(0xFF) + 0x5F99E
+    print(hex(offset))
+    stats = game[offset: offset +20]
+
+
+    game[offset] = 0x02
+    offset += 1
+    assert offset < 0x5FFFF, "Too much text"
+    game[offset] = 0x04
+    offset += 1
+    assert offset < 0x5FFFF, "Too much text"
+    game[offset] = len(text)
+    offset += 1
+    assert offset < 0x5FFFF, "Too much text"
+    game[offset] = 0x30
+    for letter in text:
         offset += 1
-        game[offset] = value
+        assert offset < 0x5FFFF, "Too much text"
+        game[offset] = ord(letter.upper())
     for value in stats:
         offset += 1
+        assert offset < 0x5FFFF, "Too much text"
         game[offset] = value
 
-    offset += 1
-    game.setmulti(offset, 0x5FDFF, 0x0)
 
 with open("Vanilla.smc", "rb") as original:
     originaldata = original.read()
@@ -58,8 +68,22 @@ with open("Vanilla.smc", "rb") as original:
     test_bosses(game)
     auto_bosses(game)
 
+    add_credits(game,"Allo Charles, je suis vraiment tanné")
+    add_credits(game,"de regarder les credits")
+    add_credits(game,"pour vérifier si mon code marche")
+    add_credits(game,"et ceci est la preuve que ça marche")
+    add_credits(game,"Enjoy!")
 
-    text_writter(game)
+    add_credits(game,"pour vérifier si mon code marche")
+    add_credits(game,"et ceci est la preuve que ça marche")
+    add_credits(game,"Enjoy!")
+
+    add_credits(game,"pour vérifier si mon code marche")
+
+
+
+
+
 
     with open("Vanillanoh.smc", "wb") as newgame:
         print(f"Testing case have been created! {datetime.datetime.now()}")
