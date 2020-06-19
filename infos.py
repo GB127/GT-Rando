@@ -252,8 +252,14 @@ class infos:
     def range_credits(self):
         print(f' Vanilla credits : {hex(0x5F99E)} - {hex(0x5FBFF)}')
 
-
-
+    def format_credits_line(self, verbose=False):
+        print("[Vspac][Hspac][#][Col][...letters...]")
+        if verbose:
+            print("Byte 1   : Vspac : Vertical spacing")
+            print("Byte 2   : Hspac : Horizontal spacing")
+            print("Byte 3   : #     : How many letters to fetch for the line")
+            print("Byte 4   : Col   : Color / Properties")
+            print("Bytes 5+ : The following bytes are the letters")
 
 
     def range_World_Item(self, world=None):

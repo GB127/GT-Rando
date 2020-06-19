@@ -6,22 +6,7 @@ from debug import *
 import datetime
 info = infos()
 
-# patrick gilmore
-"""
-for self.infos:
-    hex(0x1414F) : "Speed of the THE END Credits",
-    hex(0x14137) : "Where the THE END should stop if password used"
-"""
-# Stats screen:
-    # Version number
-    # Flags
-    # Worlds times
-    # Deaths 
-    # Hits
-    # Cherries
-    # Bananas
-    # Red Gems
-    # Blue Gems
+
 
 def add_credits(game, text,*, center=True, color=1, underlined=False, spacing=0xD):
     # Format :
