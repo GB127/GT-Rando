@@ -1,4 +1,5 @@
 82bfd8 : credit starter?
+    I did not test or decipher this one.
 
 82c065 - 82C077 : credits_loop_getletter(Y)
     -- Addresses:
@@ -30,8 +31,6 @@
         A already has the number of letters to fetch
         Y register will point to the orientation of the letter already
             from what I see, it's always at the start of the lines.
-            pointed value should be 0x24
-        X 
     -- Addresses:
         -- $0000,Y : Letters infos
         -- $37 : Stored info of $0000,Y
