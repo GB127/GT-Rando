@@ -2,18 +2,40 @@ from infos import *
 import random
 
 def add_credits(game):
+    """
+        This function will add the credits of the contributors of this project
+        in the credits of the game. It defines a function internally, then uses it for each lines.
+    """
+
     def add_credits_line(game, text,*, center=True, color=0, underlined=False, spacing=0xD):
+        """ This function will add a single line to the credits of the game.
+
+        Args:
+            game ([type]): [description]
+            text (str) : The text to be written. Max 32 characters as it's the width of the screen.
+            center (bool, optional): Centered text or not. Defaults to True.
+            color (int, optional): Color, must be 0-15 currently. Defaults to 0 (white).
+            underlined (bool, optional): Will underline the words. Defaults to False.
+            spacing (int, optional): Vertical spacing. Defaults to 0xD.
+        """
+
         assert len(text) <= 32, f"Text line too long ({len(text)}). Must be < 32"
-        assert color <= int("1111", base=2), "0 < Color < 0"
+        assert color <= int("1111", base=2), "0 < Color < 0" # FIXME : I tried to check if color < 0, but couldn't make it work.
 
-        credits_range = game[0x5F99E: 0x5FFFF +1]
+        credits_range = game[0x5F99E: 0x5FFFF +1]  
+            # This is the entire range available for writting the credits... Almost. 
+            # I did not make sure it won't scrap the palettes that are stored futher in the region.
+            # Eventually I'll try to fix that. But it seems daunting and tedious... And I'm tired to watch the credits :P
         offset = credits_range.index(0xFF) + 0x5F99E
+            # 0xFF will call the "THE END sprites if it's at "nombre de return"
+            # In other words, this will fetch the end of the current credits.
         stats = game[offset: offset +20]
+            # After the credits, the total time is there. I need to keep them, so I created
+            # a new variable.
 
-        game[offset] = spacing  # Nb de returns
-            # FF will call the "THE END sprites if it's at "nombre de return"
+        game[offset] = spacing  # Nb de returns (vertical spacing)
         offset += 1
-        game[offset] = 16 - len(text) // 2 if center else 1 # Alignement
+        game[offset] = 16 - len(text) // 2 if center else 1 # Horizontal Alignement
         offset += 1
         game[offset] = len(text)  # nombre de lettres
         offset += 1
@@ -22,16 +44,24 @@ def add_credits(game):
                 # byte 1 displayed nothing => If set, always display nothing?
                 # byte 7-8 : Mirrors stuffs
                 # All the others are colors stuffs
-        for letter in text:
+
+                # By multiplying by 4, we are doing two shift left and 
+                # then dodge the bits 0 and bits 1 being set.
+                # Since we can't have bits 7 and 8 set as well, we then cannot
+                # have an initial color higher than 15 (in binary : 1111).
+        for letter in text:  # Writting the string
             offset += 1
             game[offset] = ord(letter.upper())
         for value in stats:
             offset += 1
-            assert offset <= 0x5FFFF, "Too much text added"
+            assert offset <= 0x5FFFF, "Too much text added"  # This is the check to make sure we don't pass the allowed range.
+                # Currently, we can write up to the end of the bank, overwritting the palettes section.
             game[offset] = value
         if underlined:
+            # An underline is simply a new line with "¨".
             string = "¨" * len(text)
             add_credits_line(game,string ,center=center, color=color, spacing=0x1)
+
     add_credits_line(game, "Goof Troop randomizer", underlined=True, color=4)
     add_credits_line(game, "Version alpha", spacing=1)
     add_credits_line(game, "Flags used : alpha", spacing=1)
