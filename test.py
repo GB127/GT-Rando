@@ -44,7 +44,6 @@ def add_credits(game):
     add_credits_line(game, "Developpers", underlined=True, color=5)
     add_credits_line(game, "GB127 - Niamek", spacing=2)
     add_credits_line(game, "Charles342", spacing=2)
-
     add_credits_line(game, "Special thanks", underlined=True, color=3)
     add_credits_line(game, "PsychoManiac", spacing=2)
 
