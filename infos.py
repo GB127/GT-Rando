@@ -82,6 +82,13 @@ class infos:
                 # Note : the items are always -2. 
                 # For example : the bell will be 10 (or A).
 
+            # Credits
+                hex(0x1414F) : "Credits : Speed of the THE END Credits",
+                hex(0x14137) : "Credits : Where the THE END should stop if password used",
+
+
+
+
             # Password box
                 hex(0x230) : "Password box 1",
                 hex(0x231) : "Password box 2",
