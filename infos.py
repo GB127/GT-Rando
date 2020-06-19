@@ -248,6 +248,14 @@ class infos:
         else:
             raise InfosError("world can only take a value of [None-1-2-3-4]")
 
+
+    def range_credits(self):
+        print(f' Vanilla credits : {hex(0x5F99E)} - {hex(0x5FBFF)}')
+
+
+
+
+
     def range_World_Item(self, world=None):
         end = {0:0x1164,
                1:0x1165,
