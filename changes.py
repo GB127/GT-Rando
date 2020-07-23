@@ -42,12 +42,12 @@ def add_credits(game):
         game[offset] = color * 4
                 # byte 0 displayed the text weirdly (jap?)
                 # byte 1 displayed nothing => If set, always display nothing?
-                # byte 7-8 : Mirrors stuffs
+                # byte 6-7 : Mirrors stuffs
                 # All the others are colors stuffs
 
                 # By multiplying by 4, we are doing two shift left and 
                 # then dodge the bits 0 and bits 1 being set.
-                # Since we can't have bits 7 and 8 set as well, we then cannot
+                # Since we can't have bits 6 and 7 set as well, we then cannot
                 # have an initial color higher than 15 (in binary : 1111).
         for letter in text:  # Writting the string
             offset += 1
