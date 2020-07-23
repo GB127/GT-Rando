@@ -1,4 +1,4 @@
-from gameclass import ROM
+from gameclass import ROM, GT
 import argparse
 from changes import *
 import random
@@ -23,11 +23,11 @@ if __name__ == "__main__":
         # Note that this isn't used anywhere yet.
     with open("Vanilla.smc", "rb") as original:
         originaldata = original.read()
-        randogame = ROM(originaldata)
-        add_credits(randogame)
+        randogame = GT(originaldata)
+        randogame.add_credits()
         if options.Rpass:
-            password_randomizer(randogame)
+            randogame.password_randomizer()
         if options.Rdark:
-            darkrooms_randomizer(randogame)
+            randogame.darkrooms_randomizer()
         with open("vanillanoh.smc", "wb") as newgame:
             newgame.write(randogame.data)
