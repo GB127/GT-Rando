@@ -1,6 +1,5 @@
 from gameclass import ROM, GT
 import argparse
-from changes import *
 import random
 
 def getoptions():
