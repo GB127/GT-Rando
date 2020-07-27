@@ -40,6 +40,8 @@ class ROM:
         self.data[offset] = value
 
 class GT(ROM):
+
+###############DEBUG################################
     def dark_room(self, world, room):
         # Currently this sets the darkness in the specific room.
         self[0x186B5] = world
@@ -73,7 +75,7 @@ class GT(ROM):
         self[0x1c686] = 0x1
         self[0x1c68c] = 0x1
         self[0x1c692] = 0x1
-
+##################Others stuffs####################
 
     def add_credits(self):
         """
@@ -201,8 +203,7 @@ class GT(ROM):
                     ]
             Worlds_passwords = [World_1_pass, World_2_pass, World_3_pass, World_4_pass]
             check = all([1 == Worlds_passwords.count(x) for x in Worlds_passwords])
-
-
+##################Randomizers######################
 
     def darkrooms_randomizer(self):
         """
