@@ -43,7 +43,7 @@ class GT(ROM):
 
 ###############DEBUG################################
     def dark_room(self, world, room):
-        # Currently this sets the darkness in the specific room.
+        # Currently this sets the darkness in the specific room in the specific world.
         self[0x186B5] = world
         self[0x186B6] = room
 

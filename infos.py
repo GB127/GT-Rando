@@ -24,6 +24,14 @@
     [6:55 AM] PsychoManiac: For horizontal or vertical lines, bits 1-4 specify the length and bit 5 says if it is 1 or 2 tiles thick.
 
 
+
+
+ PsychoManiac: Read a byte from address $83:F303 + level_index (level 2 would be $83:F305)
+[12:48 PM] PsychoManiac: Then, at $83:F303 + previously_read_byte + 2 * screen_index is stored a 16-bit offset into bank $83 where the actual exit data for the screen can be found
+[12:49 PM] PsychoManiac: The first byte of the exit data is the number of exits for the screen (which might be zero). This is followed by the list of exits for the screen, 6 bytes per exit.
+
+
+
 """
 
 
