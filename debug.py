@@ -1,21 +1,22 @@
-from gameclass import GT
-from gameclass import ROM
+from gameclass import GT, ROM
+import datetime
 
 class debug(GT):
     def set_dark_room(self, world, room):
-        # TODO: interactive
         self[0x186B5] = world
         self[0x186B6] = room
 
-    def auto_bosses(self):
-        # Currently only boss of world 4 (the pirate)
+    def quick_bosses(self):
+        self[0xB4AB] = 0x1  # For now, only kill one to clear the boss for world 0.
+
         self[0xC563] = 0x1
 
-    def quick_bosses(self):
+    def early_bosses(self):
+        """Changes exits so that bosses are reached within the very first exit of a world!
+        """
         self[0x1F3ED] = 14
         self[0x1F4C3] = 15
         self[0x1F58D] = 25
-        # World 3 missing
         self[0x1f6f7] = 25
         self[0x1f6f7 + 4] = 180
         self[0x1F877] = 25
@@ -42,6 +43,6 @@ with open("Vanilla.smc", "rb") as original:
     game = debug(original.read())
     game.world_select()
 
-
     with open("debug.smc", "wb") as newgame:
+        print(f"Testing case have been created! {datetime.datetime.now()}")
         newgame.write(game.data)
