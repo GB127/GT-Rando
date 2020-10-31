@@ -52,7 +52,6 @@ class GT(ROM):
             """ This function will add a single line to the credits of the game.
 
             Args:
-                game ([type]): [description]
                 text (str) : The text to be written. Max 32 characters as it's the width of the screen.
                 center (bool, optional): Centered text or not. Defaults to True.
                 color (int, optional): Color, must be 0-15 currently. Defaults to 0 (white).
@@ -101,7 +100,7 @@ class GT(ROM):
             if underlined:
                 # An underline is simply a new line with "¨".
                 string = "¨" * len(text)
-                add_credits_line(game,string ,center=center, color=color, spacing=0x1)
+                add_credits_line(string ,center=center, color=color, spacing=0x1)
 
         add_credits_line(self, "Goof Troop randomizer", underlined=True, color=4)
         add_credits_line(self, "Version alpha", spacing=1)
