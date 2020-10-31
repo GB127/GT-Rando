@@ -100,7 +100,7 @@ class GT(ROM):
             if underlined:
                 # An underline is simply a new line with "¨".
                 string = "¨" * len(text)
-                add_credits_line(string ,center=center, color=color, spacing=0x1)
+                add_credits_line(self, string ,center=center, color=color, spacing=0x1)
 
         add_credits_line(self, "Goof Troop randomizer", underlined=True, color=4)
         add_credits_line(self, "Version alpha", spacing=1)
