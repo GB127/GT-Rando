@@ -1,17 +1,6 @@
 """
-    i = world
-    j = niveau
-    base = Read_Byte(0x83F303 + i)
-    addr = Read_Word(0x83F303 + base + 2*j)
-    tu vas toruver toutes les infos sur le prochain niveau à loader dans les adresses suivantes:
-    Read_Byte(addr + 0)
-    Read_Byte(addr + 1)
-    Read_Byte(addr + 3)
-    Read_Byte(addr + 4)
-    Read_Byte(addr + 5)
-
-
-
+    DARK AND ICE
+    https://pastebin.com/PVucvGyy
 
 
     [3:19 PM] PsychoManiac: The routine at $80:B631 loads the collision tiles
@@ -22,15 +11,6 @@
     [6:54 AM] PsychoManiac: If bit 6 is set (0x20) then it is a vertical line, otherwise it is horizontal or 2x2
     [6:55 AM] PsychoManiac: If bit 6 is not set and bits 1-4 are 0x0F, then the exit is 2x2 (x,y) (x+1,y) (x,y+1) and (x+1,y+1)
     [6:55 AM] PsychoManiac: For horizontal or vertical lines, bits 1-4 specify the length and bit 5 says if it is 1 or 2 tiles thick.
-
-
-
-
- PsychoManiac: Read a byte from address $83:F303 + level_index (level 2 would be $83:F305)
-[12:48 PM] PsychoManiac: Then, at $83:F303 + previously_read_byte + 2 * screen_index is stored a 16-bit offset into bank $83 where the actual exit data for the screen can be found
-[12:49 PM] PsychoManiac: The first byte of the exit data is the number of exits for the screen (which might be zero). This is followed by the list of exits for the screen, 6 bytes per exit.
-
-
 
 """
 
