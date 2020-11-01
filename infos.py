@@ -153,11 +153,11 @@ class infos:
         """Returns a string showing the range of addresses that stores the items of a said world.
             If no world is selected, it will print all worlds.
 
-        Args:
-            world ([int], optional): World selected. Defaults to None.
+            Args:
+                world ([int], optional): World selected. Defaults to None.
 
-        Raises:
-            InfosError: Make sure the world is only 0-1-2-3-4 or None.
+            Raises:
+                InfosError: Make sure the world is only 0-1-2-3-4 or None.
         """
         end = {0:0x1164,
                1:0x1165,
