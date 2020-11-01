@@ -1,5 +1,9 @@
 from gameclass import GT, ROM
 import datetime
+from infos import *  # This is for the tools in infos.
+from items import getter_items
+from exits import getter_exits
+
 
 class debug(GT):
     def set_dark_room(self, world, room):
@@ -38,6 +42,13 @@ class debug(GT):
         self[0x1c68c] = 0x1
         self[0x1c692] = 0x1
 
+
+
+info = infos()
+
+info.range_World_Item()
+info.values_items_World()
+info.maps()
 
 with open("Vanilla.smc", "rb") as original:
     game = debug(original.read())
