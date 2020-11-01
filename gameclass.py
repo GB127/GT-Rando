@@ -111,7 +111,7 @@ class GT(ROM):
         add_credits_line(self, "Special thanks", underlined=True, color=3)
         add_credits_line(self, "PsychoManiac", spacing=2)
 
-    def password_randomizer(self):
+    def password_randomizer(self):  # Note : I have made a function that will simplify this a lot.
         """
             This is the password shuffler, to make sure one doesn't cheat.
 
