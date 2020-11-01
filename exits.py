@@ -89,9 +89,3 @@ def getter_exits(data, world):
             """
 
     return liste_offsets, liste_data  # On retourne les listes
-
-
-with open("Vanilla.smc", "rb") as original:
-    originaldata = original.read()
-    randogame = GT(originaldata)
-    print(getter(randogame.data, 1)[0])
