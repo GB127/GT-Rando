@@ -82,6 +82,8 @@ class infos:
         for i in range(0x186b5, 0x186bf+1,2):
             self.infos[hex(i)] = "Dark Room World"
             self.infos[hex(i + 1)] = "Dark Room Level"
+
+
         for i in range(0x1c67f, 0x1c692 + 1):
             self.infos[hex(i)] = "Password check"
 
