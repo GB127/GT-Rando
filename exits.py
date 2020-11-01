@@ -1,7 +1,7 @@
 from gameclass import GT
 
 
-def getter(data, world):
+def getter_exits(data, world):
     """Fonction allant chercher les offsets ET les valeurs. Je ne sais pas encore si on a besoin 
         des deux ou pas. Donc j'ai retourné les deux.
 
