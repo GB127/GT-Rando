@@ -48,6 +48,13 @@ with open("Vanilla.smc", "rb") as original:
     game = debug(original.read())
     game.world_select()
 
+    print([hex(i) for i in getter_items(game.data, 0)])
+
+    proof = getter_exits(game.data, 0)
+    print(proof[0])  # This one is the offsets
+    print(proof[1])  # This one is the actual values
+
+
     with open("debug.smc", "wb") as newgame:
         print(f"Testing case have been created! {datetime.datetime.now()}")
         newgame.write(game.data)
