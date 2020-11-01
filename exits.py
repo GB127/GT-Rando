@@ -74,7 +74,7 @@ def getter_exits(data, world):
         count = data[test6]  # This will be the count.
 
         for i in range(count):
-            liste_offsets.append([[test6 + x + 6 * i + 1] for x in range(6)])  # Voici les offsets.
+            liste_offsets.append(list(test6 + x + 6 * i + 1 for x in range(6)))  # Voici les offsets.
             liste_data.append([data[test6 + x + 6 * i + 1] for x in range(6)])  # Voici les valeurs retrouvées dans chaque offsets.
             """
                 0 : Screen this exit leads to
