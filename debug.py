@@ -43,9 +43,6 @@ class debug(GT):
 
 info = infos()
 
-info.range_World_Item()
-info.values_items_World()
-info.maps()
 
 with open("Vanilla.smc", "rb") as original:
     game = debug(original.read())
