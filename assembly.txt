@@ -115,40 +115,47 @@
     80a7b3 sep #$10               A:f302 X:f3ff Y:0007 S:1cfb D:0000 DB:83 nvMxdizc V: 25 H:113 F:56
     80a7b5 rts                    A:f302 X:00ff Y:0007 S:1cfb D:0000 DB:83 nvMXdizc V: 25 H:118 F:56
 
-80e53c : prepare worlditems()
-    -- This function is actually a loop where it will read
-        a number of time from a value that depends on Y.
-        each items will be 4 bytes apart.
+80e523 : Functions for World's Items preparation()
+    -> Clean up to do, but since translation is done, not a priority.
+    -> See litteral translation in items_translation.py
+    -> Has two loops.
 
-    Addresses:
-        $0C : Number of items to place???
-        $1160: All the items of the whole world.
 
-    80e53c lda $0000,y   [80ef69] A:0040 X:0005 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H:199 F:57
-    80e53f and #$e0               A:0008 X:0005 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H:207 F:57
-    80e541 bne $e55a     [80e55a] A:0000 X:0005 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdiZC V:240 H:210 F:57
-    80e543 lda $00       [000000] A:0000 X:0005 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdiZC V:240 H:213 F:57
-    80e545 lsr a                  A:0000 X:0005 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdiZC V:240 H:218 F:57
-    80e546 tax                    A:0000 X:0005 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdiZc V:240 H:221 F:57
-    80e547 lda $0000,y   [80ef69] A:0000 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdiZc V:240 H:224 F:57
-    80e54a and #$0f               A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:231 F:57
-    80e54c bcc $e552     [80e552] A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:234 F:57
-        - On saute les ASL, si on n'a pas besoin de "placer le byte à gauche"
-        - > ATTENTION : Les valeurs des registers/flags" ne se suivront pas du début vers la fin.
-    80e54e asl a                  A:0008 X:0001 Y:ef7c S:1cf7 D:0000 DB:80 nvMxdizC V:241 H:329 F:57
-    80e54f asl a                  A:0010 X:0001 Y:ef7c S:1cf7 D:0000 DB:80 nvMxdizc V:241 H:332 F:57
-    80e550 asl a                  A:0020 X:0001 Y:ef7c S:1cf7 D:0000 DB:80 nvMxdizc V:241 H:335 F:57
-    80e551 asl a                  A:0040 X:0001 Y:ef7c S:1cf7 D:0000 DB:80 nvMxdizc V:241 H:338 F:57
-    ------------------------------------------------------------------------------------------------
-    80e552 inc $00       [000000] A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:239 F:57
-    80e554 ora $1160,x   [801160] A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:247 F:57
-    80e557 sta $1160,x   [801160] A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:255 F:57
-    80e55a iny                    A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:263 F:57
-    80e55b iny                    A:0008 X:0000 Y:ef6a S:1cf7 D:0000 DB:80 NvMxdizc V:240 H:266 F:57
-    80e55c iny                    A:0008 X:0000 Y:ef6b S:1cf7 D:0000 DB:80 NvMxdizc V:240 H:269 F:57
-    80e55d iny                    A:0008 X:0000 Y:ef6c S:1cf7 D:0000 DB:80 NvMxdizc V:240 H:272 F:57
-    80e55e dec $0c       [00000c] A:0008 X:0000 Y:ef6d S:1cf7 D:0000 DB:80 NvMxdizc V:240 H:275 F:57
-    80e560 bne $e53c     [80e53c] A:0008 X:0000 Y:ef6d S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:284 F:57
+    80e523 ldy $b6       [0000b6] A:00ff X:0010 Y:0020 S:1cf7 D:0000 DB:80 NvMXdizC V:239 H:236 F:57
+    80e525 ldx $ee6a,y   [80ee6a] A:00ff X:0010 Y:0000 S:1cf7 D:0000 DB:80 nvMXdiZC V:239 H:241 F:57
+    80e528 lda $e6d6,y   [80e6d6] A:00ff X:0005 Y:0000 S:1cf7 D:0000 DB:80 nvMXdizC V:239 H:247 F:57
+    80e52b sta $0e       [00000e] A:0010 X:0005 Y:0000 S:1cf7 D:0000 DB:80 nvMXdizC V:239 H:253 F:57
+    80e52d rep #$10               A:0010 X:0005 Y:0000 S:1cf7 D:0000 DB:80 nvMXdizC V:239 H:258 F:57
+    80e52f ldy $ee6a,x   [80ee6f] A:0010 X:0005 Y:0000 S:1cf7 D:0000 DB:80 nvMxdizC V:239 H:263 F:57
+    80e532 lda $0000,y   [80ef58] A:0060 X:0005 Y:ef58 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 30 F: 9
+    80e535 sta $0c       [00000c] A:0006 X:0005 Y:ef58 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 37 F: 9
+    80e537 iny                    A:0006 X:0005 Y:ef58 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 42 F: 9
+    80e538 lda $0c       [00000c] A:0006 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 NvMxdizC V:240 H: 45 F: 9
+    80e53a beq $e562     [80e562] A:0006 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 50 F: 9
+    80e53c lda $0000,y   [80ef59] A:0006 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 53 F: 9
+    80e53f and #$e0               A:0040 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 61 F: 9
+    80e541 bne $e55a     [80e55a] A:0040 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 64 F: 9
+    80e543 lda $00       [000000] A:0000 X:0005 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdiZC V:240 H:237 F: 9
+    80e545 lsr a                  A:0000 X:0005 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdiZC V:240 H:242 F: 9
+    80e546 tax                    A:0000 X:0005 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdiZc V:240 H:245 F: 9
+    80e547 lda $0000,y   [80ef69] A:0000 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdiZc V:240 H:248 F: 9
+    80e54a and #$0f               A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:255 F: 9
+    80e54c bcc $e552     [80e552] A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:258 F: 9
+    4x ASL
+    80e552 inc $00       [000000] A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:263 F: 9
+    80e554 ora $1160,x   [801160] A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:271 F: 9
+    80e557 sta $1160,x   [801160] A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:279 F: 9
+    80e55a iny                    A:0060 X:0005 Y:ef54 S:1cf7 D:0000 DB:80 nvMxdizC V:239 H:333 F: 9
+    80e55b iny                    A:0060 X:0005 Y:ef55 S:1cf7 D:0000 DB:80 NvMxdizC V:239 H:336 F: 9
+    80e55c iny                    A:0060 X:0005 Y:ef56 S:1cf7 D:0000 DB:80 NvMxdizC V:239 H:339 F: 9
+    80e55d iny                    A:0060 X:0005 Y:ef57 S:1cf7 D:0000 DB:80 NvMxdizC V:240 H:  2 F: 9
+    80e55e dec $0c       [00000c] A:0060 X:0005 Y:ef58 S:1cf7 D:0000 DB:80 NvMxdizC V:240 H:  5 F: 9
+    80e560 bne $e53c     [80e53c] A:0060 X:0005 Y:ef58 S:1cf7 D:0000 DB:80 nvMxdiZC V:240 H: 14 F: 9
+        80e53c lda $0000,y   [80ef59] A:0006 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 53 F: 9
+        80e53f and #$e0               A:0040 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 61 F: 9
+        80e541 bne $e55a     [80e55a] A:0040 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 64 F: 9
+    80e562 dec $0e       [00000e] A:0060 X:0005 Y:ef58 S:1cf7 D:0000 DB:80 nvMxdiZC V:240 H: 17 F: 9
+    80e564 bne $e532     [80e532] A:0060 X:0005 Y:ef58 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 25 F: 9
 
 80e56e : Level_setitem1()
     -- Function used to get the item to place in level.

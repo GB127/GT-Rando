@@ -1,0 +1,39 @@
+80e523 : Functions for World's Items preparation
+    80e523 ldy $b6       [0000b6] A:00ff X:0010 Y:0020 S:1cf7 D:0000 DB:80 NvMXdizC V:239 H:236 F:57
+    80e525 ldx $ee6a,y   [80ee6a] A:00ff X:0010 Y:0000 S:1cf7 D:0000 DB:80 nvMXdiZC V:239 H:241 F:57
+    80e528 lda $e6d6,y   [80e6d6] A:00ff X:0005 Y:0000 S:1cf7 D:0000 DB:80 nvMXdizC V:239 H:247 F:57
+    80e52b sta $0e       [00000e] A:0010 X:0005 Y:0000 S:1cf7 D:0000 DB:80 nvMXdizC V:239 H:253 F:57
+    80e52d rep #$10               A:0010 X:0005 Y:0000 S:1cf7 D:0000 DB:80 nvMXdizC V:239 H:258 F:57
+    80e52f ldy $ee6a,x   [80ee6f] A:0010 X:0005 Y:0000 S:1cf7 D:0000 DB:80 nvMxdizC V:239 H:263 F:57
+
+    80e532 lda $0000,y   [80ef58] A:0060 X:0005 Y:ef58 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 30 F: 9
+    80e535 sta $0c       [00000c] A:0006 X:0005 Y:ef58 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 37 F: 9
+    80e537 iny                    A:0006 X:0005 Y:ef58 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 42 F: 9
+    80e538 lda $0c       [00000c] A:0006 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 NvMxdizC V:240 H: 45 F: 9
+    80e53a beq $e562     [80e562] A:0006 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 50 F: 9
+
+    80e53c lda $0000,y   [80ef59] A:0006 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 53 F: 9
+    80e53f and #$e0               A:0040 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 61 F: 9
+    80e541 bne $e55a     [80e55a] A:0040 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 64 F: 9
+    80e543 lda $00       [000000] A:0000 X:0005 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdiZC V:240 H:237 F: 9
+    80e545 lsr a                  A:0000 X:0005 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdiZC V:240 H:242 F: 9
+    80e546 tax                    A:0000 X:0005 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdiZc V:240 H:245 F: 9
+    80e547 lda $0000,y   [80ef69] A:0000 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdiZc V:240 H:248 F: 9
+    80e54a and #$0f               A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:255 F: 9
+    80e54c bcc $e552     [80e552] A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:258 F: 9
+    4x ASL
+    80e552 inc $00       [000000] A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:263 F: 9
+    80e554 ora $1160,x   [801160] A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:271 F: 9
+    80e557 sta $1160,x   [801160] A:0008 X:0000 Y:ef69 S:1cf7 D:0000 DB:80 nvMxdizc V:240 H:279 F: 9
+
+    80e55a iny                    A:0060 X:0005 Y:ef54 S:1cf7 D:0000 DB:80 nvMxdizC V:239 H:333 F: 9
+    80e55b iny                    A:0060 X:0005 Y:ef55 S:1cf7 D:0000 DB:80 NvMxdizC V:239 H:336 F: 9
+    80e55c iny                    A:0060 X:0005 Y:ef56 S:1cf7 D:0000 DB:80 NvMxdizC V:239 H:339 F: 9
+    80e55d iny                    A:0060 X:0005 Y:ef57 S:1cf7 D:0000 DB:80 NvMxdizC V:240 H:  2 F: 9
+    80e55e dec $0c       [00000c] A:0060 X:0005 Y:ef58 S:1cf7 D:0000 DB:80 NvMxdizC V:240 H:  5 F: 9
+    80e560 bne $e53c     [80e53c] A:0060 X:0005 Y:ef58 S:1cf7 D:0000 DB:80 nvMxdiZC V:240 H: 14 F: 9
+        80e53c lda $0000,y   [80ef59] A:0006 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 53 F: 9
+        80e53f and #$e0               A:0040 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 61 F: 9
+        80e541 bne $e55a     [80e55a] A:0040 X:0005 Y:ef59 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 64 F: 9
+    80e562 dec $0e       [00000e] A:0060 X:0005 Y:ef58 S:1cf7 D:0000 DB:80 nvMxdiZC V:240 H: 17 F: 9
+    80e564 bne $e532     [80e532] A:0060 X:0005 Y:ef58 S:1cf7 D:0000 DB:80 nvMxdizC V:240 H: 25 F: 9
