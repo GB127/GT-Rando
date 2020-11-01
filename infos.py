@@ -77,27 +77,7 @@ class infos:
                 hex(0x231) : "Password box 2",
                 hex(0x232) : "Password box 3",
                 hex(0x233) : "Password box 4",
-                hex(0x234) : "Password box 5",
-
-
-            # Stored items for the World
-                # See range_World_Item()
-                    # The idea is that some levels will take the first "letter", some will take the second letters.
-                    # For example, if the byte read is 0xAC:
-                        # One level that read this specific byte will read A and thus will fetch a Grey Key.
-                        # The other level that read the same byte will read C and will fetch the Shovel.
-                hex(0x1160) : "World Item 1&2",
-                hex(0x1161) : "World Item 3&4",
-                hex(0x1162) : "World Item 5&6",
-                hex(0x1163) : "World Item 7&8",
-                hex(0x1164) : "World Item 9&10",
-                hex(0x1165) : "World Item 11&12",
-                hex(0x1166) : "World Item 13&14",
-                hex(0x1167) : "World Item 15&16",
-                hex(0x1168) : "World Item 17&18",
-                hex(0x1169) : "World Item 19&20",
-                hex(0x116A) : "World Item 21&22"}
-
+                hex(0x234) : "Password box 5",}
 
         for i in range(0x186b5, 0x186bf+1,2):
             self.infos[hex(i)] = "Dark Room World"
@@ -169,7 +149,16 @@ class infos:
             print("Bytes 5+ : The following bytes are the letters")
 
 
-    def range_World_Item(self, world=None):
+    def range_World_storedItem(self, world=None):
+        """Returns a string showing the range of addresses that stores the items of a said world.
+            If no world is selected, it will print all worlds.
+
+        Args:
+            world ([int], optional): World selected. Defaults to None.
+
+        Raises:
+            InfosError: Make sure the world is only 0-1-2-3-4 or None.
+        """
         end = {0:0x1164,
                1:0x1165,
                2:0x116A,
