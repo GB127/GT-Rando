@@ -96,84 +96,8 @@ class infos:
                 hex(0x1167) : "World Item 15&16",
                 hex(0x1168) : "World Item 17&18",
                 hex(0x1169) : "World Item 19&20",
-                hex(0x116A) : "World Item 21&22",
+                hex(0x116A) : "World Item 21&22"}
 
-            # World 0's items.
-                hex(0x6F69): "0-X : Item",
-                hex(0x6F72): "0-X : Item",
-                hex(0x6F77): "0-X : Item",
-                hex(0x6F7C): "0-X : Item",
-                hex(0x6F8D): "0-X : Item",
-                hex(0x6F9F): "0-X : Item",
-                hex(0x6FB1): "0-X : Item",
-                hex(0x6FC3): "0-X : Item",
-                hex(0x6FCC): "0-X : Item",
-                hex(0x6FDD): "0-X : Item",
-
-            # World 1:
-                hex(0x7013): "1-X : Item",
-                hex(0x7018): "1-X : Item",
-                hex(0x701C): "1-X : Item",
-                hex(0x7022): "1-X : Item",
-                hex(0x7027): "1-X : Item",
-                hex(0x702B): "1-X : Item",
-                hex(0x7034): "1-X : Item",
-                hex(0x7038): "1-X : Item",
-                hex(0x7043): "1-X : Item",
-                hex(0x7048): "1-X : Item",
-                hex(0x7050): "1-X : Item",
-                hex(0x7055): "1-X : Item",
-
-            # World 2
-                hex(0x7072): "2-X : Item",
-                hex(0x7077): "2-X : Item",
-                hex(0x707C): "2-X : Item",
-                hex(0x7080): "2-X : Item",
-                hex(0x7084): "2-X : Item",
-                hex(0x708E): "2-X : Item",
-                hex(0x7092): "2-X : Item",
-                hex(0x70BA): "2-X : Item",
-                hex(0x70BE): "2-X : Item",
-                hex(0x70C2): "2-X : Item",
-                hex(0x70CC): "2-X : Item",
-                hex(0x70D6): "2-X : Item",
-                hex(0x70DB): "2-X : Item",
-                hex(0x70E0): "2-X : Item",
-                hex(0x70E5): "2-X : Item",
-                hex(0x70EB): "2-X : Item",
-                hex(0x70EF): "2-X : Item",
-                hex(0x70F5): "2-X : Item",
-                hex(0x70FD): "2-X : Item",
-                hex(0x7101): "2-X : Item",
-                hex(0x7107): "2-X : Item",
-
-            # World 3:
-                hex(0x7122): "3-X : Item",
-                hex(0x7126): "3-X : Item",
-                hex(0x7171): "3-X : Item",
-                hex(0x719D): "3-X : Item",
-                hex(0x71A6): "3-X : Item",
-
-            # World 4:
-                hex(0x71D2) : "4-X : Item",
-                hex(0x71E2) : "4-X : Item",
-                hex(0x71EA) : "4-X : Item",
-                hex(0x71F8) : "4-X : Item",
-                hex(0x71FC) : "4-X : Item",
-                hex(0x720B) : "4-X : Item",
-                hex(0x720F) : "4-X : Item",
-                hex(0x721D) : "4-X : Item",
-                hex(0x7221) : "4-X : Item",
-                hex(0x7225) : "4-X : Item",
-                hex(0x723A) : "4-X : Item",
-                hex(0x7260) : "4-X : Item",
-                hex(0x7264) : "4-X : Item",
-                hex(0x726D) : "4-X : Item",
-                hex(0x7272) : "4-X : Item",
-                hex(0x727C) : "4-X : Item",
-                hex(0x7297) : "4-X : Item",
-                hex(0x729B) : "4-X : Item"
-                }
 
         for i in range(0x186b5, 0x186bf+1,2):
             self.infos[hex(i)] = "Dark Room World"
