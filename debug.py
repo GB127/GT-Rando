@@ -32,9 +32,6 @@ class debug(GT):
 
         Cherry = 0x0
         Banana = 0x1
-        RedG = 0x2
-        BlueG = 0x3
-        password = [Cherry, Banana, RedG, BlueG]
 
         self.setmulti(0x1C67F, 0x1C692, 0x0)
         self[0x1c680] = 0x1
