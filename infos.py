@@ -118,7 +118,7 @@ class infos:
         else:
             raise InfosError("World can only be a value of [None-1-2-3-4]")
 
-    def range_dark_rooms(self):
+    def range_dark_rooms(self):  # Will disappear eventually.
         print("worlds - level")
         for i in range(0x186B5, 0x186BF+1,2):
             print(f'{hex(i)} - {hex(i+1)}')
@@ -158,7 +158,7 @@ class infos:
 
             Raises:
                 InfosError: Make sure the world is only 0-1-2-3-4 or None.
-        """
+            """
         end = {0:0x1164,
                1:0x1165,
                2:0x116A,
@@ -166,11 +166,9 @@ class infos:
                4:0x1168}
         if world in range(5):
             print(f'World {world} range location : {hex(0x1160)} - {hex(end[world])}')
-            return
         elif world is None:
             for i in end.keys():
                 print(f'World {i} range location : {hex(0x1160)} - {hex(end[i])}')
-            return
         else:
             raise InfosError("The world can only be a value of [0-1-2-3-4-None]")
 
