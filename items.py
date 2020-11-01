@@ -1,27 +1,32 @@
 from gameclass import GT
 
 def getter_items(data, world):
+    """Retrieve the offsets of all the items in a given world.
+        NOTES:
+            The code initially was a litteral translation of the assembly code.
+            Then I removed some codes to fit for the purposes of the randomizer. The codes
+            not needed for the randomizer are removed. The original translation is still available.
+
+        Args:
+            data ([bytearray]): the game data.
+            world ([int]): The world you want the infos.
+        
+        Return list of offsets
+        """
+
     liste = []
     def boucle1(E,offset, liste=liste):
+        """I am honestly not sure to understand why the entire code is like that.
+            """
         def boucle2(offset, compte, liste=liste):
-            item_count = 0x0  # Reading a value in byte 0x0. Should be 0 
-
+            """Boucle 2 is the loop that take care of the actual item retrieval.
+                This boucle checks for if an item is to be stored.
+            """
             for _ in range(compte):
-                info = data[offset] & 0xE0  # Ceci est pour vérifier si On a un byte à gauche
+                info = data[offset] & 0xE0
                 if info == 0:
                     # Pas de byte à gauche (Donc on a 0x00 à 0x0F)
-                    
-                    liste.append(offset)  # Cette ligne est la seule différence avec le code d'assembleur! Tout le reste est une traduction littérale.
-                    
-                    # Cette section ne sert à rien pour le randomizer. Mais je le conserve, car c'est la traduction pythonique du code intégral.
-                    """
-                    X = item_count // 2
-                    A = data[offset] & 0x0F  # On vérifie si byte de droite est présent
-                    if item_count % 2 == 1:  # 80E54C
-                        A = A  * 2 * 2 * 2 * 2  # 4x ASL, je ne sais pas comment faire mieux que ça ahah.
-                    data[0x1160 + X] = data[0x1160 + X] | A
-                    item_count += 1
-                    """
+                    liste.append(offset)
                 offset += 4  # E55A
             return offset
         ####################################
