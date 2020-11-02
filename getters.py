@@ -89,7 +89,7 @@ def getter_exits(data, world_i, nFrames):
 
     return exits_offsets, exits_values, exits_frames  # On retourne les listes
 
-def passwords(data, world):
+def getter_passwords(world):
     if world == "all":
         return list(range(0x1C67F, 0x1C693))
-    return [x for x in range(0x1C67F + 5*(world), 0x1C684 + 5*(world))]
+    return [x for x in range(0x1C67F + 5*(world -1), 0x1C684 + 5*(world-1))]
