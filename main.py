@@ -10,10 +10,10 @@ def getoptions():
 
     parser.add_argument("--password", action="store_false",
     help="Disable the password randomization", dest="Rpass")
-    return parser.parse_args()
 
     parser.add_argument("--seed", action="store", help="Seed for the randomization",
                         dest="seed", default=random.random(), metavar="", type=int)
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
