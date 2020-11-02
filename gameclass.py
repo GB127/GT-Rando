@@ -42,6 +42,7 @@ class ROM:
         self.data[offset] = value
 
 class GT(ROM):
+
     def print_passwords(self, world=None):
         translation = {0x0 : "Cherry",
                        0x1 : "Banana",
