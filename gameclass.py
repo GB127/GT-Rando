@@ -145,7 +145,9 @@ class GT(ROM):
             for i in range(0x1C67F, 0x1C692+1):  # This range covers all boxes.
                 self[i] = random.choice(password)
 
-            # Let's check if two passwords are identical
+            # Let's check if two passwords are identical  
+            # FIXME : I'm pretty sure it's possible to combine these five 
+            # following lines into a single line. Not sure how to though.
             World_1_pass = list(self.data[offset] for offset in getter_passwords(1))
             World_2_pass = list(self.data[offset] for offset in getter_passwords(2))
             World_3_pass = list(self.data[offset] for offset in getter_passwords(3))
