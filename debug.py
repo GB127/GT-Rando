@@ -43,12 +43,9 @@ class debug(GT):
 info = infos()
 
 with open("Vanilla.smc", "rb") as original:
+    # random.seed("Value")
     game = debug(original.read())
-    random.seed("allo")
 
-    game.password_randomizer()
-    game.print_passwords()
-
-    #with open("debug.smc", "wb") as newgame:
-    #    print(f"Testing case have been created! {datetime.datetime.now()}")
-    #    newgame.write(game.data)
+    with open("debug.smc", "wb") as newgame:
+        print(f"Testing case have been created! {datetime.datetime.now()}")
+        newgame.write(game.data)
