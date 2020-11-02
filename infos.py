@@ -72,7 +72,7 @@ class infos:
 
 
 
-            # Password box
+            # Password box when inputting passwords
                 hex(0x230) : "Password box 1",
                 hex(0x231) : "Password box 2",
                 hex(0x232) : "Password box 3",
@@ -82,10 +82,6 @@ class infos:
         for i in range(0x186b5, 0x186bf+1,2):
             self.infos[hex(i)] = "Dark Room World"
             self.infos[hex(i + 1)] = "Dark Room Level"
-
-
-        for i in range(0x1c67f, 0x1c692 + 1):
-            self.infos[hex(i)] = "Password check"
 
     def check(self,adress):
         if isinstance(adress,str):
@@ -103,40 +99,11 @@ class infos:
     def maps(self):
         print("https://www.vgmaps.com/Atlas/SuperNES/index.htm#GoofTroop")
 
-    def password(self,world=None):
-        if world == 1:
-            print("World 1 : Banana - Red Diamond - Cherry - Banana - Cherry")
-        if world == 2:
-            print("World 2 : Cherry - Red Diamond - Blue Diamond - Cherry - Banana")
-        if world == 3:
-            print("World 3 : Red Diamond - Cherry - Blue Diamond - Blue Diamond - Red Diamond")
-        if world == 4:
-            print("world 4 : Banana - Cherry - Blue Diamond - Red Diamond - Banana")
-        elif world is None:
-            print("World 1 : Banana - Red Diamond - Cherry - Banana - Cherry")
-            print("World 2 : Cherry - Red Diamond - Blue Diamond - Cherry - Banana")
-            print("World 3 : Cherry - Blue Diamond - Blue Diamond - Red Diamond")
-            print("World 4 : Banana - Cherry - Blue Diamond - Red Diamond - Banana")
-        else:
-            raise InfosError("World can only be a value of [None-1-2-3-4]")
 
     def range_dark_rooms(self):  # Will disappear eventually.
         print("worlds - level")
         for i in range(0x186B5, 0x186BF+1,2):
             print(f'{hex(i)} - {hex(i+1)}')
-
-
-    def range_password(self, world=None):
-        if world is None:
-            for worlds in range(1,5):
-                offset = 0x1C67F + 5 *(worlds-1)
-                print(f'World {worlds} : {hex(offset)} - {hex(offset+1)} - {hex(offset+2)} - {hex(offset+3)} - {hex(offset+4)}')
-        elif world in range(1,5):
-            offset = 0x1C67F + 5 *(world-1)
-            print(f'World {world} : {hex(offset)} - {hex(offset+1)} - {hex(offset+2)} - {hex(offset+3)} - {hex(offset+4)}')
-        else:
-            raise InfosError("world can only take a value of [None-1-2-3-4]")
-
 
     def range_credits(self):
         print(f' Vanilla credits : {hex(0x5F99E)} - {hex(0x5FBFF)}')
@@ -216,16 +183,3 @@ class infos:
                 print(f"{hex(value)} - {values[value]}")
         else:
             raise InfosError(f"value can only take a value in the range of {list(values.keys())}")            
-
-    def values_password(self, value=None):
-        values = {0:"Cherry",
-                  1:"Banana",
-                  2:"Red Gem",
-                  3:"Blue Gem",}
-        if value is None:
-            for i in values.keys():
-                print(f'{hex(i)} - {values[i]}')
-        elif value in values.keys():
-            print(f'{hex(value)} - {values[value]}')
-        else:
-            raise InfosError(f"Password value can only be a value of {list(values.keys())}")
