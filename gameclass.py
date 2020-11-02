@@ -211,13 +211,15 @@ class GT(ROM):
 
     def exits_randomizer(self):
         fix_boss_exit = True
+        keep_direction = True
+        pair_exits = True
         # create world objects
-        for world_i in range(5):
+        for world_i in range(1):
             this_world = World(self.data, world_i)
-            this_world.randomize_exits(fix_boss_exit)
+            this_world.randomize_exits(fix_boss_exit,keep_direction,pair_exits)
             for i,this_exit_offsets in enumerate(this_world.exits_offsets):
-                for j,offset in enumerate(this_exit_offsets):
-                    self[offset] = this_world.exits_values[i][j]
+                for j,this_offset in enumerate(this_exit_offsets):
+                    self[this_offset] = this_world.exits_values[i][j]
         
         #world1.randomize_exits(fix_boss_exit)
         #world2.randomize_exits(fix_boss_exit)
