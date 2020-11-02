@@ -52,11 +52,9 @@ class GT(ROM):
                 self.print_passwords(one)
         else:
             data = f"World {world} :"
-            for box in getter_passwords(self.data, world):
+            for box in getter_passwords(world):
                 data += f'{translation[self.data[box]]:^10}-'
             print(data.rstrip("-"))
-
-
 
     def add_credits(self):
         """
@@ -139,48 +137,20 @@ class GT(ROM):
             randomize each box seperately
             check if each set of 5 are the same (one world is 5 boxes)
         """
-        Cherry = 0x0
-        Banana = 0x1
-        RedG = 0x2
-        BlueG = 0x3
-        password = [Cherry, Banana, RedG, BlueG]
+        password = [0x0, 0x1, 0x2, 0x3]
 
         check = False
-
         while check is False:
             # Actual randomization of the password
-            for i in range(0x1C67F, 0x1C692+1):
+            for i in range(0x1C67F, 0x1C692+1):  # This range covers all boxes.
                 self[i] = random.choice(password)
 
             # Let's check if two passwords are identical
-            World_1_pass = [
-                            self[0x1c67f],
-                            self[0x1c680],
-                            self[0x1c681],
-                            self[0x1c682],
-                            self[0x1c683]
-                        ]
-            World_2_pass = [
-                            self[0x1c684],
-                            self[0x1c685],
-                            self[0x1c686],
-                            self[0x1c687],
-                            self[0x1c688]
-                    ]
-            World_3_pass = [
-                            self[0x1c689],
-                            self[0x1c68a],
-                            self[0x1c68b],
-                            self[0x1c68c],
-                            self[0x1c68d]
-                    ]
-            World_4_pass = [
-                            self[0x1c68e],
-                            self[0x1c68f],
-                            self[0x1c690],
-                            self[0x1c691],
-                            self[0x1c692]
-                    ]
+            World_1_pass = list(self.data[offset] for offset in getter_passwords(1))
+            World_2_pass = list(self.data[offset] for offset in getter_passwords(2))
+            World_3_pass = list(self.data[offset] for offset in getter_passwords(3))
+            World_4_pass = list(self.data[offset] for offset in getter_passwords(4))
+
             Worlds_passwords = [World_1_pass, World_2_pass, World_3_pass, World_4_pass]
             check = all([1 == Worlds_passwords.count(x) for x in Worlds_passwords])
 
