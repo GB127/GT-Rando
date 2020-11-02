@@ -1,5 +1,6 @@
 from gameclass import GT, ROM
 import datetime
+import random
 from infos import *  # This is for the tools in infos.
 from items import getter_items
 from getters import getter_passwords
@@ -43,10 +44,11 @@ info = infos()
 
 with open("Vanilla.smc", "rb") as original:
     game = debug(original.read())
-    game.exits_randomizer()
+    random.seed("allo")
 
+    game.password_randomizer()
     game.print_passwords()
 
-    with open("debug.smc", "wb") as newgame:
-        print(f"Testing case have been created! {datetime.datetime.now()}")
-        newgame.write(game.data)
+    #with open("debug.smc", "wb") as newgame:
+    #    print(f"Testing case have been created! {datetime.datetime.now()}")
+    #    newgame.write(game.data)

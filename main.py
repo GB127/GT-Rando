@@ -18,7 +18,7 @@ def getoptions():
 
 if __name__ == "__main__":
     options = getoptions()
-    seed = str(options.seed)[2:] if options.seed < 1 else options.seed
+    random.seed(str(options.seed)[2:] if options.seed < 1 else options.seed)
         # Note that this isn't used anywhere yet.
     with open("Vanilla.smc", "rb") as original:
         originaldata = original.read()
