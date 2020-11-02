@@ -9,11 +9,6 @@
 
 """
 
-
-
-
-
-
 class InfosError(BaseException):
     pass
 class infos:
