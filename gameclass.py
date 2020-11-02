@@ -133,9 +133,9 @@ class GT(ROM):
             That all worlds can be accessed (IE no 2 passwords are identical).
 
 
-        Summary :
-            randomize each box seperately
-            check if each set of 5 are the same (one world is 5 boxes)
+            Summary :
+                randomize each box seperately
+                check if each set of 5 are the same (one world is 5 boxes)
         """
         password = [0x0, 0x1, 0x2, 0x3]
 
