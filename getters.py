@@ -91,5 +91,5 @@ def getter_exits(data, world_i, nFrames):
 
 def passwords(data, world):
     if world == "all":
-        return [range(0x1C67F, 0x1C93)]
-    return [x for x in range(0x1C67F + 5*world, 0x1C682 + 5*(world+1))]
+        return list(range(0x1C67F, 0x1C693))
+    return [x for x in range(0x1C67F + 5*(world), 0x1C684 + 5*(world))]
