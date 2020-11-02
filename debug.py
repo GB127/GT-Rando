@@ -46,13 +46,7 @@ info = infos()
 
 with open("Vanilla.smc", "rb") as original:
     game = debug(original.read())
-    game.world_select()
-
-    print([hex(i) for i in getter_items(game.data, 0)])
-
-    proof = getter_exits(game.data, 0)
-    print(proof[0])  # This one is the offsets
-    print(proof[1])  # This one is the actual values
+    game.exits_randomizer()
 
 
     with open("debug.smc", "wb") as newgame:
