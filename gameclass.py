@@ -142,7 +142,7 @@ class GT(ROM):
         check = False
         while check is False:
             # Actual randomization of the password
-            for i in range(0x1C67F, 0x1C692+1):  # This range covers all boxes.
+            for i in getter_passwords("all"):
                 self[i] = random.choice(password)
 
             # Let's check if two passwords are identical  
