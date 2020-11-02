@@ -1,7 +1,7 @@
 from infos import *
 import random
 from world import *
-
+from getters import getter_passwords
 
 class ROM:
     header = bytearray(
@@ -42,6 +42,21 @@ class ROM:
         self.data[offset] = value
 
 class GT(ROM):
+    def print_passwords(self, world=None):
+        translation = {0x0 : "Cherry",
+                       0x1 : "Banana",
+                       0x2 : "Red Gem",
+                       0x3 : "Blue Gem"}
+        if world is None:
+            for one in range(1,5):
+                self.print_passwords(one)
+        else:
+            data = f"World {world} :"
+            for box in getter_passwords(self.data, world):
+                data += f'{translation[self.data[box]]:^10}-'
+            print(data.rstrip("-"))
+
+
 
     def add_credits(self):
         """
