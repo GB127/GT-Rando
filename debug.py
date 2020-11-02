@@ -2,8 +2,7 @@ from gameclass import GT, ROM
 import datetime
 from infos import *  # This is for the tools in infos.
 from items import getter_items
-from exits import getter_exits
-
+from getters import getter_passwords
 
 class debug(GT):
     def set_dark_room(self, world, room):
@@ -39,15 +38,25 @@ class debug(GT):
         self[0x1c68c] = 0x1
         self[0x1c692] = 0x1
 
-
+    def print_passwords(self, world=None):
+        translation = {0x0 : "Cherry",
+                       0x1 : "Banana",
+                       0x2 : "Red Gem",
+                       0x3 : "Blue Gem"}
+        if world is None:
+            for one in range(1,5):
+                self.print_passwords(one)
+        else:
+            data = f"World {world} :"
+            for box in getter_passwords(self.data, world):
+                data += f'{translation[self.data[box]]:^10}-'
+            print(data.rstrip("-"))
 
 info = infos()
-
 
 with open("Vanilla.smc", "rb") as original:
     game = debug(original.read())
     game.exits_randomizer()
-
 
     with open("debug.smc", "wb") as newgame:
         print(f"Testing case have been created! {datetime.datetime.now()}")
