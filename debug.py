@@ -72,9 +72,30 @@ with open("Vanilla.smc", "rb") as original:
 
     # Voici à quoi pourrait ressembler l'assignation. Encore, proof of concept.
     # Évidement ça écrit aux mauvais endroits!
-    for i, x in enumerate(range(10,17)):
+    # J'ai essayé avec une liste en intégration, et ça n'a pas fonctionné, hummm...
+    for i, x in enumerate(range(10,16)):
         game.data[x] = test2.Tuple()[i]
         print(game.data[x])
+
+
+
+
+
+
+
+
+
+    # Correction proposée pour l'itération à implanter dans tes fonctions.
+    # Le loop que tu utilisais peut être utilisé dans tes fonctions comme qui suit :
+    # En gros, on déplacerait le range que tu utilisais somehow (?) en dehors du getter
+    # Pour permettre de cibler un endroit précis avec le getter.
+
+    WorldX = 2
+    World_x_totalframecount = 5  # Je vais upposer que c'est 5
+    for x in range(World_x_totalframecount):
+        print(getter_exits(game.data, WorldX, x))
+
+
 
 
     with open("debug.smc", "wb") as newgame:

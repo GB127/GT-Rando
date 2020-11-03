@@ -18,6 +18,7 @@ class World():
         self.data = data
         self.nFrames = all_nFrames[world_i]
         self.bossFrame = all_bossFrame[world_i]
+        # Si je comprends bien ici, il faudra faire le loop proposé ici pour tout rassembler.
         self.exits_offsets, self.exits_values, self.source_frames = getter_exits(data, world_i, self.nFrames)
         self.original_exits_values = deepcopy(self.exits_values)
         self.determine_current_destinations()
