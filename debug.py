@@ -58,20 +58,22 @@ with open("Vanilla.smc", "rb") as original:
     # random.seed("Value")
     game = debug(original.read())
 
-    data = getter_exits(game.data, 1,0)[0]
-    test2 = Exit(data)
+    data = getter_exits(game.data, 1,Frames=[0])
+    print(data)
+    test2 = Exit(data[0])
+
+    data2 = getter_exits(game.data, 1,Frames=range(25))  # Maintenant le range est ici.
+    print(data2)
 
 
     # Voici des exemples d'utilisation pour faire les 6 assignations nécessaires.
     a, b, c, d, e, f = test2.Tuple()
-    print(a,b,c,d,e,f)
 
     # Voici à quoi pourrait ressembler l'assignation. Encore, proof of concept.
     # Évidement ça écrit aux mauvais endroits!
     # J'ai essayé avec une liste en intégration, et ça n'a pas fonctionné, hummm...
     for i, x in enumerate(range(10,16)):
         game.data[x] = test2.Tuple()[i]
-        print(game.data[x])
 
 
 
@@ -81,15 +83,6 @@ with open("Vanilla.smc", "rb") as original:
 
 
 
-    # Correction proposée pour l'itération à implanter dans tes fonctions.
-    # Le loop que tu utilisais peut être utilisé dans tes fonctions comme qui suit :
-    # En gros, on déplacerait le range que tu utilisais somehow (?) en dehors du getter
-    # Pour permettre de cibler un endroit précis avec le getter.
-
-    WorldX = 2
-    World_x_totalframecount = 5  # Je vais upposer que c'est 5
-    for x in range(World_x_totalframecount):
-        print(getter_exits(game.data, WorldX, x))
 
 
 
