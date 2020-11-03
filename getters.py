@@ -104,6 +104,7 @@ def getter_exits(data, world_i, Frames_i):
 
     for i in range(count):
         exits_offsets.append(list(temp4 + x + 6 * i + 1 for x in range(6)))  # Voici les offsets.
+        # Il devrait être possible d'utiliser Exit() ici.
         exits_values.append([data[temp4 + x + 6 * i + 1] for x in range(6)])  # Voici les valeurs retrouvées dans chaque offsets.
         exits_frames.append(frame_i)
         """
