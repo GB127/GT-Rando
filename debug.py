@@ -65,6 +65,13 @@ with open("Vanilla.smc", "rb") as original:
     data2 = getter_exits(game.data, 1,Frames=range(25))  # Maintenant le range est ici.
     print(data2)
 
+
+    data = getter_exits(game.data, 1,Frames=[0,4,6,2])
+    print(data)
+    test2 = Exit(data[0])
+
+
+
     data = getter_exits(game.data, 1,Frames=0)  # Lance une erreur
 
     with open("debug.smc", "wb") as newgame:
