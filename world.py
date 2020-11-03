@@ -230,3 +230,11 @@ class Exit:
 
     def Tuple(self):
         return self.destination, self.data1, self.data2, self.type, self.destinationx, self.destinationy
+
+    def category(self):
+        """
+            3 : Type d'exit, It specifies how the exit's collision tiles are laid down, See below.
+            If bit 6 is set (0x20) then it is a vertical line, otherwise it is horizontal or 2x2
+            If bit 6 is not set and bits 1-4 are 0x0F, then the exit is 2x2 (x,y) (x+1,y) (x,y+1) and (x+1,y+1)
+            For horizontal or vertical lines, bits 1-4 specify the length and bit 5 says if it is 1 or 2 tiles thick.
+        """
