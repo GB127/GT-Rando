@@ -61,6 +61,7 @@ def getter_exits(data, world_i, Frames=[]):
     # J'ai fait ces deux checks au cas où.
     assert isinstance(data, bytearray), "Must be a bytearray"
     assert 0 <= world_i <= 4, "Must be in range 0-4."
+    assert Frames is not iter(Frames), "Must be an iterable"
 
     exits_values = []
     exits_offsets = []

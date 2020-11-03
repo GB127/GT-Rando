@@ -65,27 +65,7 @@ with open("Vanilla.smc", "rb") as original:
     data2 = getter_exits(game.data, 1,Frames=range(25))  # Maintenant le range est ici.
     print(data2)
 
-
-    # Voici des exemples d'utilisation pour faire les 6 assignations nécessaires.
-    a, b, c, d, e, f = test2.Tuple()
-
-    # Voici à quoi pourrait ressembler l'assignation. Encore, proof of concept.
-    # Évidement ça écrit aux mauvais endroits!
-    # J'ai essayé avec une liste en intégration, et ça n'a pas fonctionné, hummm...
-    for i, x in enumerate(range(10,16)):
-        game.data[x] = test2.Tuple()[i]
-
-
-
-
-
-
-
-
-
-
-
-
+    data = getter_exits(game.data, 1,Frames=0)  # Lance une erreur
 
     with open("debug.smc", "wb") as newgame:
         print(f"Testing case have been created! {datetime.datetime.now()}")
