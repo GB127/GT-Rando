@@ -3,7 +3,7 @@ from copy import deepcopy
 from getters import getter_exits
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-import cv2
+# import cv2  J'ai du commenter cela pour coder mes affaires, car je ne sais pas comment faire pour le régler. J'ai essayé pip install cv2 et ça n'a rien donné.
 from matplotlib.patches import Circle
 import numpy as np
 
@@ -198,3 +198,34 @@ class World():
 
         plt.show()
         return ''
+
+
+
+class Exit:
+    def __init__(self, list_values):
+        """[summary]
+
+            0 : Screen this exit leads to
+            1 : Base tile index on collision map
+            2 : Pas spécifié par psychomaniac
+            3 : Type d'exit, It specifies how the exit's collision tiles are laid down, See below.
+                If bit 6 is set (0x20) then it is a vertical line, otherwise it is horizontal or 2x2
+                If bit 6 is not set and bits 1-4 are 0x0F, then the exit is 2x2 (x,y) (x+1,y) (x,y+1) and (x+1,y+1)
+                For horizontal or vertical lines, bits 1-4 specify the length and bit 5 says if it is 1 or 2 tiles thick.
+            4 : X position on the destination screen to place Max and/or Goofy
+            5 : Y position on the destination screen to place Max and/or Goofy
+
+
+
+        Args:
+            list_values ([type]): [description]
+        """
+        self.destination = list_values[0]
+        self.data1 = list_values[1]
+        self.data2 = list_values[2]
+        self.type = list_values[3]
+        self.destinationx = list_values[4]
+        self.destinationy = list_values[5]
+
+    def Tuple(self):
+        return self.destination, self.data1, self.data2, self.type, self.destinationx, self.destinationy
