@@ -36,21 +36,19 @@ class debug(GT):
         self[0x1c68c] = 0x1
         self[0x1c692] = 0x1
 
-    def modify_exit(self, world_i, source_old_exit, destination_old_exit, source_new_exit, destination_new_exit):
-        all_nFrames = [16, 16, 26, 30, 26]
-        nFrames = all_nFrames[world_i]
-        exits_offsets, exits_values, source_frames = getter_exits(self.data, world_i, nFrames)
-        destination_frames = []
-        for this_exit_values in exits_values:
-            destination_frames.append(this_exit_values[0])
-        for i in range(len(source_frames)): 
-            if (source_frames[i]==source_old_exit)&(destination_frames[i]==destination_old_exit): #only when i is exit to modify
-                for j in range(len(source_frames)): 
-                    if (source_frames[j]==source_new_exit)&(destination_frames[j]==destination_new_exit): #only when j is new exit to reach
-                        self[exits_offsets[i][0]] = exits_values[j][0]
-                        self[exits_offsets[i][4]] = exits_values[j][4]
-                        self[exits_offsets[i][5]] = exits_values[j][5]
-        
+    def set_exit(self, world2, start, end, viceversa=False):  # Eventually, add the selection of which
+        offsets_to_change = getter_exits(self.data, world2, Frames=[start])[0][0]  # For now, hardcorded to first
+        print(offsets_to_change)
+        all_exits_values = getter_exits(self.data, world2, Frames=range(10))[1]  # Je vais supposer qu'ici ça va chercher tous les rooms du world.
+        for one_exit in all_exits_values:
+            if one_exit[0] == end:
+                for no, value in enumerate(one_exit):
+                    self[offsets_to_change[no]] = value
+                break
+        if viceversa:
+            self.set_exit(world2, end, start)
+
+
 
 info = infos()
 
@@ -58,6 +56,7 @@ with open("Vanilla.smc", "rb") as original:
     # random.seed("Value")
     game = debug(original.read())
 
+    """
     data = getter_exits(game.data, 1,Frames=[0])
     print(data)
     test2 = Exit(data[0])
@@ -73,6 +72,18 @@ with open("Vanilla.smc", "rb") as original:
 
 
     data = getter_exits(game.data, 1,Frames=0)  # Lance une erreur
+    """
+
+
+
+    game.set_exit(0,0,7, viceversa=True)
+
+
+
+
+
+
+
 
     with open("debug.smc", "wb") as newgame:
         print(f"Testing case have been created! {datetime.datetime.now()}")
