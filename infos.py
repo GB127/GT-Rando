@@ -93,18 +93,6 @@ class infos:
             self.infos[hex(i)] = "Dark Room World"
             self.infos[hex(i + 1)] = "Dark Room Level"
 
-    def check(self,adress):
-        if isinstance(adress,str):
-            return adress + " : " + self.infos[adress]
-        else:
-            return hex(adress) + " : " + self.infos[hex(adress)]
-
-    def seek(self,*seeked):
-        print("-----------LIST OF ADRESSES-------------------")
-        for i in list(self.infos):
-            if all(x in self.infos[i] for x in seeked):
-                print(self.check(i))
-        print("-----------END OF ADRESSES--------------------")
 
     def maps(self):
         print("https://www.vgmaps.com/Atlas/SuperNES/index.htm#GoofTroop")
