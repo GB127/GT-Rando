@@ -1,4 +1,30 @@
-from gameclass import GT
+def indices(data,world, frame):
+    World = world
+    Map = frame
+    toreturn = []
+
+    offset1 = 2* Map + data[World + 0x6E6A]
+
+    offset2 = data[offset1 + 0x6E6A]
+    offset3 = data[offset1 + 0x6E6A + 1]
+
+    offset4 = offset3 * 16 * 16 + offset2 - 0x8000
+
+    count = data[offset4]
+    if count != 0:
+        offset4 += 1
+        for _ in range(count):
+            X = data[offset4]
+            X = X & 0xE0
+            X = X // 16
+            if X == 0x0:
+                # There is something with 0x0 à regarder.
+                something4 = data[offset4 + 1]
+                offset5 = something4 // 2  # C'EST CE QUE JE CHERCHE
+                carry = something4 % 2
+                toreturn.append((offset5, carry))
+            offset4 += 4
+    return toreturn
 
 def getter_items(data, world):
     """Retrieve the offsets of all the items in a given world.
