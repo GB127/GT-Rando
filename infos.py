@@ -2,6 +2,21 @@
     DARK AND ICE by Zarby
     https://pastebin.com/PVucvGyy
 
+    00 = nothing, 01 = ice, 02 = dark room, 03 = ice and dark
+    org $83FF30 ;New Ice/Dark check Location
+    LevelOffsets:
+    db Level1-LevelOffsets, Level2-LevelOffsets, Level3-LevelOffsets, Level4-LevelOffsets, Level5-LevelOffsets
+    Level1:
+    db $00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 ;0-15 level1
+    Level2:
+    db $00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 ;16-32 level2
+    Level3:
+    db $00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 ;32-58
+    Level4:
+    db $00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00
+    Level5:
+    db $00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00
+
 
     [3:19 PM] PsychoManiac: The routine at $80:B631 loads the collision tiles
     [3:20 PM] PsychoManiac: There are two layers, the lower layers is saved for when something is removed from the upper layer
