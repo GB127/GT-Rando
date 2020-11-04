@@ -13,18 +13,20 @@ class Exits:
         self.offsets,values,self.source_frames = self.getExitsFromData(data,world_i,self.nFrames)
         self.nExits = len(values)
         self.destination_frames = [value[0] for value in values]
-        self.raw_type = [value[3] for value in values]
+        self.source_raw_types = [value[3] for value in values]
         self.destination_Xpos = [value[4] for value in values]
         self.destination_Ypos = [value[5] for value in values]
+
         for i in range(self.nExits):
                 if self.destination_frames[i] == self.boss_frame:
                     self.preboss_frame = i
                     break
 
-
         # other methods
+        self.source_Xpos, self.source_Ypos = self.getSourcePositions()
         self.source_types, self.destination_types = self.getTypes()
         self.pairs = self.getPairs()
+        
         
     def getExitsFromData(self, data, world_i, nFrames):
         """Fonction allant chercher les offsets ET les valeurs. Je ne sais pas encore si on a besoin 
@@ -119,6 +121,24 @@ class Exits:
                 """
         return exits_offsets, exits_values, exits_frames  # On retourne les listes
     
+    def getSourcePositions(self):
+        source_Xpos = []
+        source_Ypos = []
+        for i in range(self.nExits): #source
+            is_a_destination = False
+            for j in range(self.nExits): #destination
+                if (self.destination_frames[i] == self.source_frames[j])&(self.destination_frames[j] == self.source_frames[i]):
+                    source_Xpos.append(self.destination_Xpos[j])
+                    source_Ypos.append(self.destination_Ypos[j])
+                    is_a_destination = True
+                    break
+            if is_a_destination == False:
+                # this source is not a destination: means that the exit leads to the boss (North)
+                source_Xpos.append(120)
+                source_Ypos.append(28)
+
+        return source_Xpos, source_Ypos
+
     def getPairs(self):
         pairs = []
         for i in range(self.nExits):
@@ -131,23 +151,31 @@ class Exits:
     def getTypes(self):
         source_types = []
         destination_types = []
+        N_list = [4, 18, 20, 146, 148]
+        S_list = [68, 82, 84, 196, 210]
+        W_list = [98, 100, 226, 228]
+        E_list = [34, 35, 36, 50, 162, 164]
+        stairs_list = [15, 143]
         for i in range(self.nExits):
-            if self.destination_Xpos[i]<25:
-                destination_types.append('W')
-                source_types.append('E')
-            elif self.destination_Xpos[i]>230:
-                destination_types.append('E')
-                source_types.append('W')
-            elif self.destination_Ypos[i]<40:
-                destination_types.append('N')
-                source_types.append('S')
-            elif self.destination_Ypos[i]>190:
+            if self.source_raw_types[i] in N_list:
                 destination_types.append('S')
                 source_types.append('N')
-            else:
+            elif self.source_raw_types[i] in S_list:
+                destination_types.append('N')
+                source_types.append('S')
+            elif self.source_raw_types[i] in W_list:
+                destination_types.append('E')
+                source_types.append('W')
+            elif self.source_raw_types[i] in E_list:
+                destination_types.append('W')
+                source_types.append('E')
+            elif self.source_raw_types[i] in stairs_list:
                 destination_types.append('?')
                 source_types.append('?')
-        return source_types, destination_types #source types will not be valid if there had already been a randomization
+            else:
+                raise ExitTypeError('Could not assign a type to this exit')
+
+        return source_types, destination_types #destination types will not be valid if there had already been a randomization
 
     def determineRandomizationOrder(self, fix_boss_exit, keep_direction, pair_exits):
         new_order = list(range(self.nExits))

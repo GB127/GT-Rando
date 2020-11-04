@@ -4,12 +4,12 @@ import random
 from infos import *  # This is for the tools in infos.
 from items import getter_items
 from getters import *
-from world import Exit
+
 
 class debug(GT):
-    def set_dark_room(self, world, room):
+    def set_dark_room(self, world, frame):
         self[0x186B5] = world
-        self[0x186B6] = room
+        self[0x186B6] = frame
 
     def quick_bosses(self):
         self[0xB4AB] = 0x1  # For now, only kill one to clear the boss for world 0.
@@ -55,7 +55,7 @@ info = infos()
 with open("Vanilla.smc", "rb") as original:
     # random.seed("Value")
     game = debug(original.read())
-
+    game.exits_randomizer(1,1,1)
     """
     data = getter_exits(game.data, 1,Frames=[0])
     print(data)
@@ -73,13 +73,6 @@ with open("Vanilla.smc", "rb") as original:
 
     data = getter_exits(game.data, 1,Frames=0)  # Lance une erreur
     """
-
-
-
-    game.set_exit(0,0,7, viceversa=True)
-
-
-
 
 
 

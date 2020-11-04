@@ -2,8 +2,8 @@ import random
 from copy import deepcopy
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-import cv2
 from matplotlib.patches import Circle
+import cv2
 import numpy as np
 from exits import *
 
@@ -26,7 +26,7 @@ class World():
         
         #map
         filenames = ['map0.png','map1.png','map2.png','map3.png','map4.png']
-        img = cv2.imread(filenames[self.world_i])
+        img = cv2.imread('maps/'+filenames[self.world_i])
         RGB_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         fig,ax = plt.subplots(1)
         ax.set_aspect('equal')
@@ -34,52 +34,30 @@ class World():
 
         # centers
         step_size = (256, 221)
-        origins = [(128,1442),(128,1300),(128, 1255),(128, 3580)]
-        origin = origins[self.world_i]
-        all_worlds_frame_positions = [[(0,0),(1,0),(1,1),(1,2),(2,2),(0,3),(1,3),(2,3),(0,4),(1,4),(2,4),(2,5),(0,5),(1,5),(0,6),(0,1)],
-                                    [(1,0),(1,1),(1,2),(1,3),(0,3),(0,4),(0,5),(1,4),(1,5),(1,6),(2,6),(3,6),(2,7),(3,7),(3,8),(3,9)],
-                                    [(4.17,-0.17),(4.17,0.83),(3.17,0.83),(5.17,0.83),(3.17,1.83),(4.17,1.83),(5.17,1.83),(3.17,2.83),(4.17,2.83),(5.17,2.83),   (1,0),(2,0),(0,1),(1,1),(2,1),(0,0),   (0.6,2.3),(1.6,2.3),(0.6,3.3),(1.6,3.3),   (2.77,4.17),(3.77,4.17),(2.77,5.17),(3.77,5.17),  (5.22,4.17),(5.22,5.17)],
-                                    [(1,0),(0,0),(1,1),(1,2),(2,2),(3,2),(3,3),(2,3),(3,4),(3,6),(4,6),(5,6),(3,7),(5,7),(2,7),(5,9),(2,9),(4,9),(3,10),(4,10),(4,11),(4,12),(4,13),(5,13),(4,14),(4,15),  (3,5),(2,10),(2,8),(5,8)],
-                                    []]
+        all_worlds_frame_positions = [[(128, 1442),(384, 1442),(384, 1221),(384, 1000),(640, 1000),(128, 779),(384, 779),(640, 779),(128, 558),(384, 558),(640, 558),(640, 337),(128, 337),(384, 337),(128, 116),(128, 1221)],
+                                        [(384, 2110),(384, 1889),(384, 1668),(384, 1447),(128, 1447),(128, 1226),(128, 1005),(384, 1226),(384, 1005),(384, 784),(640, 784),(896, 784),(640, 563),(896, 563),(896, 342),(896, 121)],
+                                        [(1195, 1292),(1195, 1071),(939, 1071),(1451, 1071),(939, 850),(1195, 850),(1451, 850),(939, 629),(1195, 629),(1451, 629),(384, 1255),(640, 1255),(128, 1034),(384, 1034),(640, 1034),(128, 1255),(281, 746),(537, 746),(281, 525),(537, 525),(837, 333),(1093, 333),(837, 112),(1093, 112),(1464, 333),(1464, 112)],
+                                        [(384, 3580),(128, 3580),(384, 3359),(384, 3138),(640, 3138),(896, 3138),(896, 2917),(640, 2917),(896, 2696),(896, 2254),(1152, 2254),(1408, 2254),(896, 2033),(1408, 2033),(640, 2033),(1408, 1591),(640, 1591),(1152, 1591),(896, 1370),(1152, 1370),(1152, 1149),(1152, 928),(1152, 707),(1408, 707),(1152, 486),(1152, 265),(896, 2475),(640, 1370),(640, 1812),(1408, 1812)],
+                                        [(128, 1350),(128, 1129),(384, 1129),(1003, 1334),(747, 1334),(747, 1113),(1003, 1113),(1259, 1113),(1259, 1334),(2065, 1334),(1809, 1334),(1809, 1113),(1553, 1113),(1553, 1334),(2065, 1113),(1809, 892),(2065, 892),(1553, 892),(747, 892),(1003, 892),(1259, 892),(2065, 141),(2065, 362),(2065, 583),(1809, 362),(1809, 141)]]
         frame_positions = all_worlds_frame_positions[self.world_i]
-        for frame in range(self.nFrames):
-            this_pos = (origin[0]+frame_positions[frame][0]*step_size[0], 
-                        origin[1]-frame_positions[frame][1]*step_size[1])
-            ax.add_patch(Circle(this_pos,22, color='w'))
-            ax.text(this_pos[0],this_pos[1],str(frame),fontsize=10,
+        for i in range(self.nFrames):
+            base_pos = frame_positions[i]
+            ax.add_patch(Circle(base_pos,22, color='w'))
+            ax.text(base_pos[0],base_pos[1],str(i),fontsize=10,
                     horizontalalignment='center', verticalalignment='center')
         
         #exits
         for i,source in enumerate(self.exits.source_frames):
             this_color = list(1-np.random.choice(range(256), size=3)/300)
             #source exit
-            this_pos = (origin[0]+frame_positions[source][0]*step_size[0], 
-                        origin[1]-frame_positions[source][1]*step_size[1])
-            if self.exits.source_types[i] == 'N':
-                source_pos = (this_pos[0],this_pos[1]-step_size[1]*0.4)
-            elif self.exits.source_types[i] == 'S':
-                source_pos = (this_pos[0],this_pos[1]+step_size[1]*0.4)
-            elif self.exits.source_types[i] == 'W':
-                source_pos = (this_pos[0]-step_size[0]*0.4, this_pos[1])
-            elif self.exits.source_types[i] == 'E':
-                source_pos = (this_pos[0]+step_size[0]*0.4, this_pos[1])
-            elif self.exits.source_types[i] == '?':
-                source_pos = (this_pos[0]+step_size[0]*0.2, this_pos[1]+step_size[1]*0.2)
-            
+            base_pos = frame_positions[source]
+            source_pos = (base_pos[0]-step_size[0]/2+self.exits.source_Xpos[i], base_pos[1]-step_size[1]/2+self.exits.source_Ypos[i])
             ax.add_patch(Circle(source_pos,5, color=this_color))
+            ax.text(source_pos[0],source_pos[1],str(self.exits.source_types[i]),fontsize=10,
+                    horizontalalignment='center', verticalalignment='center', color='r')
             #target exit
-            this_pos = (origin[0]+frame_positions[self.exits.destination_frames[i]][0]*step_size[0], 
-                        origin[1]-frame_positions[self.exits.destination_frames[i]][1]*step_size[1])
-            if self.exits.destination_types[i] == 'N':
-                target_pos = (this_pos[0],this_pos[1]-step_size[1]*0.4)
-            elif self.exits.destination_types[i] == 'S':
-                target_pos = (this_pos[0],this_pos[1]+step_size[1]*0.4)
-            elif self.exits.destination_types[i] == 'W':
-                target_pos = (this_pos[0]-step_size[0]*0.4, this_pos[1])
-            elif self.exits.destination_types[i] == 'E':
-                target_pos = (this_pos[0]+step_size[0]*0.4, this_pos[1])
-            elif self.exits.destination_types[i] == '?':
-                target_pos = (this_pos[0]+step_size[0]*0.2, this_pos[1]+step_size[1]*0.2)
+            base_pos = frame_positions[self.exits.destination_frames[i]]
+            target_pos = (base_pos[0]-step_size[0]/2+self.exits.destination_Xpos[i], base_pos[1]-step_size[1]/2+self.exits.destination_Ypos[i])
             ax.arrow(source_pos[0],source_pos[1],target_pos[0]-source_pos[0], target_pos[1]-source_pos[1], 
                     head_width=15,length_includes_head=True, color=this_color)
 
