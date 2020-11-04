@@ -1,9 +1,20 @@
-def indices(data,world, frame):
-    World = world
-    Map = frame
+def getter_items_indices(data, world, frame):
+    """Getter for getting the correct indices for each items that has an item.
+        return None if no items on the frame.
+
+        Args:
+            data (bytearray): game data.
+            world (int): World, ranging from 0 to 4.
+            frame (int): frame you want to fetch.
+
+        Returns if items:
+            list of tuples : (indices, GvsD)
+                GvsD = Will determine if Left or right of the 0xXX.
+                In pythonic code, we could can do 2* indices + Gvs.D
+    """
     toreturn = []
 
-    offset1 = 2* Map + data[World + 0x6E6A]
+    offset1 = 2* frame + data[world + 0x6E6A]
 
     offset2 = data[offset1 + 0x6E6A]
     offset3 = data[offset1 + 0x6E6A + 1]
@@ -18,13 +29,15 @@ def indices(data,world, frame):
             X = X & 0xE0
             X = X // 16
             if X == 0x0:
-                # There is something with 0x0 à regarder.
                 something4 = data[offset4 + 1]
-                offset5 = something4 // 2  # C'EST CE QUE JE CHERCHE
+                offset5 = something4 // 2
                 carry = something4 % 2
                 toreturn.append((offset5, carry))
             offset4 += 4
-    return toreturn
+    if toreturn != []:
+        return toreturn
+    else:
+        return None
 
 def getter_items(data, world):
     """Retrieve the offsets of all the items in a given world.
@@ -37,7 +50,7 @@ def getter_items(data, world):
             data ([bytearray]): the game data.
             world ([int]): The world you want the infos.
         
-        Return list of offsets
+            Return list of offsets
         """
 
     liste = []
@@ -76,3 +89,4 @@ def getter_items(data, world):
     boucle1(E, item_offset)
 
     return liste
+
