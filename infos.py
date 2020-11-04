@@ -112,7 +112,7 @@ class infos:
             print("Bytes 5+ : The following bytes are the letters")
 
 
-    def range_World_storedItem(self, world=None):
+    def range_World_dynamic_Items(self, world=None):
         """Returns a string showing the range of addresses that stores the items of a said world.
             If no world is selected, it will print all worlds.
 
