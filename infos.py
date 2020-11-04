@@ -78,16 +78,10 @@ class infos:
             # Credits
                 hex(0x1414F) : "Credits : Speed of the THE END Credits",
                 hex(0x14137) : "Credits : Where the THE END should stop if password used",
+        }
 
 
 
-
-            # Password box when inputting passwords
-                hex(0x230) : "Password box 1",
-                hex(0x231) : "Password box 2",
-                hex(0x232) : "Password box 3",
-                hex(0x233) : "Password box 4",
-                hex(0x234) : "Password box 5",}
 
         for i in range(0x186b5, 0x186bf+1,2):
             self.infos[hex(i)] = "Dark Room World"
@@ -97,6 +91,8 @@ class infos:
     def maps(self):
         print("https://www.vgmaps.com/Atlas/SuperNES/index.htm#GoofTroop")
 
+    def range_dynamic_passwords(self):
+        return [x for x in range(0x230, 0x235)]
 
     def range_dark_rooms(self):  # Will disappear eventually.
         print("worlds - level")
