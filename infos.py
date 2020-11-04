@@ -136,30 +136,6 @@ class infos:
             raise InfosError("The world can only be a value of [0-1-2-3-4-None]")
 
 
-    def values_item_display(self, id=None, adjust=0):
-        # The adjust is because the items displayed on the levels are
-        # always -2. For example, in inventory, the bell is 12. On the
-        # level, it will be 10.
-
-        # note that I've not improved this one since we may not need this one that much.
-        items = {"Hookshot" : 2,
-        "Candle" : 4,
-        "Grey Key" : 6,
-        "Gold Key" : 8,
-        "Shovel" : 10,
-        "Bell" : 12,
-        "Bridge" : 14}
-        if id is None:
-            print("-" * 20)
-            for i in items.keys() :
-                print(i)
-            print("-" * 20)
-        else:
-            for i in items.keys():
-                if id == items[i] -adjust:
-                    print(i)
-                    return
-
     def values_items_World(self, value=None):
         # These are the actual values that the game will need to select the items.
         # For placing them in the levels
@@ -176,4 +152,4 @@ class infos:
         elif value in range(0x8, 0xE +1):
                 print(f"{hex(value)} - {values[value]}")
         else:
-            raise InfosError(f"value can only take a value in the range of {list(values.keys())}")            
+            raise InfosError(f"value can only take a value in the range of {list(values.keys())}")
