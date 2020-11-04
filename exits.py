@@ -6,8 +6,10 @@ class Exits:
         
         all_nFrames = [16, 16, 26, 30, 26]
         all_boss_frame = [14, 15, 25, 25, 25]
+        all_locked_doors = [[11,21],[],[7,13],[46,51],[]]
         self.nFrames = all_nFrames[world_i]
         self.boss_frame = all_boss_frame[world_i]
+        self.locked_doors = all_locked_doors[world_i]
 
         # getter utilization
         self.offsets,values,self.source_frames = self.getExitsFromData(data,world_i,self.nFrames)
@@ -146,6 +148,9 @@ class Exits:
                 if (self.destination_frames[i] == self.source_frames[j])&(self.destination_frames[j] == self.source_frames[i]):
                     if sorted([i,j]) not in pairs: 
                         pairs.append(sorted([i,j]))
+        for pair in pairs:
+            if (self.source_types[pair[0]] == 'S')|(self.source_types[pair[0]] == 'W'):
+                pair.reverse()
         return pairs
 
     def getTypes(self):
@@ -177,13 +182,16 @@ class Exits:
 
         return source_types, destination_types #destination types will not be valid if there had already been a randomization
 
-    def determineRandomizationOrder(self, fix_boss_exit, keep_direction, pair_exits):
+    def determineRandomizationOrder(self, fix_boss_exit, fix_locked_doors, keep_direction, pair_exits):
         new_order = list(range(self.nExits))
         if keep_direction & (not pair_exits):#keep direction
             for targeted_type in ['N','S','W','E','?']:
                 targeted_i = [i for i, destination_type in enumerate(self.destination_types) if destination_type == targeted_type]
                 if fix_boss_exit: 
                     if self.preboss_frame in targeted_i: targeted_i.remove(self.preboss_frame)
+                if fix_locked_doors:
+                    for locked_door in self.locked_doors:
+                        if locked_door in targeted_i: targeted_i.remove(locked_door)
                 shuffled_i = deepcopy(targeted_i)
                 random.shuffle(shuffled_i)
                 for j,i in enumerate(targeted_i):
@@ -191,6 +199,12 @@ class Exits:
 
         elif (not keep_direction) & (pair_exits):#pair exits
             shuffled_pairs = deepcopy(self.pairs)
+            if fix_locked_doors:
+                for pair in shuffled_pairs:
+                    for locked_door in self.locked_doors:
+                        if locked_door in pair: 
+                            shuffled_pairs.remove(pair)
+                            break
             random.shuffle(shuffled_pairs)
             for i,pair in enumerate(self.pairs):
                 new_order[pair[0]] = shuffled_pairs[i][0]
@@ -198,6 +212,13 @@ class Exits:
 
         elif keep_direction & pair_exits: #keep direction AND pair exits
             pairs_to_sort = deepcopy(self.pairs)
+            if fix_locked_doors:
+                for pair in pairs_to_sort:
+                    for locked_door in self.locked_doors:
+                        if locked_door in pair: 
+                            pairs_to_sort.remove(pair)
+                            break
+
             NS_pairs = []
             WE_pairs = []
             stairs_pairs = []
@@ -208,6 +229,7 @@ class Exits:
                     WE_pairs.append(pair)
                 elif (self.destination_types[pair[0]] == '?'):
                     stairs_pairs.append(pair)
+
             #North and South pairs
             shuffled_pairs = deepcopy(NS_pairs)
             random.shuffle(shuffled_pairs)
@@ -232,13 +254,16 @@ class Exits:
             if fix_boss_exit:
                 new_order.remove(self.preboss_frame)
                 new_order.insert(self.preboss_frame,self.preboss_frame)
-
+            if fix_locked_doors:
+                for locked_door in self.locked_doors:
+                    new_order.remove(locked_door)
+                    new_order.insert(locked_door,locked_door)
         return new_order
 
-    def randomize(self, fix_boss_exit, keep_direction, pair_exits): #fix_boss_exit is a bool
+    def randomize(self, fix_boss_exit, fix_locked_doors, keep_direction, pair_exits): #fix_boss_exit is a bool
             
         #determine new order
-        new_order = self.determineRandomizationOrder(fix_boss_exit, keep_direction, pair_exits)
+        new_order = self.determineRandomizationOrder(fix_boss_exit, fix_locked_doors, keep_direction, pair_exits)
 
         #assign elements in new order
         self.destination_frames = [self.destination_frames[i] for i in new_order]

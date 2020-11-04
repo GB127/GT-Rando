@@ -197,16 +197,17 @@ class GT(ROM):
             check = all([1 == dark_rooms.count(x) for x in dark_rooms])
             print(check)
 
-    def exits_randomizer(self, fix_boss_exit, keep_direction, pair_exits):
+    def exits_randomizer(self, fix_boss_exit, fix_locked_doors, keep_direction, pair_exits):
 
         # create world objects
-        for world_i in range(5):
+        for world_i in [3]:
             this_world = World(self.data, world_i)
-            this_world.randomizeExits(fix_boss_exit,keep_direction,pair_exits)
+            this_world.showMap()
+            this_world.randomizeExits(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
             for i in range(this_world.exits.nExits):
                 self[this_world.exits.offsets[i][0]] = this_world.exits.destination_frames[i]
                 self[this_world.exits.offsets[i][4]] = this_world.exits.destination_Xpos[i]
                 self[this_world.exits.offsets[i][5]] = this_world.exits.destination_Ypos[i]
-            
+
         
         

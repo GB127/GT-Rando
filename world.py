@@ -6,6 +6,7 @@ from matplotlib.patches import Circle
 import cv2
 import numpy as np
 from exits import *
+from items import *
 
 class World():
     def __init__(self, data, world_i):
@@ -18,9 +19,13 @@ class World():
         self.nFrames = all_nFrames[world_i]
         self.exits = Exits(data, world_i)
         self.original_exits = deepcopy(self.exits)
+        #self.items = Items(data, world_i)
 
-    def randomizeExits(self, fix_boss_exit, keep_direction, pair_exits):
-        self.exits.randomize(fix_boss_exit, keep_direction, pair_exits)
+    def randomizeExits(self, fix_boss_exit, fix_locked_doors, keep_direction, pair_exits):
+        self.exits.randomize(fix_boss_exit, fix_locked_doors, keep_direction, pair_exits)
+
+    def randomizeItems(self):
+        self.items.randomize()
 
     def showMap(self):
         
@@ -53,7 +58,7 @@ class World():
             base_pos = frame_positions[source]
             source_pos = (base_pos[0]-step_size[0]/2+self.exits.source_Xpos[i], base_pos[1]-step_size[1]/2+self.exits.source_Ypos[i])
             ax.add_patch(Circle(source_pos,5, color=this_color))
-            ax.text(source_pos[0],source_pos[1],str(self.exits.source_types[i]),fontsize=10,
+            ax.text(source_pos[0],source_pos[1],str(i),fontsize=10,
                     horizontalalignment='center', verticalalignment='center', color='r')
             #target exit
             base_pos = frame_positions[self.exits.destination_frames[i]]

@@ -55,7 +55,8 @@ info = infos()
 with open("Vanilla.smc", "rb") as original:
     # random.seed("Value")
     game = debug(original.read())
-    game.exits_randomizer(1,1,1)
+    game.exits_randomizer(1,1,1,1)
+    game.world_select()
     """
     data = getter_exits(game.data, 1,Frames=[0])
     print(data)
