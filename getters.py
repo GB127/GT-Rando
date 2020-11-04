@@ -114,8 +114,7 @@ def getter_exits(data, world_i, Frames=[]):
                 4 : X position on the destination screen to place Max and/or Goofy
                 5 : Y position on the destination screen to place Max and/or Goofy
             """
-    return exits_values
-        # return exits_offsets, exits_values, exits_frames  # On retourne les listes
+    return exits_offsets, exits_values, exits_frames  # On retourne les listes
 
 def getter_passwords(world):
     """Return the offsets of all passwords
