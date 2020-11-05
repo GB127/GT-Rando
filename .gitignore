@@ -13,3 +13,9 @@ Vanilla.bp
 Vanilla.cpu.sym
 Vanilla.smp.sym
 .vscode/settings.json
+debug.cpu.sym
+debug.smc
+debug.smp.sym
+debug-1.bst
+debug-trace.log
+debug.bp
