@@ -36,9 +36,8 @@ class debug(GT):
         self[0x1c68c] = 0x1
         self[0x1c692] = 0x1
 
-    def set_exit(self, world2, start, end, viceversa=False):  # Eventually, add the selection of which
+    def set_exit(self, world2, start, end, viceversa=False):
         offsets_to_change = getter_exits(self.data, world2, Frames=[start])[0][0]  # For now, hardcorded to first
-        print(offsets_to_change)
         all_exits_values = getter_exits(self.data, world2, Frames=range(10))[1]  # Je vais supposer qu'ici ça va chercher tous les rooms du world.
         for one_exit in all_exits_values:
             if one_exit[0] == end:
@@ -48,35 +47,34 @@ class debug(GT):
         if viceversa:
             self.set_exit(world2, end, start)
 
+    def print_passwords(self, world=None):
+        # J'aime mieux ceci dans debug, vu que l'on va imprimer
+        # Le password seulement pour déboguer.
+        translation = {0x0 : "Cherry",
+                       0x1 : "Banana",
+                       0x2 : "Red Gem",
+                       0x3 : "Blue Gem"}
+        if world is None:
+            for one in range(1,5):
+                self.print_passwords(one)
+        else:
+            data = f"World {world} :"
+            for box in getter_passwords(world):
+                data += f'{translation[self.data[box]]:^10}-'
+            print(data.rstrip("-"))
 
 
 info = infos()
 
+
+
+
+
 with open("Vanilla.smc", "rb") as original:
     # random.seed("Value")
     game = debug(original.read())
-    game.exits_randomizer(1,1,1,1)
-    game.world_select()
-    """
-    data = getter_exits(game.data, 1,Frames=[0])
-    print(data)
-    test2 = Exit(data[0])
 
-    data2 = getter_exits(game.data, 1,Frames=range(25))  # Maintenant le range est ici.
-    print(data2)
-
-
-    data = getter_exits(game.data, 1,Frames=[0,4,6,2])
-    print(data)
-    test2 = Exit(data[0])
-
-
-
-    data = getter_exits(game.data, 1,Frames=0)  # Lance une erreur
-    """
-
-
-
+    #game.set_exit(3,0,4)
 
 
     with open("debug.smc", "wb") as newgame:

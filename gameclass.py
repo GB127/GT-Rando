@@ -12,7 +12,10 @@ class ROM:
     # https://en.wikibooks.org/wiki/Super_NES_Programming/SNES_memory_map
 
     def change_ice_dark_code(self):
+        """Change old code to new code to be more flexible.
 
+            Will reduce number of lines eventually.
+        """
         self[0x28CC] = 0x64
         self[0x28CD] = 0xCA
         self[0x28CE] = 0xA6
