@@ -6,7 +6,7 @@ class Exits:
         
         all_nFrames = [16, 16, 26, 30, 26]
         all_boss_exit = [29,27,53,49,49]
-        all_locked_doors = [[11,21],[19,24],[0,3],[45,50],[]]
+        all_locked_doors = [[11,21],[19,24],[0,3,28,33],[45,50],[]]
         self.nFrames = all_nFrames[world_i]
         self.boss_exit = all_boss_exit[world_i]
         self.locked_doors = all_locked_doors[world_i]
@@ -205,15 +205,16 @@ class Exits:
                     new_order[i] = shuffled_i[j]
 
         elif (not keep_direction) & (pair_exits):#pair exits
-            shuffled_pairs = deepcopy(self.pairs)
+            pairs_to_sort = deepcopy(self.pairs)
             if fix_locked_doors:
-                for pair in shuffled_pairs:
+                for pair in pairs_to_sort:
                     for locked_door in self.locked_doors:
                         if locked_door in pair: 
-                            shuffled_pairs.remove(pair)
+                            pairs_to_sort.remove(pair)
                             break
+            shuffled_pairs = deepcopy(pairs_to_sort)
             random.shuffle(shuffled_pairs)
-            for i,pair in enumerate(self.pairs):
+            for i,pair in enumerate(pairs_to_sort):
                 new_order[pair[0]] = shuffled_pairs[i][0]
                 new_order[shuffled_pairs[i][1]] = pair[1]
 

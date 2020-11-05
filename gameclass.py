@@ -249,7 +249,7 @@ class GT(ROM):
                 self[this_world.exits.offsets[i][0]] = this_world.exits.destination_frames[i]
                 self[this_world.exits.offsets[i][4]] = this_world.exits.destination_Xpos[i]
                 self[this_world.exits.offsets[i][5]] = this_world.exits.destination_Ypos[i]
-            this_world.showMap()
+            #this_world.showMap()
 
         
         
