@@ -24,6 +24,13 @@ class Exits:
         self.source_types, self.destination_types = self.getTypes()
         self.pairs, self.destination_exits = self.getPairs()
         
+        # save original values
+        self.original_destination_frames = deepcopy(self.destination_frames)
+        self.original_destination_Xpos = deepcopy(self.destination_Xpos)
+        self.original_destination_Ypos = deepcopy(self.destination_Ypos)
+        self.original_destination_types = deepcopy(self.destination_types)
+        self.original_destination_exits = deepcopy(self.destination_exits)
+
     def getExitsFromData(self, data, world_i, nFrames):
         """Fonction allant chercher les offsets ET les valeurs. Je ne sais pas encore si on a besoin 
             des deux ou pas. Donc j'ai retourné les deux.
@@ -282,8 +289,21 @@ class Exits:
         new_order = self.determineRandomizationOrder(fix_boss_exit, fix_locked_doors, keep_direction, pair_exits)
 
         #assign elements in new order
-        self.destination_frames = [self.destination_frames[i] for i in new_order]
-        self.destination_Xpos = [self.destination_Xpos[i] for i in new_order]
-        self.destination_Ypos = [self.destination_Ypos[i] for i in new_order]
-        self.destination_types = [self.destination_types[i] for i in new_order]
-        self.destination_exits = [self.destination_exits[i] for i in new_order]
+        self.destination_frames = [self.original_destination_frames[i] for i in new_order]
+        self.destination_Xpos = [self.original_destination_Xpos[i] for i in new_order]
+        self.destination_Ypos = [self.original_destination_Ypos[i] for i in new_order]
+        self.destination_types = [self.original_destination_types[i] for i in new_order]
+        self.destination_exits = [self.original_destination_exits[i] for i in new_order]
+
+    def setExit(self, source_exit, destination_exit):
+        for i in range(self.nExits):
+            if destination_exit == "boss":
+                destination_exit = None
+            if self.original_destination_exits[i] == destination_exit:
+                self.destination_frames[source_exit] = self.original_destination_frames[i]
+                self.destination_Xpos[source_exit] = self.original_destination_Xpos[i]
+                self.destination_Ypos[source_exit] = self.original_destination_Ypos[i]
+                self.destination_types[source_exit] = self.original_destination_types[i]
+                self.destination_exits[source_exit] = self.original_destination_exits[i]
+
+        

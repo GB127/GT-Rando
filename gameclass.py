@@ -98,6 +98,7 @@ class GT(ROM):
     def __init__(self,data):
         super().__init__(data)
         self.change_ice_dark_code()
+        self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
 
     def add_credits(self):
         """
@@ -242,8 +243,7 @@ class GT(ROM):
     def exits_randomizer(self, fix_boss_exit, fix_locked_doors, keep_direction, pair_exits):
 
         # create world objects
-        for world_i in [0,1,2,3,4]:
-            this_world = World(self.data, world_i)
+        for this_world in self.all_worlds:
             this_world.randomizeExits(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
             for i in range(this_world.exits.nExits):
                 self[this_world.exits.offsets[i][0]] = this_world.exits.destination_frames[i]
@@ -251,5 +251,11 @@ class GT(ROM):
                 self[this_world.exits.offsets[i][5]] = this_world.exits.destination_Ypos[i]
             #this_world.showMap()
 
-        
+    def setExit(self, world_i, source_exit, destination_exit):
+        this_world = self.all_worlds[world_i]
+        this_world.setExit(source_exit, destination_exit)
+        self[this_world.exits.offsets[source_exit][0]] = this_world.exits.destination_frames[source_exit]
+        self[this_world.exits.offsets[source_exit][4]] = this_world.exits.destination_Xpos[source_exit]
+        self[this_world.exits.offsets[source_exit][5]] = this_world.exits.destination_Ypos[source_exit]
+        this_world.showMap()
         

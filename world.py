@@ -24,6 +24,9 @@ class World():
     def randomizeExits(self, fix_boss_exit, fix_locked_doors, keep_direction, pair_exits):
         self.exits.randomize(fix_boss_exit, fix_locked_doors, keep_direction, pair_exits)
 
+    def setExit(self, source_exit, destination_exit):
+        self.exits.setExit(source_exit, destination_exit)
+
     def randomizeItems(self):
         self.items.randomize()
 
