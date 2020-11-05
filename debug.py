@@ -14,33 +14,6 @@ class debug(GT):
     #    self[0x186B5] = world
     #    self[0x186B6] = frame
 
-    def print_dark_rooms(self):
-        world0 = range(16)
-        world1 = range(16, 33)
-        world2 = range(33, 59)
-        world3 = range(59, 85)
-        world4 = range(85, 85 + 25)
-        liste = []
-        self[0x1FF35 + 16 + 17 + 25 + 26] = 0x2  # Testing line
-        for no, x in enumerate(range(0x1FF35, 0x1FF35 + (84+25) + 1)):
-            if self[x] == 0x2:
-                if no in world0:
-                    print(f"(0-{no})")
-                elif no in world1:
-                    print(f"(1-{no-16})")
-                elif no in world2:
-                    print(f"(2-{no-16-17})")
-                elif no in world3:
-                    print(f"(3-{no-16-17 -25})")
-                elif no in world4:
-                    print(f"(4-{no-16-17 -25 - 26})")
-
-                else:
-                    print("not sure yet...")
-
-
-
-
 
     def quick_bosses(self):
         self[0xB4AB] = 0x1  # For now, only kill one to clear the boss for world 0.
@@ -67,19 +40,6 @@ class debug(GT):
         self[0x1c68c] = 0x1
         self[0x1c692] = 0x1
 
-    def set_exit(self, world2, start, end, viceversa=False):
-        all_nFrames = [16, 16, 26, 30, 26]
-
-        offsets_to_change = getter_exits(self.data, world2, Frames=[start])[0][0]  # For now, hardcorded to first
-        all_exits_values = getter_exits(self.data, world2, Frames=range(all_nFrames[world2]))[1]  # Je vais supposer qu'ici ça va chercher tous les rooms du world.
-        for one_exit in all_exits_values:
-            if one_exit[0] == end:
-                print(one_exit)
-                for no, value in enumerate(one_exit):
-                    self[offsets_to_change[no]] = value
-                break
-        if viceversa:
-            self.set_exit(world2, end, start)
 
     def print_passwords(self, world=None):
         # J'aime mieux ceci dans debug, vu que l'on va imprimer
@@ -97,24 +57,54 @@ class debug(GT):
                 data += f'{translation[self.data[box]]:^10}-'
             print(data.rstrip("-"))
 
+    def print_darkrooms(self):
+        print(f'{len(self.get_darkrooms())} Dark rooms: {self.get_darkrooms()}')
+
+    def print_icerooms(self):
+        print(f'{len(self.get_icerooms())} Ice rooms: {self.get_icerooms()}')
+
+    def get_darkrooms(self):
+        toreturn = []
+        for no, offset in enumerate(range(0x1FF35, 0x1FFA7)):
+            if self[offset] & 2:
+                if no in range(0, 16):
+                    toreturn.append((0, no))
+                elif no in range(16, 32):
+                    toreturn.append((1, no - 16))
+                elif no in range(32, 58):
+                    toreturn.append((2, no - 32))
+                elif no in range(58, 88):
+                    toreturn.append((3, no - 58))
+                else:
+                    toreturn.append((4, no - 88))
+        return toreturn
+    def get_icerooms(self):
+        toreturn = []
+        for no, offset in enumerate(range(0x1FF35, 0x1FFA7)):
+            if self[offset] & 1:
+                if no in range(0, 16):
+                    toreturn.append((0, no))
+                elif no in range(16, 32):
+                    toreturn.append((1, no - 16))
+                elif no in range(32, 58):
+                    toreturn.append((2, no - 32))
+                elif no in range(58, 88):
+                    toreturn.append((3, no - 58))
+                else:
+                    toreturn.append((4, {no - 88}))
+        return toreturn
+
 
 info = infos()
-
-
-
 
 
 with open("Vanilla.smc", "rb") as original:
     # random.seed("Value")
     game = debug(original.read())
 
-    game.set_exit(2,0,25)
-
-    test = World(game.data, 2)
-    test.showMap()
-
-
     game.world_select()
+    game.print_icerooms()
+    game.print_darkrooms()
 
     with open("debug.smc", "wb") as newgame:
         print(f"Testing case have been created! {datetime.datetime.now()}")

@@ -45,6 +45,11 @@ class ROM:
         self.data[offset] = value
 
 class GT(ROM):
+    dark_rooms_vanilla = [(2,4),(2,20),
+                          (3,7),(3,20),
+                          (4,15),(4,17)]
+    ice_rooms_vanilla = [(3,5),(3,6)]
+
     def change_ice_dark_code(self):
         """Change old code to new code to be more flexible.
 
@@ -85,15 +90,29 @@ class GT(ROM):
 
         self.setmulti(0x2816,0x2820, 0xEA)
 
-
-        # Data for Ice and Dark rooms
-        self[0x1FF30] = 0+5 # World 0  Ceci c'est bon
-        self[0x1FF31] = 16+5# World 1  Ceci c'est bon
-        self[0x1FF32] = 33+5# World 2  Ceci c'est bon
+        # Data table for Ice and Dark rooms
+        self[0x1FF30] = 0+5 # World 0
+        self[0x1FF31] = 16+5# World 1
+        self[0x1FF32] = 32+5# World 2
         self[0x1FF33] = 58+5# World 3
-        self[0x1FF34] = 84+5# World4
-        self.setmulti(0x1FF35, 0x1FF35 + (84+25), 0x0)
+        self[0x1FF34] = 88+5# World4
+        self.setmulti(0x1FF35, 0x1FFA6, 0x0)
+        
+        for couple in GT.dark_rooms_vanilla:
+            self[self.get_darkice_indice(couple[0], couple[1])] += 2
+        for couple in GT.ice_rooms_vanilla:
+            self[self.get_darkice_indice(couple[0], couple[1])] += 1
 
+
+
+    def dark_randomizer(self, vanilla=True):
+        self.setmulti(0x1FF35, 0x1FFA6, 0x0)  # clear everything
+        if vanilla:
+            offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
+
+    def get_darkice_indice(self, world,frame):
+        offsets = [0, 16, 32, 58, 88]
+        return offsets[world] + frame + 0x1FF35
 
     def __init__(self,data):
         super().__init__(data)
@@ -168,6 +187,7 @@ class GT(ROM):
         add_credits_line(self, "Charles Matte-Breton", spacing=2)
         add_credits_line(self, "Special thanks", underlined=True, color=3)
         add_credits_line(self, "PsychoManiac", spacing=2)
+        add_credits_line(self, "Zarby65", spacing=2)
 
     def password_randomizer(self):  # Note : I have made a function that will simplify this a lot.
         """
@@ -200,46 +220,6 @@ class GT(ROM):
             Worlds_passwords = [World_1_pass, World_2_pass, World_3_pass, World_4_pass]
             check = all([1 == Worlds_passwords.count(x) for x in Worlds_passwords])
 
-    def darkrooms_randomizer(self):
-        """
-            This is a dark room randomizer : It randomizes what rooms can be dark!
-            Currently there is NO logic. Any world can have any number of rooms
-            (I've seen 4 dark rooms in world 1 for example)
-
-            FIXME : Make sure *all rooms can be randomized.
-                We need to replace 3 by the highest number a world have. And make sure the boss room isn't in the range
-
-            I've tried a darkroom in a boss room. It almost works. There is probably something that we have to disable
-            to make it work for bosses.
-                On world 0 boss for example, we see the darkness, then you see the level over everything. 
-                The game still works, so it's not a softlock or crash. You just don't see anything.
-
-            I'd like to have this randomizer randomizes everything that's not boss rooms, AND a mode where bosses could be randomized".
-        """
-        check = False
-        rooms = {  # Format =>  World : highest room number 
-                0:3,
-                1:3,
-                2:3,
-                3:3,
-                4:3,
-                }
-        while check is False:
-            for i in range(0x186B5, 0x186BF+1 , 2):
-                self[i] = random.randint(0,0x4)
-                self[i+1] = random.randint(0,rooms[self[i]])
-            dark_rooms = []
-            for i in range(0x186B5, 0x186BF+1 , 2):
-                dark_rooms.append((self[i], self[i+1]))
-            for i in dark_rooms:
-                if dark_rooms.count(i) == 1:
-                    check = True
-                else:
-                    check = False
-            print(dark_rooms)
-            check = all([1 == dark_rooms.count(x) for x in dark_rooms])
-            print(check)
-
     def exits_randomizer(self, fix_boss_exit, fix_locked_doors, keep_direction, pair_exits):
 
         # create world objects
@@ -257,5 +237,4 @@ class GT(ROM):
         self[this_world.exits.offsets[source_exit][0]] = this_world.exits.destination_frames[source_exit]
         self[this_world.exits.offsets[source_exit][4]] = this_world.exits.destination_Xpos[source_exit]
         self[this_world.exits.offsets[source_exit][5]] = this_world.exits.destination_Ypos[source_exit]
-        this_world.showMap()
         
