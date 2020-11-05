@@ -22,8 +22,7 @@ class Exits:
         # other methods
         self.source_Xpos, self.source_Ypos = self.getSourcePositions()
         self.source_types, self.destination_types = self.getTypes()
-        self.pairs = self.getPairs()
-        
+        self.pairs, self.destination_exits = self.getPairs()
         
     def getExitsFromData(self, data, world_i, nFrames):
         """Fonction allant chercher les offsets ET les valeurs. Je ne sais pas encore si on a besoin 
@@ -150,15 +149,23 @@ class Exits:
 
     def getPairs(self):
         pairs = []
+        destination_exits = []
         for i in range(self.nExits):
+            found_a_pair = False #variable reset
             for j in range(self.nExits):
                 if (self.destination_frames[i] == self.source_frames[j])&(self.destination_frames[j] == self.source_frames[i]):
                     if sorted([i,j]) not in pairs: 
                         pairs.append(sorted([i,j]))
+                    destination_exits.append(j)
+                    found_a_pair = True
+                    break
+            if found_a_pair == False:
+                destination_exits.append(None)
+            
         for pair in pairs:
             if (self.source_types[pair[0]] == 'S')|(self.source_types[pair[0]] == 'W'):
                 pair.reverse()
-        return pairs
+        return pairs, destination_exits
 
     def getTypes(self):
         source_types = []
@@ -279,3 +286,4 @@ class Exits:
         self.destination_Xpos = [self.destination_Xpos[i] for i in new_order]
         self.destination_Ypos = [self.destination_Ypos[i] for i in new_order]
         self.destination_types = [self.destination_types[i] for i in new_order]
+        self.destination_exits = [self.destination_exits[i] for i in new_order]
