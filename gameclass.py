@@ -97,18 +97,46 @@ class GT(ROM):
         self[0x1FF33] = 58+5# World 3
         self[0x1FF34] = 88+5# World4
         self.setmulti(0x1FF35, 0x1FFA6, 0x0)
-        
+
         for couple in GT.dark_rooms_vanilla:
             self[self.get_darkice_indice(couple[0], couple[1])] += 2
         for couple in GT.ice_rooms_vanilla:
             self[self.get_darkice_indice(couple[0], couple[1])] += 1
 
 
+    def dark_randomizer(self, count="vanilla"):
+        for offset in range(0x1FF35, 0x1FFA7):  # Remove all dark rooms
+            self[offset] = self[offset] & 1
+        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
+        random.shuffle(offsets)
+        if count == "vanilla":
+            for no in range(6):
+                self[offsets[no]] += 2
+        if count == "random":
+            for no in range(random.randint(0,114)):
+                self[offsets[no]] += 2
 
-    def dark_randomizer(self, vanilla=True):
-        self.setmulti(0x1FF35, 0x1FFA6, 0x0)  # clear everything
-        if vanilla:
-            offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
+        elif isinstance(count, int):
+            for no in range(count):
+                self[offsets[no]] += 2
+
+    def ice_randomizer(self, count="vanilla"):
+        for offset in range(0x1FF35, 0x1FFA7):  # Remove all dark rooms
+            self[offset] = self[offset] & 2
+        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
+        random.shuffle(offsets)
+        if count == "vanilla":
+            for no in range(2):
+                self[offsets[no]] += 1
+        if count == "random":
+            for no in range(random.randint(0,114)):
+                self[offsets[no]] += 1
+        elif isinstance(count, int):
+            for no in range(count):
+                self[offsets[no]] += 1
+
+
+
 
     def get_darkice_indice(self, world,frame):
         offsets = [0, 16, 32, 58, 88]
