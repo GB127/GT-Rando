@@ -6,7 +6,7 @@ class Exits:
         
         all_nFrames = [16, 16, 26, 30, 26]
         all_boss_exit = [29,27,53,49,49]
-        all_locked_doors = [[11,21],[19,24],[7,13],[45,50],[]]
+        all_locked_doors = [[11,21],[19,24],[0,3],[45,50],[]]
         self.nFrames = all_nFrames[world_i]
         self.boss_exit = all_boss_exit[world_i]
         self.locked_doors = all_locked_doors[world_i]
