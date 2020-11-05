@@ -164,7 +164,7 @@ class GT(ROM):
         add_credits_line(self, "Flags used : alpha", spacing=1)
         add_credits_line(self, "Developpers", underlined=True, color=5)
         add_credits_line(self, "GB127 - Niamek", spacing=2)
-        add_credits_line(self, "Charles342", spacing=2)
+        add_credits_line(self, "Charles Matte-Breton", spacing=2)
         add_credits_line(self, "Special thanks", underlined=True, color=3)
         add_credits_line(self, "PsychoManiac", spacing=2)
 
@@ -242,14 +242,14 @@ class GT(ROM):
     def exits_randomizer(self, fix_boss_exit, fix_locked_doors, keep_direction, pair_exits):
 
         # create world objects
-        for world_i in [3]:
+        for world_i in [0,1,2,3,4]:
             this_world = World(self.data, world_i)
-            this_world.showMap()
             this_world.randomizeExits(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
             for i in range(this_world.exits.nExits):
                 self[this_world.exits.offsets[i][0]] = this_world.exits.destination_frames[i]
                 self[this_world.exits.offsets[i][4]] = this_world.exits.destination_Xpos[i]
                 self[this_world.exits.offsets[i][5]] = this_world.exits.destination_Ypos[i]
+            this_world.showMap()
 
         
         

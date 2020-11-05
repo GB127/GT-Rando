@@ -5,10 +5,10 @@ class Exits:
     def __init__(self, data, world_i):
         
         all_nFrames = [16, 16, 26, 30, 26]
-        all_boss_frame = [14, 15, 25, 25, 25]
-        all_locked_doors = [[11,21],[],[7,13],[46,51],[]]
+        all_boss_exit = [29,27,53,49,49]
+        all_locked_doors = [[11,21],[19,24],[0,3],[45,50],[]]
         self.nFrames = all_nFrames[world_i]
-        self.boss_frame = all_boss_frame[world_i]
+        self.boss_exit = all_boss_exit[world_i]
         self.locked_doors = all_locked_doors[world_i]
 
         # getter utilization
@@ -18,11 +18,6 @@ class Exits:
         self.source_raw_types = [value[3] for value in values]
         self.destination_Xpos = [value[4] for value in values]
         self.destination_Ypos = [value[5] for value in values]
-
-        for i in range(self.nExits):
-                if self.destination_frames[i] == self.boss_frame:
-                    self.preboss_frame = i
-                    break
 
         # other methods
         self.source_Xpos, self.source_Ypos = self.getSourcePositions()
@@ -121,6 +116,18 @@ class Exits:
                     4 : X position on the destination screen to place Max and/or Goofy
                     5 : Y position on the destination screen to place Max and/or Goofy
                 """
+        if world_i == 1:
+            exits_offsets.pop(30) #exit from boss to before boss
+            exits_values.pop(30)
+            exits_frames.pop(30)
+            exits_offsets.pop(26) #random imaginary exit
+            exits_values.pop(26) 
+            exits_frames.pop(26)
+        elif world_i == 3:
+            exits_offsets.pop(2) #random imaginary exit
+            exits_values.pop(2) 
+            exits_frames.pop(2)
+
         return exits_offsets, exits_values, exits_frames  # On retourne les listes
     
     def getSourcePositions(self):
@@ -188,7 +195,7 @@ class Exits:
             for targeted_type in ['N','S','W','E','?']:
                 targeted_i = [i for i, destination_type in enumerate(self.destination_types) if destination_type == targeted_type]
                 if fix_boss_exit: 
-                    if self.preboss_frame in targeted_i: targeted_i.remove(self.preboss_frame)
+                    if self.boss_exit in targeted_i: targeted_i.remove(self.boss_exit)
                 if fix_locked_doors:
                     for locked_door in self.locked_doors:
                         if locked_door in targeted_i: targeted_i.remove(locked_door)
@@ -250,14 +257,15 @@ class Exits:
                 new_order[shuffled_pairs[i][1]] = pair[1]
 
         else: #totally random
-            random.shuffle(new_order)
-            if fix_boss_exit:
-                new_order.remove(self.preboss_frame)
-                new_order.insert(self.preboss_frame,self.preboss_frame)
+            targeted_i = deepcopy(new_order)
+            if fix_boss_exit: targeted_i.remove(self.boss_exit)
             if fix_locked_doors:
-                for locked_door in self.locked_doors:
-                    new_order.remove(locked_door)
-                    new_order.insert(locked_door,locked_door)
+                    for locked_door in self.locked_doors:
+                        if locked_door in targeted_i: targeted_i.remove(locked_door)
+            shuffled_i = deepcopy(targeted_i)
+            random.shuffle(shuffled_i)
+            for j,i in enumerate(targeted_i):
+                    new_order[i] = shuffled_i[j]
         return new_order
 
     def randomize(self, fix_boss_exit, fix_locked_doors, keep_direction, pair_exits): #fix_boss_exit is a bool
