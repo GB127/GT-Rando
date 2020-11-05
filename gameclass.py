@@ -11,6 +11,56 @@ class ROM:
     # NOTE for self : it's a LoROM
     # https://en.wikibooks.org/wiki/Super_NES_Programming/SNES_memory_map
 
+    def change_ice_dark_code(self):
+
+        self[0x28CC] = 0x64
+        self[0x28CD] = 0xCA
+        self[0x28CE] = 0xA6
+        self[0x28CF] = 0xB6
+        self[0x28D0] = 0xA5
+        self[0x28D1] = 0xB7
+        self[0x28D2] = 0x18
+        self[0x28D3] = 0x7F
+        self[0x28D4] = 0x30
+        self[0x28D5] = 0xFF
+        self[0x28D6] = 0x83
+        self[0x28D7] = 0xAA
+        self[0x28D8] = 0xBF
+        self[0x28D9] = 0x30
+        self[0x28DA] = 0xFF
+        self[0x28DB] = 0x83
+        self[0x28DC] = 0x29
+        self[0x28DD] = 0x01
+        self[0x28DE] = 0xF0
+        self[0x28DF] = 0x02
+        self[0x28E0] = 0xE6
+        self[0x28E1] = 0xCA
+        self[0x28E2] = 0x60
+
+        self[0x280E] = 0xBF
+        self[0x280F] = 0x30
+        self[0x2810] = 0xFF
+        self[0x2811] = 0x83
+        self[0x2812] = 0x29
+        self[0x2813] = 0x02
+        self[0x2814] = 0xD0
+        self[0x2815] = 0x2822-0x2815
+
+        self.setmulti(0x2816,0x2820, 0xEA)
+
+
+        # Data for Ice and Dark rooms
+        self[0x1FF30] = 0+5 # World 0
+        self[0x1FF31] = 16+5# World 1
+        self[0x1FF32] = 33+5# World 2
+        self[0x1FF33] = 58+5# World 3
+        self[0x1FF34] = 84+5# World4
+        self.setmulti(0x1FF35, 0x1FF35 + (84+25), 0x0)
+
+
+
+
+
 
     def __init__(self,data):
         """
@@ -27,6 +77,7 @@ class ROM:
             raise BaseException("Your game seems to be corrupted")
         for n,i in enumerate(self.data[0x7FC0:0x7FFF]):
             assert i == self.header[n]
+        self.change_ice_dark()
 
     def setmulti(self, offset1, offset2, value, jumps=1):
         # The idea of this method is for cases where you need to change the value
