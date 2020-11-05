@@ -91,7 +91,7 @@ class debug(GT):
                 elif no in range(58, 88):
                     toreturn.append((3, no - 58))
                 else:
-                    toreturn.append((4, {no - 88}))
+                    toreturn.append((4, no - 88))
         return toreturn
 
 
@@ -103,7 +103,11 @@ with open("Vanilla.smc", "rb") as original:
     game = debug(original.read())
 
     game.world_select()
+
     game.print_icerooms()
+    game.ice_randomizer(count="random")
+    game.print_icerooms()
+    print("-" * 20)
     game.print_darkrooms()
 
     with open("debug.smc", "wb") as newgame:
