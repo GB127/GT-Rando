@@ -7,9 +7,38 @@ from getters import *
 
 
 class debug(GT):
-    def set_dark_room(self, world, frame):
-        self[0x186B5] = world
-        self[0x186B6] = frame
+    # These three lines are no longer valid because I changed the lines per default.
+    #def set_dark_room(self, world, frame):
+    #    self[0x186B5] = world
+    #    self[0x186B6] = frame
+
+    def print_dark_rooms(self):
+        world0 = range(16)
+        world1 = range(16, 33)
+        world2 = range(33, 59)
+        world3 = range(59, 85)
+        world4 = range(85, 85 + 25)
+        liste = []
+        self[0x1FF35 + 16 + 17 + 25 + 26] = 0x2  # Testing line
+        for no, x in enumerate(range(0x1FF35, 0x1FF35 + (84+25) + 1)):
+            if self[x] == 0x2:
+                if no in world0:
+                    print(f"(0-{no})")
+                elif no in world1:
+                    print(f"(1-{no-16})")
+                elif no in world2:
+                    print(f"(2-{no-16-17})")
+                elif no in world3:
+                    print(f"(3-{no-16-17 -25})")
+                elif no in world4:
+                    print(f"(4-{no-16-17 -25 - 26})")
+
+                else:
+                    print("not sure yet...")
+
+
+
+
 
     def quick_bosses(self):
         self[0xB4AB] = 0x1  # For now, only kill one to clear the boss for world 0.
@@ -74,8 +103,11 @@ with open("Vanilla.smc", "rb") as original:
     # random.seed("Value")
     game = debug(original.read())
 
-    #game.set_exit(3,0,4)
 
+    game.print_dark_rooms()
+
+    #game.set_exit(3,0,4)
+    game.world_select()
 
     with open("debug.smc", "wb") as newgame:
         print(f"Testing case have been created! {datetime.datetime.now()}")
