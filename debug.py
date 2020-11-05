@@ -57,13 +57,25 @@ class debug(GT):
                 data += f'{translation[self.data[box]]:^10}-'
             print(data.rstrip("-"))
 
-    def print_darkrooms(self):
+    def print_darkframes(self):
+        """Print the list of tuples that are dark rooms.
+            """
         print(f'{len(self.get_darkrooms())} Dark rooms: {self.get_darkrooms()}')
 
-    def print_icerooms(self):
+    def print_iceframes(self):
+        """Print the list of tuples that are ice rooms
+            """
         print(f'{len(self.get_icerooms())} Ice rooms: {self.get_icerooms()}')
 
-    def get_darkrooms(self):
+    def get_darkframes(self):
+        """Generate a list of tuples that contains the different frames that are darks.
+
+            Returns:
+                list: list of tuples
+                    tuples : (World, Frame)
+                        World : int
+                        Frame : int
+            """
         toreturn = []
         for no, offset in enumerate(range(0x1FF35, 0x1FFA7)):
             if self[offset] & 2:
@@ -78,7 +90,17 @@ class debug(GT):
                 else:
                     toreturn.append((4, no - 88))
         return toreturn
-    def get_icerooms(self):
+
+    def get_iceframes(self):
+        """Generate a list of tuples that contains the different frames that are icy.
+
+            Returns:
+                list: list of tuples
+                    tuples : (World, Frame)
+                        World : int
+                        Frame : int
+            """
+
         toreturn = []
         for no, offset in enumerate(range(0x1FF35, 0x1FFA7)):
             if self[offset] & 1:
@@ -101,14 +123,10 @@ info = infos()
 with open("Vanilla.smc", "rb") as original:
     # random.seed("Value")
     game = debug(original.read())
-
     game.world_select()
 
-    game.print_icerooms()
-    game.ice_randomizer(count="random")
-    game.print_icerooms()
-    print("-" * 20)
-    game.print_darkrooms()
+
+
 
     with open("debug.smc", "wb") as newgame:
         print(f"Testing case have been created! {datetime.datetime.now()}")
