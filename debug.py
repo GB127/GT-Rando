@@ -4,10 +4,12 @@ import random
 from infos import *  # This is for the tools in infos.
 from items import getter_items
 from getters import *
-
+from exits import *
+from world import *
 
 class debug(GT):
     # These three lines are no longer valid because I changed the lines per default.
+    # I want to keep them for now because it's how it's layed out in the vanilla code.
     #def set_dark_room(self, world, frame):
     #    self[0x186B5] = world
     #    self[0x186B6] = frame
@@ -66,10 +68,13 @@ class debug(GT):
         self[0x1c692] = 0x1
 
     def set_exit(self, world2, start, end, viceversa=False):
+        all_nFrames = [16, 16, 26, 30, 26]
+
         offsets_to_change = getter_exits(self.data, world2, Frames=[start])[0][0]  # For now, hardcorded to first
-        all_exits_values = getter_exits(self.data, world2, Frames=range(10))[1]  # Je vais supposer qu'ici ça va chercher tous les rooms du world.
+        all_exits_values = getter_exits(self.data, world2, Frames=range(all_nFrames[world2]))[1]  # Je vais supposer qu'ici ça va chercher tous les rooms du world.
         for one_exit in all_exits_values:
             if one_exit[0] == end:
+                print(one_exit)
                 for no, value in enumerate(one_exit):
                     self[offsets_to_change[no]] = value
                 break
@@ -103,10 +108,12 @@ with open("Vanilla.smc", "rb") as original:
     # random.seed("Value")
     game = debug(original.read())
 
+    game.set_exit(2,0,25)
 
-    game.print_dark_rooms()
+    test = World(game.data, 2)
+    test.showMap()
 
-    #game.set_exit(3,0,4)
+
     game.world_select()
 
     with open("debug.smc", "wb") as newgame:
