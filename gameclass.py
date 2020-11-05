@@ -122,7 +122,7 @@ class GT(ROM):
         add_credits_line(self, "Flags used : alpha", spacing=1)
         add_credits_line(self, "Developpers", underlined=True, color=5)
         add_credits_line(self, "GB127 - Niamek", spacing=2)
-        add_credits_line(self, "Charles342", spacing=2)
+        add_credits_line(self, "Charles Matte-Breton", spacing=2)
         add_credits_line(self, "Special thanks", underlined=True, color=3)
         add_credits_line(self, "PsychoManiac", spacing=2)
 
