@@ -89,7 +89,7 @@ class GT(ROM):
         # Data for Ice and Dark rooms
         self[0x1FF30] = 0+5 # World 0  Ceci c'est bon
         self[0x1FF31] = 16+5# World 1  Ceci c'est bon
-        self[0x1FF32] = 33+5# World 2
+        self[0x1FF32] = 33+5# World 2  Ceci c'est bon
         self[0x1FF33] = 58+5# World 3
         self[0x1FF34] = 84+5# World4
         self.setmulti(0x1FF35, 0x1FF35 + (84+25), 0x0)
