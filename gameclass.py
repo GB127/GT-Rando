@@ -253,7 +253,7 @@ class GT(ROM):
 
     def setExit(self, world_i, source_exit, destination_exit):
         this_world = self.all_worlds[world_i]
-        this_world.setExit(source_exit, destination_exit)
+        this_world.exits.setExit(source_exit, destination_exit)
         self[this_world.exits.offsets[source_exit][0]] = this_world.exits.destination_frames[source_exit]
         self[this_world.exits.offsets[source_exit][4]] = this_world.exits.destination_Xpos[source_exit]
         self[this_world.exits.offsets[source_exit][5]] = this_world.exits.destination_Ypos[source_exit]
