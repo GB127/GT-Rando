@@ -11,10 +11,13 @@ class Items:
         self.names = self.getNames()
 
     def getNames(self):
-        all_names = ["Hookshot","Candle","Grey Key","Gold Key","Shovel","Bell","Bridge"]
+        # GB : Petite suggestion de code.
+        # all_names = ["Hookshot","Candle","Grey Key","Gold Key","Shovel","Bell","Bridge"]
+        all_names = {0x8 : "Hookshot", 0x9 : "Candle", 0xA : "Grey Key",0xB : "Gold Key", 0xC :"Shovel", 0xD : "Bell", 0xE : "Bridge"}
         names = []
         for value in self.values:
-            names.append(all_names[value-8])
+            # names.append(all_names[value-8])
+            names.append(all_names[value])
         return names
 
     def randomize(self, only_switch_positions):
