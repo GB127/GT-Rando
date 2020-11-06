@@ -34,6 +34,10 @@ class debug(GT):
         self[0x1c692] = 0x1
 
 
+    def show_map(self, world):
+        self.all_worlds[world].showMap()
+
+
     def print_passwords(self, world=None):
         # J'aime mieux ceci dans debug, vu que l'on va imprimer
         # Le password seulement pour déboguer.
@@ -119,6 +123,7 @@ with open("Vanilla.smc", "rb") as original:
     game.world_select()
 
 
+    game.show_map(2)
 
 
     with open("debug.smc", "wb") as newgame:
