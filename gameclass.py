@@ -115,13 +115,12 @@ class GT(ROM):
         if count == "random":
             for no in range(random.randint(0,114)):
                 self[offsets[no]] += 2
-
         elif isinstance(count, int):
             for no in range(count):
                 self[offsets[no]] += 2
 
     def ice_randomizer(self, count="vanilla"):
-        for offset in range(0x1FF35, 0x1FFA7):  # Remove all dark rooms
+        for offset in range(0x1FF35, 0x1FFA7):  # Remove all ice rooms
             self[offset] = self[offset] & 2
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
         random.shuffle(offsets)
@@ -134,9 +133,6 @@ class GT(ROM):
         elif isinstance(count, int):
             for no in range(count):
                 self[offsets[no]] += 1
-
-
-
 
     def get_darkice_indice(self, world,frame):
         offsets = [0, 16, 32, 58, 88]
@@ -217,13 +213,12 @@ class GT(ROM):
         add_credits_line(self, "PsychoManiac", spacing=2)
         add_credits_line(self, "Zarby65", spacing=2)
 
-    def password_randomizer(self):  # Note : I have made a function that will simplify this a lot.
+    def password_randomizer(self):
         """
-            This is the password shuffler, to make sure one doesn't cheat.
+            This is the password shuffler.
 
-            All password are shuffled and could be anything. There is also a check to make sure
-            That all worlds can be accessed (IE no 2 passwords are identical).
-
+            All password are shuffled and can be anything.
+            There is also a check to make sure no 2 passwords are identical).
 
             Summary :
                 randomize each box seperately
