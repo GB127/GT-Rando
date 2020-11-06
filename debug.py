@@ -9,6 +9,10 @@ from world import *
 class debug(GT):
 
     def __init__(self,data):
+        self.list_freespace()
+        super().__init__(data)
+
+    def list_freespace(self):
         self.freespace = [offset for offset in range(0x7374, 0x7FB0)]
         self.freespace += [offset for offset in range(0xFF33, 0x10000)]
         self.freespace += [offset for offset in range(0x1401, 0x15E00)]
@@ -30,9 +34,6 @@ class debug(GT):
         self.freespace += [offset for offset in range(0x7FFB0, 0x7FFFF)]
 
         self.used = []
-        super().__init__(data)
-
-
 
     def quick_bosses(self):
         self[0xB4AB] = 0x1  # For now, only kill one to clear the boss for world 0.
@@ -162,9 +163,6 @@ with open("Vanilla.smc", "rb") as original:
     game.world_select()
     game.items_randomizer(0)
 
-
-    print(len(game.freespace))
-    print(len(game.used))
 
     with open("debug.smc", "wb") as newgame:
         print(f"Testing case have been created! {datetime.datetime.now()}")
