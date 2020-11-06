@@ -61,6 +61,9 @@ class GT(ROM):
             
             old dark rooms locations: 0x186B5 to 0x186B5 + 12
 
+        Big thank you to Zarby89, the following code is the litteral translation
+        of his code on this link: https://pastebin.com/PVucvGyy
+
         """
         self[0x28CC] = 0x64
         self[0x28CD] = 0xCA
@@ -148,7 +151,76 @@ class GT(ROM):
     def __init__(self,data):
         super().__init__(data)
         self.change_ice_dark_code()
+        self.change_code_firstframe()
         self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
+
+
+    def change_code_firstframe(self):
+        self[0x1DFD] = 0xA9
+        self[0x1DFE] = 0x04
+        self[0x1DFF] = 0x85
+        self[0x1E00] = 0xA0
+        self[0x1E01] = 0xA5
+        self[0x1E02] = 0xC3
+        self[0x1E03] = 0x85
+        self[0x1E04] = 0xB6
+
+
+        # Jump
+        self[0x1E05] = 0x20
+        self[0x1E06] = 0x81
+        self[0x1E07] = 0xF3
+        self[0x1E08] = 0xEA
+
+        # TAX
+        self[0x7381] = 0xAA
+
+        # LDA,X
+        self[0x7382] = 0xBD
+        self[0x7383] = 0xA7  # TO FIX
+        self[0x7384] = 0xFF
+
+        # STA B7
+        self[0x7385] = 0x85
+        self[0x7386] = 0xB7
+
+
+        #LDA #0
+        self[0x7387] = 0xEA#0xA9
+        self[0x7388] = 0xEA#0x00
+
+        # LDX #8
+        self[0x7389] = 0xA2
+        self[0x738A] = 0x8
+
+        #rts
+        self[0x738B] = 0x60
+
+
+        self[0x1F95] = 0xEA
+        self[0x1F96] = 0xEA
+
+
+        #Data
+        self[0x1FFA7] = 0   
+        self[0x1FFA8] = 0
+        self[0x1FFA9] = 0
+        self[0x1FFAA] = 0
+        self[0x1FFAB] = 0
+
+
+
+    def firstframe_randomizer(self):
+        all_nFrames = [15, 15, 25, 29, 25]  # NOTE : The values are -1 since 0 counts. And randint includes b
+        for world, offset in enumerate(range(0x1FFA7, 0x1FFAC)):
+            print(self[offset])
+            self[offset] = random.randint(0,all_nFrames[world])
+            print(self[offset])
+
+
+
+
+
 
     def add_credits(self):
         """
@@ -218,7 +290,7 @@ class GT(ROM):
         add_credits_line(self, "Charles Matte-Breton", spacing=2)
         add_credits_line(self, "Special thanks", underlined=True, color=3)
         add_credits_line(self, "PsychoManiac", spacing=2)
-        add_credits_line(self, "Zarby65", spacing=2)
+        add_credits_line(self, "Zarby89", spacing=2)
 
     def password_randomizer(self):
         """
