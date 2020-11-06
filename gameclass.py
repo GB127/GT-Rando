@@ -211,11 +211,10 @@ class GT(ROM):
 
 
     def firstframe_randomizer(self):
+        #TODO : Remove boss frames
         all_nFrames = [15, 15, 25, 29, 25]  # NOTE : The values are -1 since 0 counts. And randint includes b
         for world, offset in enumerate(range(0x1FFA7, 0x1FFAC)):
-            print(self[offset])
             self[offset] = random.randint(0,all_nFrames[world])
-            print(self[offset])
 
 
 

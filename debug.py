@@ -114,6 +114,13 @@ class debug(GT):
         return toreturn
 
 
+    def get_first_rooms(self):
+        return [(0, self[0x1FFA7]),
+                (1, self[0x1FFA8]),
+                (2, self[0x1FFA9]),
+                (3, self[0x1FFAA]),
+                (4, self[0x1FFAB])]
+
 info = infos()
 
 
@@ -121,6 +128,10 @@ with open("Vanilla.smc", "rb") as original:
     # random.seed("Value")
     game = debug(original.read())
     game.world_select()
+
+    print(game.get_first_rooms())
+    game.firstframe_randomizer()
+    print(game.get_first_rooms())
 
     with open("debug.smc", "wb") as newgame:
         print(f"Testing case have been created! {datetime.datetime.now()}")
