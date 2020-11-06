@@ -46,11 +46,47 @@ class ROM:
 
 class GT(ROM):
 
+    def __setitem__(self,offset, value):
+
+        super().__setitem__(offset,value)
+
+
+
     def __init__(self,data):
         super().__init__(data)
         self.modify_data_ice_dark()
         self.modify_data_starting_frame()
         self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
+
+        self.freespace = [offset for offset in range(0x7374, 0x7FB0)]
+        self.freespace += [offset for offset in range(0xFF33, 0x10000)]
+        self.freespace += [offset for offset in range(0x1401, 0x15E00)]
+        self.freespace += [offset for offset in range(0x1F9C1, 0x1FA42)]
+        self.freespace += [offset for offset in range(0x1FADC, 0x20000)]
+        self.freespace += [offset for offset in range(0x2A796, 0x2C000)]
+        self.freespace += [offset for offset in range(0x47DFE, 0x48000)]
+        self.freespace += [offset for offset in range(0x45055, 0x4F100)]
+        self.freespace += [offset for offset in range(0x4FD48, 0x50000)]
+        self.freespace += [offset for offset in range(0x53F70, 0x54000)]
+        self.freespace += [offset for offset in range(0x55FC0, 0x56000)]
+        self.freespace += [offset for offset in range(0x57E00, 0x58000)]
+        self.freespace += [offset for offset in range(0x5E240, 0x5F000)]
+        self.freespace += [offset for offset in range(0x5FBDC, 0x5FE00)]
+
+        self.freespace += [offset for offset in range(0xFB5BE, 0xFD400)]
+
+        self.freespace += [offset for offset in range(0x7FB20, 0x7FE00)]
+        self.freespace += [offset for offset in range(0x7FE50, 0x7FEA0)]
+
+        self.freespace += [offset for offset in range(0x7FED0, 0x7FF00)]
+        self.freespace += [offset for offset in range(0x7FFB0, 0x7FFFF)]
+
+
+
+
+
+
+
 
     def modify_data_ice_dark(self):
         """Change old code to new code to be more flexible.
