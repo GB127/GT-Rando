@@ -45,16 +45,14 @@ class ROM:
         self.data[offset] = value
 
 class GT(ROM):
-    dark_rooms_vanilla = [(2,4),(2,20),
-                          (3,7),(3,20),
-                          (4,15),(4,17)]
-    ice_rooms_vanilla = [(3,5),(3,6)]
 
+    def __init__(self,data):
+        super().__init__(data)
+        self.modify_data_ice_dark()
+        self.modify_data_starting_frame()
+        self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
 
-
-
-
-    def change_ice_dark_code(self):
+    def modify_data_ice_dark(self):
         """Change old code to new code to be more flexible.
 
             Will reduce number of lines eventually.
@@ -108,54 +106,17 @@ class GT(ROM):
         self[0x1FF34] = 88+5# World4
         self.setmulti(0x1FF35, 0x1FFA6, 0x0)
 
-        for couple in GT.dark_rooms_vanilla:
+        dark_rooms_vanilla = [(2,4),(2,20),
+                            (3,7),(3,20),
+                            (4,15),(4,17)]
+        ice_rooms_vanilla = [(3,5),(3,6)]
+
+        for couple in dark_rooms_vanilla:
             self[self.get_darkice_indice(couple[0], couple[1])] += 2
-        for couple in GT.ice_rooms_vanilla:
+        for couple in ice_rooms_vanilla:
             self[self.get_darkice_indice(couple[0], couple[1])] += 1
 
-
-    def dark_randomizer(self, count="vanilla"):
-        for offset in range(0x1FF35, 0x1FFA7):  # Remove all dark rooms
-            self[offset] = self[offset] & 1
-        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
-        random.shuffle(offsets)
-        if count == "vanilla":
-            for no in range(6):
-                self[offsets[no]] += 2
-        if count == "random":
-            for no in range(random.randint(0,114)):
-                self[offsets[no]] += 2
-        elif isinstance(count, int):
-            for no in range(count):
-                self[offsets[no]] += 2
-
-    def ice_randomizer(self, count="vanilla"):
-        for offset in range(0x1FF35, 0x1FFA7):  # Remove all ice rooms
-            self[offset] = self[offset] & 2
-        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
-        random.shuffle(offsets)
-        if count == "vanilla":
-            for no in range(2):
-                self[offsets[no]] += 1
-        if count == "random":
-            for no in range(random.randint(0,114)):
-                self[offsets[no]] += 1
-        elif isinstance(count, int):
-            for no in range(count):
-                self[offsets[no]] += 1
-
-    def get_darkice_indice(self, world,frame):
-        offsets = [0, 16, 32, 58, 88]
-        return offsets[world] + frame + 0x1FF35
-
-    def __init__(self,data):
-        super().__init__(data)
-        self.change_ice_dark_code()
-        self.change_code_firstframe()
-        self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
-
-
-    def change_code_firstframe(self):
+    def modify_data_starting_frame(self):
         self[0x1DFD] = 0xA9
         self[0x1DFE] = 0x04
         self[0x1DFF] = 0x85
@@ -207,6 +168,40 @@ class GT(ROM):
         self[0x1FFA9] = 0
         self[0x1FFAA] = 0
         self[0x1FFAB] = 0
+
+    def dark_randomizer(self, count="vanilla"):
+        for offset in range(0x1FF35, 0x1FFA7):  # Remove all dark rooms
+            self[offset] = self[offset] & 1
+        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
+        random.shuffle(offsets)
+        if count == "vanilla":
+            for no in range(6):
+                self[offsets[no]] += 2
+        if count == "random":
+            for no in range(random.randint(0,114)):
+                self[offsets[no]] += 2
+        elif isinstance(count, int):
+            for no in range(count):
+                self[offsets[no]] += 2
+
+    def ice_randomizer(self, count="vanilla"):
+        for offset in range(0x1FF35, 0x1FFA7):  # Remove all ice rooms
+            self[offset] = self[offset] & 2
+        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
+        random.shuffle(offsets)
+        if count == "vanilla":
+            for no in range(2):
+                self[offsets[no]] += 1
+        if count == "random":
+            for no in range(random.randint(0,114)):
+                self[offsets[no]] += 1
+        elif isinstance(count, int):
+            for no in range(count):
+                self[offsets[no]] += 1
+
+    def get_darkice_indice(self, world,frame):
+        offsets = [0, 16, 32, 58, 88]
+        return offsets[world] + frame + 0x1FF35
 
 
 
@@ -321,16 +316,21 @@ class GT(ROM):
             Worlds_passwords = [World_1_pass, World_2_pass, World_3_pass, World_4_pass]
             check = all([1 == Worlds_passwords.count(x) for x in Worlds_passwords])
 
-    def exits_randomizer(self, fix_boss_exit, fix_locked_doors, keep_direction, pair_exits):
-
+    def exits_randomizer(self, fix_boss_exit=True, fix_locked_doors=True, keep_direction=True, pair_exits=True):
         # create world objects
         for this_world in self.all_worlds:
-            this_world.randomizeExits(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
+            this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
             for i in range(this_world.exits.nExits):
                 self[this_world.exits.offsets[i][0]] = this_world.exits.destination_frames[i]
                 self[this_world.exits.offsets[i][4]] = this_world.exits.destination_Xpos[i]
                 self[this_world.exits.offsets[i][5]] = this_world.exits.destination_Ypos[i]
             #this_world.showMap()
+
+    def items_randomizer(self, only_switch_positions=True):
+        for this_world in self.all_worlds:
+            this_world.items.randomize(only_switch_positions)
+            for i in range(this_world.items.nItems):
+                self[this_world.items.offsets[i]] = this_world.items.values[i]
 
     def setExit(self, world_i, source_exit, destination_exit):
         this_world = self.all_worlds[world_i]
