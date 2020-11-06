@@ -50,10 +50,17 @@ class GT(ROM):
                           (4,15),(4,17)]
     ice_rooms_vanilla = [(3,5),(3,6)]
 
+
+
+
+
     def change_ice_dark_code(self):
         """Change old code to new code to be more flexible.
 
             Will reduce number of lines eventually.
+            
+            old dark rooms locations: 0x186B5 to 0x186B5 + 12
+
         """
         self[0x28CC] = 0x64
         self[0x28CD] = 0xCA

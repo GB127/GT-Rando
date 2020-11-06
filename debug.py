@@ -8,13 +8,6 @@ from exits import *
 from world import *
 
 class debug(GT):
-    # These three lines are no longer valid because I changed the lines per default.
-    # I want to keep them for now because it's how it's layed out in the vanilla code.
-    #def set_dark_room(self, world, frame):
-    #    self[0x186B5] = world
-    #    self[0x186B6] = frame
-
-
     def quick_bosses(self):
         self[0xB4AB] = 0x1  # For now, only kill one to clear the boss for world 0.
 
