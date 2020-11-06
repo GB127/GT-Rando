@@ -2,7 +2,6 @@ from gameclass import GT, ROM
 import datetime
 import random
 from infos import *  # This is for the tools in infos.
-from items import getter_items
 from getters import *
 from exits import *
 from world import *
@@ -34,8 +33,8 @@ class debug(GT):
         self[0x1c692] = 0x1
 
 
-    def show_map(self, world):
-        self.all_worlds[world].showMap()
+    def show_map(self, world_i):
+        self.all_worlds[world_i].showMap()
 
 
     def print_passwords(self, world=None):
@@ -128,10 +127,7 @@ with open("Vanilla.smc", "rb") as original:
     # random.seed("Value")
     game = debug(original.read())
     game.world_select()
-
-    print(game.get_first_rooms())
-    game.firstframe_randomizer()
-    print(game.get_first_rooms())
+    game.show_map(2)
 
     with open("debug.smc", "wb") as newgame:
         print(f"Testing case have been created! {datetime.datetime.now()}")
