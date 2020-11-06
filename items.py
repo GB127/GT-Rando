@@ -1,4 +1,4 @@
-
+from getters import getter_items, getter_items_indices
 class Items:
     def __init__(self, data, world_i):
         
