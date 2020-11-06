@@ -1,27 +1,7 @@
 """
-    DARK AND ICE by Zarby
-    https://pastebin.com/PVucvGyy
-
-    00 = nothing, 01 = ice, 02 = dark room, 03 = ice and dark
-    org $83FF30 ;New Ice/Dark check Location
-    LevelOffsets:
-    db Level1-LevelOffsets, Level2-LevelOffsets, Level3-LevelOffsets, Level4-LevelOffsets, Level5-LevelOffsets
-    Level1:
-    db $00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 ;0-15 level1
-    Level2:
-    db $00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 ;16-32 level2
-    Level3:
-    db $00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 ;32-58
-    Level4:
-    db $00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00
-    Level5:
-    db $00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00
-
-
     [3:19 PM] PsychoManiac: The routine at $80:B631 loads the collision tiles
     [3:20 PM] PsychoManiac: There are two layers, the lower layers is saved for when something is removed from the upper layer
     [3:20 PM] PsychoManiac: This routine also calls $82:C235, which loads the exits for the screen you are
-
 """
 
 class InfosError(BaseException):
@@ -81,23 +61,11 @@ class infos:
         }
 
 
-
-
-        for i in range(0x186b5, 0x186bf+1,2):
-            self.infos[hex(i)] = "Dark Room World"
-            self.infos[hex(i + 1)] = "Dark Room Level"
-
-
     def maps(self):
         print("https://www.vgmaps.com/Atlas/SuperNES/index.htm#GoofTroop")
 
     def range_dynamic_passwords(self):
         return [x for x in range(0x230, 0x235)]
-
-    def range_dark_rooms(self):  # Will disappear eventually.
-        print("worlds - level")
-        for i in range(0x186B5, 0x186BF+1,2):
-            print(f'{hex(i)} - {hex(i+1)}')
 
     def range_credits(self):
         print(f' Vanilla credits : {hex(0x5F99E)} - {hex(0x5FBFF)}')
@@ -110,7 +78,6 @@ class infos:
             print("Byte 3   : #     : How many letters to fetch for the line")
             print("Byte 4   : Col   : Color / Properties (see add_credits for more infos)")
             print("Bytes 5+ : The following bytes are the letters")
-
 
     def range_World_dynamic_Items(self, world=None):
         """Returns a string showing the range of addresses that stores the items of a said world.
