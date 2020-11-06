@@ -1,26 +1,3 @@
-# Note : J'ai changé l'argument de frames de la fonction getter de sorte
-# que la fonction retourne les exits qui sont associé uniquement à
-# l'endroit désirée. Par exemple:
-#    getter_exits(data, 0, 1)
-# Va nous retourner uniquement les exits qui sont dans le frame 0-1.
-#    getter_exits(data, 3, 1)
-# Va nous retourner uniquement les exits qui sont dans le frame 3-1.
-#    getter_exits(data, 0, 6)
-# Va nous retourner uniquement les exits qui sont dans le frame 0-6.
-#    getter_exits(data, 3, 2)
-# Va nous retourner uniquement les exits qui sont dans le frame 3-2.
-
-# J'ai procédé au changement, car j'ai trouvé que c'était mieux ainsi.
-# Ça nous permettra d'élargir les possibilités d'utilisation de la fonction.
-# Ça devrait également faciliter l'écriture (ou réécriture) de la fonction set_exit
-# Du débug maintenant.
-
-# Voir debug.py pour correction proposée.
-
-
-
-
-#def getter_exits(data, world_i, Frames_i=None, nFrames=None):
 def getter_exits(data, world_i, Frames=[]):
     """Fonction allant chercher les offsets ET les valeurs. Je ne sais pas encore si on a besoin 
         des deux ou pas. Donc j'ai retourné les deux.
