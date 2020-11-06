@@ -127,7 +127,8 @@ with open("Vanilla.smc", "rb") as original:
     # random.seed("Value")
     game = debug(original.read())
     game.world_select()
-    game.show_map(2)
+    game.items_randomizer(0)
+    game.show_map(1)
 
     with open("debug.smc", "wb") as newgame:
         print(f"Testing case have been created! {datetime.datetime.now()}")

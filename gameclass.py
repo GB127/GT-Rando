@@ -316,7 +316,7 @@ class GT(ROM):
             Worlds_passwords = [World_1_pass, World_2_pass, World_3_pass, World_4_pass]
             check = all([1 == Worlds_passwords.count(x) for x in Worlds_passwords])
 
-    def exits_randomizer(self, fix_boss_exit, fix_locked_doors, keep_direction, pair_exits):
+    def exits_randomizer(self, fix_boss_exit=True, fix_locked_doors=True, keep_direction=True, pair_exits=True):
         # create world objects
         for this_world in self.all_worlds:
             this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
@@ -326,7 +326,7 @@ class GT(ROM):
                 self[this_world.exits.offsets[i][5]] = this_world.exits.destination_Ypos[i]
             #this_world.showMap()
 
-    def items_randomizer(self, only_switch_positions):
+    def items_randomizer(self, only_switch_positions=True):
         for this_world in self.all_worlds:
             this_world.items.randomize(only_switch_positions)
             for i in range(this_world.items.nItems):
