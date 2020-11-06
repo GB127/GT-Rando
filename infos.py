@@ -101,22 +101,3 @@ class infos:
                 print(f'World {i} range location : {hex(0x1160)} - {hex(end[i])}')
         else:
             raise InfosError("The world can only be a value of [0-1-2-3-4-None]")
-
-
-    def values_items_World(self, value=None):
-        # These are the actual values that the game will need to select the items.
-        # For placing them in the levels
-        values = {0x8: "Hookshot",
-                  0x9: "Candle",
-                  0xA: "Grey Key",
-                  0xB: "Gold Key",
-                  0xC: "Shovel",
-                  0xD: "Bell",
-                  0xE: "Bridge"}
-        if value is None:
-            for i in values.keys():
-                print(f"{hex(i)} - {values[i]}")
-        elif value in range(0x8, 0xE +1):
-                print(f"{hex(value)} - {values[value]}")
-        else:
-            raise InfosError(f"value can only take a value in the range of {list(values.keys())}")
