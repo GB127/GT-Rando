@@ -7,6 +7,7 @@ import cv2
 import numpy as np
 from exits import *
 from items import *
+from frames import *
 
 class World():
     def __init__(self, data, world_i):
@@ -22,6 +23,7 @@ class World():
         self.original_exits = deepcopy(self.exits)
         self.items = Items(data, world_i)
         self.nItems = len(self.items.offsets)
+        self.frames = Frames(data, world_i, self.exits.source_frames, self.items.frames)
 
     def showMap(self, show_exits=True, show_items=True):
         #map
