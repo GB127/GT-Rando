@@ -6,7 +6,7 @@ class Exits:
         
         all_nFrames = [16, 16, 26, 30, 26]
         all_boss_exit = [29,27,53,49,49]
-        all_locked_doors = [[11,21],[19,24],[0,3,28,33],[45,50],[]]
+        all_locked_doors = [[11,21],[19,24,25,28],[0,3,28,33],[45,50],[]]
         self.nFrames = all_nFrames[world_i]
         self.boss_exit = all_boss_exit[world_i]
         self.locked_doors = all_locked_doors[world_i]
@@ -306,4 +306,15 @@ class Exits:
                 self.destination_types[source_exit] = self.original_destination_types[i]
                 self.destination_exits[source_exit] = self.original_destination_exits[i]
 
-        
+    def getUnlockedExits(self, currently_unlocked):
+        new_unlocks = [0]*self.nExits
+        boss_reached = 0
+        for source_i in range(self.nExits):
+            if currently_unlocked[source_i]:
+                destination_i = self.destination_exits[source_i]
+                if destination_i == None:
+                    boss_reached = 1
+                else:
+                    new_unlocks[source_i] = 1
+                    new_unlocks[destination_i] = 1
+        return new_unlocks, boss_reached

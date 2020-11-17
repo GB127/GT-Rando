@@ -161,7 +161,14 @@ with open("Vanilla.smc", "rb") as original:
     # random.seed("Value")
     game = debug(original.read())
     game.world_select()
-    game.items_randomizer(0)
+    game.exits_and_items_randomizer_with_verification()
+    game.all_worlds[0].showMap()
+    game.all_worlds[1].showMap()
+    game.all_worlds[2].showMap()
+    game.all_worlds[3].showMap()
+    game.all_worlds[4].showMap()
+    
+    
 
 
     with open("debug.smc", "wb") as newgame:
