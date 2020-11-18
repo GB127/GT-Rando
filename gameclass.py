@@ -283,6 +283,7 @@ class GT(ROM):
 
         add_credits_line(self, "Goof Troop randomizer", underlined=True, color=4)
         add_credits_line(self, "Version alpha", spacing=1)
+        add_credits_line(self, "Seed : alpha", spacing=1)
         add_credits_line(self, "Flags used : alpha", spacing=1)
         add_credits_line(self, "Developpers", underlined=True, color=5)
         add_credits_line(self, "GB127 - Niamek", spacing=2)
@@ -313,12 +314,9 @@ class GT(ROM):
             # Let's check if two passwords are identical  
             # FIXME : I'm pretty sure it's possible to combine these five 
             # following lines into a single line. Not sure how to though.
-            World_1_pass = list(self.data[offset] for offset in getter_passwords(1))
-            World_2_pass = list(self.data[offset] for offset in getter_passwords(2))
-            World_3_pass = list(self.data[offset] for offset in getter_passwords(3))
-            World_4_pass = list(self.data[offset] for offset in getter_passwords(4))
-
-            Worlds_passwords = [World_1_pass, World_2_pass, World_3_pass, World_4_pass]
+            Worlds_passwords = []
+            for world in range(1,5):
+                Worlds_passwords.append(list(self.data[offset] for offset in getter_passwords(world)))
             check = all([1 == Worlds_passwords.count(x) for x in Worlds_passwords])
 
     def exits_and_items_randomizer_with_verification(self, fix_boss_exit=True, fix_locked_doors=True, keep_direction=True, pair_exits=True, only_switch_positions=True):
