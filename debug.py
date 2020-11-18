@@ -163,26 +163,13 @@ class debug(GT):
                 (4, self[0x1FFAB])]
 
 info = infos()
+if __name__ == "__main__":
+    with open("Vanilla.smc", "rb") as original:
+        game = debug(original.read())
+        game.world_select()
+        startTime = datetime.now()
 
-
-with open("Vanilla.smc", "rb") as original:
-    # random.seed("Value")
-    game = debug(original.read())
-    game.world_select()
-    startTime = datetime.now()
-    game.exits_and_items_randomizer_with_verification()
-    print("-" * 40)
-    print(datetime.now() - startTime)
-
-    #game.all_worlds[0].showMap()
-    #game.all_worlds[1].showMap()
-    #game.all_worlds[2].showMap()
-    #game.all_worlds[3].showMap()
-    #game.all_worlds[4].showMap()
-    
-    
-
-
-    with open("debug.smc", "wb") as newgame:
-        print(f"Testing case have been created! {datetime.now()}")
-        newgame.write(game.data)
+        with open("debug.smc", "wb") as newgame:
+            print("Time taken to edit files : ", datetime.now() - startTime)
+            print(f"Testing case have been created! {datetime.now()}")
+            newgame.write(game.data)
