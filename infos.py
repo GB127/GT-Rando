@@ -58,6 +58,11 @@ class infos:
             # Credits
                 hex(0x1414F) : "Credits : Speed of the THE END Credits",
                 hex(0x14137) : "Credits : Where the THE END should stop if password used",
+
+
+
+
+            hex(0x10C) : "Player on correct level?"
         }
 
 
