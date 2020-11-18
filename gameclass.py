@@ -312,8 +312,6 @@ class GT(ROM):
                 self[i] = random.choice(password)
 
             # Let's check if two passwords are identical  
-            # FIXME : I'm pretty sure it's possible to combine these five 
-            # following lines into a single line. Not sure how to though.
             Worlds_passwords = []
             for world in range(1,5):
                 Worlds_passwords.append(list(self.data[offset] for offset in getter_passwords(world)))
