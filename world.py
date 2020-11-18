@@ -24,6 +24,7 @@ class World():
         self.items = Items(data, world_i)
         self.nItems = len(self.items.offsets)
         self.frames = Frames(data, world_i, self.exits.source_frames, self.items.frames)
+        print('World ',world_i, ' created!')
 
     def showMap(self, show_exits=True, show_items=True):
         #map
@@ -77,3 +78,164 @@ class World():
         plt.show()
         return ''
 
+    def feasibleWorldVerification(self, starting_exit=0):
+        unlocked_exits = [0]*self.nExits
+        unlocked_exits[starting_exit] = 1 #means that we have access to this exit at the start
+        used_items = [0]*self.nItems
+        items_filled_conditions = [0]*len(self.items.conditions_types) #means that we already put none of the the bridges and hooks to reach the items
+        items_filled_conditions[0] = 1 # element 0 should always be set to 1 in this list
+        frames_filled_conditions = [0]*len(self.frames.conditions_types) #means that we already put none of the the bridges and hooks to reach the exits
+        frames_filled_conditions[0] = 1 # element 0 should always be set to 1 in this list
+        for big_step in range(50): #max number or loops
+            for small_step in range(random.randint(2, 8)): #how much exploration before we unlock something
+                #exits links
+                unlocked_exits, boss_reached = self.exits.getUnlockedExits(unlocked_exits)
+                #internal frame links
+                unlocked_exits = self.frames.getUnlockedExits(unlocked_exits, frames_filled_conditions)
+            #unlocked items
+            unlocked_items = self.items.getUnlockedItems(unlocked_exits, items_filled_conditions)
+
+            #We now have to unlock something in order to move further?
+            #what can we unlock right now?
+            frames_reachable_conditions, items_reachable_conditions = self.getReachableConditions(unlocked_exits, frames_filled_conditions, items_filled_conditions)
+            frames_unlockable_conditions, items_unlockable_conditions = self.getUnlockableConditions(frames_reachable_conditions, items_reachable_conditions, unlocked_items, used_items)
+            #randomly chose which condition to unlock
+            if len(frames_unlockable_conditions)+len(items_unlockable_conditions)>0:
+                random_i = random.randint(0, len(frames_unlockable_conditions)+len(items_unlockable_conditions)-1)
+                if random_i<len(frames_unlockable_conditions): #we unlock a frame condition
+                    condition_i = frames_unlockable_conditions[random_i]
+                    frames_filled_conditions, used_items = self.unlockAFrameCondition(condition_i, frames_filled_conditions, unlocked_items, used_items)
+                else: #we unlock an item condition
+                    random_i = random_i-len(frames_unlockable_conditions)
+                    condition_i = items_unlockable_conditions[random_i]
+                    items_filled_conditions, used_items = self.unlockAnItemCondition(condition_i, items_filled_conditions, unlocked_items, used_items)
+
+            #verify if the world is completed
+            if all(unlocked_exits) and all(unlocked_items) and boss_reached:
+                break
+
+        return unlocked_exits, unlocked_items, boss_reached
+
+    def unlockAFrameCondition(self, condition_i, frames_filled_conditions, unlocked_items, used_items):
+        condition_type = self.frames.conditions_types[condition_i]
+        frames_filled_conditions[condition_i] = 1
+
+        if (condition_type == 1): required_items = [0x8,0xE]
+        elif (condition_type == 2): required_items = [0x8]
+        elif (condition_type == 3): required_items = [0xE]
+        elif (condition_type == 4): required_items = [0xA]
+        elif (condition_type == 5): required_items = [0xB]
+        elif (condition_type == 6): required_items = [0x8,0x8]
+        elif (condition_type == 7): required_items = [0xA]
+        elif (condition_type == 8): required_items = [0x8,0xA]
+        for required_item in required_items:
+            for item_i in range(self.nItems):
+                if unlocked_items[item_i] and not used_items[item_i]:
+                    used_items[item_i] = 1 #we use that item
+                    break
+
+        return frames_filled_conditions, used_items
+        
+
+    def unlockAnItemCondition(self, condition_i, items_filled_conditions, unlocked_items, used_items):
+        condition_type = self.items.conditions_types[condition_i]
+        items_filled_conditions[condition_i] = 1
+
+        if (condition_type == 1): required_items = [0x8,0xE]
+        elif (condition_type == 2): required_items = [0x8]
+        elif (condition_type == 3): required_items = [0xE]
+        elif (condition_type == 4): required_items = [0xA]
+        elif (condition_type == 5): required_items = [0xB]
+        elif (condition_type == 6): required_items = [0x8,0x8]
+        elif (condition_type == 7) and (0xA in available_items): frames_unlockable_conditions.append(condition_i)
+        elif (condition_type == 8): required_items = [0x8,0xA]
+
+        for required_item in required_items:
+            for item_i in range(self.nItems):
+                if unlocked_items[item_i] and not used_items[item_i]:
+                    used_items[item_i] = 1 #we use that item
+                    break
+
+        return items_filled_conditions, used_items
+        
+    
+    def getUnlockableConditions(self, frames_reachable_conditions, items_reachable_conditions, unlocked_items, used_items):
+        available_items = []
+        for item_i in range(self.nItems):
+            if unlocked_items[item_i] and not used_items[item_i]:
+                available_items.append(self.items.values[item_i])
+
+        frames_unlockable_conditions = []
+        for i in range(len(frames_reachable_conditions)):
+            condition_i = frames_reachable_conditions[i]
+            condition_type = self.frames.conditions_types[condition_i]
+            #type of condition: 0: no condition, 1: hook+bridge, 2: hook, 3:bridge, 4: door grey key external, 5: door boss key, 6:double hook, 7: door grey key with no going back!, 8: hook+key
+            #{0x8 : "Hookshot", 0x9 : "Candle", 0xA : "Grey Key",0xB : "Gold Key", 0xC :"Shovel", 0xD : "Bell", 0xE : "Bridge"}
+            if (condition_type == 1) and (0x8 in available_items) and (0xE in available_items): frames_unlockable_conditions.append(condition_i)
+            elif (condition_type == 2) and (0x8 in available_items): frames_unlockable_conditions.append(condition_i)
+            elif (condition_type == 3) and (0xE in available_items): frames_unlockable_conditions.append(condition_i)
+            elif (condition_type == 4) and (0xA in available_items): frames_unlockable_conditions.append(condition_i)
+            elif (condition_type == 5) and (0xB in available_items): frames_unlockable_conditions.append(condition_i)
+            elif (condition_type == 6) and (available_items.count(0x8)>=2): frames_unlockable_conditions.append(condition_i)
+            elif (condition_type == 7) and (0xA in available_items): frames_unlockable_conditions.append(condition_i)
+            elif (condition_type == 8) and (0x8 in available_items) and (0xA in available_items): frames_unlockable_conditions.append(condition_i)
+        
+        items_unlockable_conditions = []
+        for i in range(len(items_reachable_conditions)):
+            condition_i = items_reachable_conditions[i]
+            condition_type = self.items.conditions_types[condition_i]
+            #type of condition: 0: no condition, 1: hook+bridge, 2: hook, 3:bridge, 4: door grey key external, 5: door boss key, 6:double hook, 7: door grey key with no going back!, 8: hook+key
+            #{0x8 : "Hookshot", 0x9 : "Candle", 0xA : "Grey Key",0xB : "Gold Key", 0xC :"Shovel", 0xD : "Bell", 0xE : "Bridge"}
+            if (condition_type == 1) and (0x8 in available_items) and (0xE in available_items): items_unlockable_conditions.append(condition_i)
+            elif (condition_type == 2) and (0x8 in available_items): items_unlockable_conditions.append(condition_i)
+            elif (condition_type == 3) and (0xE in available_items): items_unlockable_conditions.append(condition_i)
+            elif (condition_type == 4) and (0xA in available_items): items_unlockable_conditions.append(condition_i)
+            elif (condition_type == 5) and (0xB in available_items): items_unlockable_conditions.append(condition_i)
+            elif (condition_type == 6) and (available_items.count(0x8)>=2): items_unlockable_conditions.append(condition_i)
+            elif (condition_type == 7) and (0xA in available_items): items_unlockable_conditions.append(condition_i)
+            elif (condition_type == 8) and (0x8 in available_items) and (0xA in available_items): items_unlockable_conditions.append(condition_i)
+
+        return frames_unlockable_conditions, items_unlockable_conditions
+
+
+    def getReachableConditions(self, unlocked_exits, frames_filled_conditions, items_filled_conditions): 
+        # A place where you can use a bridge or a hook is called a condition. 
+        # There are conditions to unlocks items and conditions to unlock exits inside a given frame
+        # This function checks which of these conditions are reachable
+        frames_reachable_conditions = []
+        items_reachable_conditions = []
+        for exit_i in range(len(unlocked_exits)):
+                if unlocked_exits[exit_i]:
+                    for condition_i in self.frames.associated_conditions_i[exit_i]:
+                        if condition_i not in frames_reachable_conditions:
+                            frames_reachable_conditions.append(condition_i)
+                    for item_i in range(self.nItems):
+                        associated_exit_i = self.items.associated_exits[item_i]
+                        if exit_i == associated_exit_i:
+                            condition_i = self.items.associated_conditions[item_i]
+                            if condition_i not in items_reachable_conditions:
+                                items_reachable_conditions.append(condition_i)
+
+        # remove conditions that are already met
+        for condition_i in range(len(frames_filled_conditions)):
+            if frames_filled_conditions[condition_i]:
+                if condition_i in frames_reachable_conditions:
+                    frames_reachable_conditions.remove(condition_i)
+        for condition_i in range(len(items_filled_conditions)):
+            if items_filled_conditions[condition_i]:
+                if condition_i in items_reachable_conditions:
+                    items_reachable_conditions.remove(condition_i)
+
+        return frames_reachable_conditions, items_reachable_conditions 
+
+
+    def allFramesConnectedVerification(self, starting_exit=0):
+        unlocked_exits = [0]*self.nExits
+        unlocked_exits[starting_exit] = 1
+        frames_filled_conditions = [1]*len(self.frames.conditions_types) #means that we already put all the bridges and hooks to reach the exits
+        for step in range(50): #max number or loops
+            #exits links
+            unlocked_exits, boss_reached = self.exits.getUnlockedExits(unlocked_exits)
+            #internal frame links
+            unlocked_exits = self.frames.getUnlockedExits(unlocked_exits, frames_filled_conditions)
+        return all(unlocked_exits)

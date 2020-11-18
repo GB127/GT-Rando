@@ -9,6 +9,44 @@ class Items:
         self.frames = self.getCorrespondingFramesFromData(data,world_i)
         self.nItems = len(self.offsets)
         self.names = self.getNames()
+        self.associated_exits, self.associated_conditions, self.conditions_types = self.getAssociatedExits(world_i)
+
+
+    def getAssociatedExits(self, world_i):
+        if world_i == 0:
+            associated_exits = [2,5,7,10,12,19,24,28,30,31]
+            associated_conditions = [0,0,0,0,0,0,0,0,0,0]
+            conditions_types = [0]
+        elif world_i == 1:
+            associated_exits = [7,9,9,13,14,14,16,16,22,24,24,25]
+            associated_conditions = [0,0,0,0,1,1,2,2,0,0,0,0] #index of associated condition to reach the item
+            conditions_types = [0,1,2]#type of condition: 0: no condition, 1: hook+bridge, 2: hook, 3:bridge, 4: door grey key external, 5: door boss key, 6:double hook
+        elif world_i == 2:
+            associated_exits = [6,8,10,10,10,13,13,22,22,22,26,32,35,37,39,44,44,47,47,48,52]
+            associated_conditions = [0,0,0,0,0,0,0,0,0,1,0,0,0,0,2,0,0,0,0,0,0] #index of associated condition to reach the item
+            conditions_types = [0,3,2]
+        elif world_i == 3:
+            associated_exits = [8,8,23,39,42]
+            associated_conditions = [0,0,0,0,0] #index of associated condition to reach the item
+            conditions_types = [0]
+        elif world_i == 4:
+            associated_exits = [3,13,13,17,17,24,23,29,29,29,30,33,33,34,36,42,48,48]
+            associated_conditions = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] #index of associated condition to reach the item
+            conditions_types = [0]
+        return associated_exits, associated_conditions, conditions_types
+
+    def getUnlockedItems(self, unlocked_exits, filled_conditions):
+        unlocked_items = [0]*self.nItems
+        for source_i in range(len(unlocked_exits)):
+            if unlocked_exits[source_i]:
+                for item_i in range(len(self.associated_exits)):
+                    associated_exit = self.associated_exits[item_i]
+                    associated_condition = self.associated_conditions[item_i]
+                    if associated_exit == source_i:
+                        if filled_conditions[associated_condition]:
+                            unlocked_items[item_i] = 1
+
+        return unlocked_items
 
     def getNames(self):
         # GB : Petite suggestion de code.

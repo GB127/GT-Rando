@@ -321,6 +321,42 @@ class GT(ROM):
             Worlds_passwords = [World_1_pass, World_2_pass, World_3_pass, World_4_pass]
             check = all([1 == Worlds_passwords.count(x) for x in Worlds_passwords])
 
+    def exits_and_items_randomizer_with_verification(self, fix_boss_exit=True, fix_locked_doors=True, keep_direction=True, pair_exits=True, only_switch_positions=True):
+        max_iter = 5000
+        for world_i, this_world in enumerate(self.all_worlds):
+            for i in range(100):
+                for j in range(max_iter):#exits and items randomization
+                    this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
+                    this_world.items.randomize(only_switch_positions)
+                    unlocked_exits, unlocked_items, boss_reached = this_world.feasibleWorldVerification(starting_exit=0)
+                    if (all(unlocked_exits) and all(unlocked_items) and boss_reached): break
+                    
+                if j<(max_iter-1):
+                    print('Found a feasible configuration after',j,'iterations. Calculating feasibility ratio...')
+
+                    feasibility_results = []#shows how many times we do not get stuck if we play randomly
+                    for m in range(1000):
+                        unlocked_exits, unlocked_items, boss_reached = this_world.feasibleWorldVerification(starting_exit=0)
+                        feasibility_results.append((all(unlocked_exits) and all(unlocked_items) and boss_reached))
+                    
+                    print(sum(feasibility_results)/len(feasibility_results))
+                    if(sum(feasibility_results)/len(feasibility_results))>0.9: 
+                        #assign new exits and items to the ROM
+                        for i in range(this_world.exits.nExits):
+                            self[this_world.exits.offsets[i][0]] = this_world.exits.destination_frames[i]
+                            self[this_world.exits.offsets[i][4]] = this_world.exits.destination_Xpos[i]
+                            self[this_world.exits.offsets[i][5]] = this_world.exits.destination_Ypos[i]
+                        for i in range(this_world.items.nItems):
+                            self[this_world.items.offsets[i]] = this_world.items.values[i]
+                        print('Assigned new exits and items to world',world_i)
+                        break
+                else: 
+                    print('Was not able to find a feasible configuration with these settings for this world')
+                    break
+                
+
+            
+
     def exits_randomizer(self, fix_boss_exit=True, fix_locked_doors=True, keep_direction=True, pair_exits=True):
         # create world objects
         for this_world in self.all_worlds:

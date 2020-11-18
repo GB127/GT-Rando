@@ -22,7 +22,7 @@ class Frames:
                     self.exit_to_exits.append(deepcopy(self.exits[frame_i])) #exit_i unlocks these exits
                     self.exit_to_items.append(deepcopy(self.items[frame_i])) #exit_i unlocks these items
 
-        isolated_exits = [[19,24],[],[17,19,28,31],[32,33,34,35],[9,10,23,24,36,37,45,46]] 
+        isolated_exits = [[19,24],[],[17,19,28,31],[32,33,34,35,45],[9,10,24,26,36,37,45,46]] 
         for exit_i in range(self.nExits):
             for isolated_exit in isolated_exits[world_i]:
                 if exit_i == isolated_exit:
@@ -30,19 +30,70 @@ class Frames:
                 elif isolated_exit in self.exit_to_exits[exit_i]:
                     self.exit_to_exits[exit_i].remove(isolated_exit)
 
-        one_ways = [[],[],[(28,31)],[(33,32),(35,34)],[(10,9),(37,36),(23,24),(4,45,46)]]# world, start, destination
+        one_ways = [[],[],[(28,31)],[(33,32),(35,34),(46,45),(45,46)],[(10,9),(23,24),(24,23),(26,27),(28,26),(26,28),(37,36),(45,46)]]# start, destination
         for one_way in one_ways[world_i]:
             self.exit_to_exits[one_way[0]].append(one_way[1])
 
-        self.original_exit_to_exits = deepcopy(self.exit_to_exits) #this assumes that you always have access to any item
+        self.associated_conditions_i, self.conditions_types = self.getAssociatedConditions(world_i)
 
-        exits_blocked_by_bridge = [[17],[],[23],[],[]]
-        exits_blocked_by_door = [[11,21],[15000],[7000,27000,30000,43000,47000,40],[],[26000]]
-        exits_blocked_by_bossdoor = [[29],[27],[53],[],[41,42]]
-        exits_blocked_by_hook = [[],[],[48],[],[4,18,20,26]]
-        exits_blocked_by_double_hook = [[],[25],[],[],[44]]
-
-
+    def getAssociatedConditions(self, world_i):
+        if world_i == 0:
+            conditions = [(3,[17,18]),(5,[29]), (7,[11,21])]
+            #type of condition: 0: no condition, 1: hook+bridge, 2: hook, 3:bridge, 4: door grey key external, 5: door boss key, 6:double hook, 7: door grey key with no going back!, 8: hook+key
+        elif world_i == 1:
+            conditions = [(5,[27]),(6,[25,26]),(7,[15]),(7,[19,24])]
+        elif world_i == 2:
+            conditions = [(3,[22,23]),(4,[39,40]),(5,[53]),(2,[47,48]),(7,[7]),(7,[27]),(7,[30]),(7,[43]),(7,[47])]
+        elif world_i == 3:
+            conditions = [(2,[45,46])] 
+            #45 and 46 are treated as one ways towards eachother previously in order to exclude 47 here
+        elif world_i == 4:
+            conditions = [(2,[3,4]),(2,[18,19]),(2,[19,20]),(2,[23,24]),(5,[41,42]),(6,[43,44]),(8,[26,28])]
+            #23 and 24 are treated as one ways towards eachother previously in order to exclude 25 here
+            #26 and 28 are treated as one ways towards eachother previously in order to exclude 27 here
         
+        associated_conditions_i = []
+        conditions_types = [0]
+        for this_exit_to_exits in self.exit_to_exits:
+            associated_conditions_i.append([0]*len(this_exit_to_exits))
 
-    
+        for condition in conditions:
+            conditions_types.append(condition[0])
+            condition_i = len(conditions_types)-1
+            for source_i in range(len(self.exit_to_exits)):
+                for i in range(len(self.exit_to_exits[source_i])):
+                    destination_i = self.exit_to_exits[source_i][i]
+
+                    if condition[0] == 7: # NO going back! can cause issues if you arrive there without a key. we should fix this
+                        if destination_i in condition[1]:
+                            associated_conditions_i[source_i][i] = condition_i
+
+                    elif len(condition[1]) == 1:
+                        if destination_i==condition[1][0]:
+                            associated_conditions_i[source_i][i] = condition_i
+                    elif len(condition[1]) == 2:
+                        if destination_i == source_i: pass
+                        elif ((source_i in condition[1]) and (destination_i in condition[1])):
+                            associated_conditions_i[source_i][i] = condition_i
+
+        return associated_conditions_i, conditions_types
+
+    def getUnlockedExits(self, currently_unlocked, filled_conditions = []):
+        new_unlocks = [0]*self.nExits
+        if filled_conditions == []:
+            for source_i in range(self.nExits):
+                if currently_unlocked[source_i]:
+                    new_unlocks[source_i] = 1
+                    for destination_i in self.exit_to_exits[source_i]:
+                        new_unlocks[destination_i] = 1
+        else:
+            for source_i in range(self.nExits):
+                if currently_unlocked[source_i]:
+                    new_unlocks[source_i] = 1
+                    for i in range(len(self.exit_to_exits[source_i])):
+                        destination_i = self.exit_to_exits[source_i][i]
+                        associated_condition_i = self.associated_conditions_i[source_i][i]
+                        if filled_conditions[associated_condition_i]:
+                            new_unlocks[destination_i] = 1
+
+        return new_unlocks
