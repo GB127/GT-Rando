@@ -169,6 +169,13 @@ if __name__ == "__main__":
         game.world_select()
         startTime = datetime.now()
 
+        # Here is a code that renders hookshot unusable in 0-15. 
+        print(bin(game[0x1F3F0]))  # here is the vanilla value.
+        game[0x1F3F0] += 0x80
+        print(bin(game[0x1F3F0]))  # Watch the only difference.
+        # Go search a hookshot on 0-1
+        # to 0-15 from 0-0
+
         with open("debug.smc", "wb") as newgame:
             print("Time taken to edit files : ", datetime.now() - startTime)
             print(f"Testing case have been created! {datetime.now()}")

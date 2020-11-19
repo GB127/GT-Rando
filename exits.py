@@ -3,7 +3,6 @@ from copy import deepcopy
 
 class Exits:
     def __init__(self, data, world_i):
-        
         all_nFrames = [16, 16, 26, 30, 26]
         all_boss_exit = [29,27,53,49,49]
         all_locked_doors = [[11,21],[19,24,25,28],[0,3,28,33],[45,50],[]]
@@ -64,6 +63,16 @@ class Exits:
                         If bit 6 is set (0x20) then it is a vertical line, otherwise it is horizontal or 2x2
                         If bit 6 is not set and bits 1-4 are 0x0F, then the exit is 2x2 (x,y) (x+1,y) (x,y+1) and (x+1,y+1)
                         For horizontal or vertical lines, bits 1-4 specify the length and bit 5 says if it is 1 or 2 tiles thick.
+
+                        *This is also used for placing player's level (tracked with dynamic offset 0x10C).
+                        In the code, it checks for the very last bit (AND 0x80), then "drags it down" up to
+                        the desired value. If the 8th bit is set, then we have a surelevated level such as 0-4.
+                        If the 8th bit is set.
+                            code used to get value for 10C:
+                                [4] AND 0x80
+                                ASL
+                                ROL
+
                     4 : X position on the destination screen to place Max and/or Goofy
                     5 : Y position on the destination screen to place Max and/or Goofy
 
@@ -79,15 +88,8 @@ class Exits:
         # Step 1 : Trouver la base.
         base = data[0x01F303 + world_i]
         for frame_i in range(nFrames):
-        # J'ai mis ces lignes en commentaires, car ces lignes forcent l'itération. 
-        # Je pense que l'itération serait beaucoup mieux
-        # Si elle était faite en dehors de la fonction.
-
-        # Comme ça, ça nous permet d'aller chercher spécifiquement les exits à UN endroit souhaité.
-
-                # On doit trouver l'endroit du count.
-
-                # On doit aller chercher le GROS byte. et pour cela, on doit avoir un "adjust" qui est dépendant du frame.
+            # On doit trouver l'endroit du count.
+            # On doit aller chercher le GROS byte. et pour cela, on doit avoir un "adjust" qui est dépendant du frame.
             adjust = 0x1F303 + base + 2*frame_i
 
             #Lecture du Gros Byte. On doit lire le byte présent et le byte suivant et les combiner ensemble.
@@ -108,7 +110,6 @@ class Exits:
 
             for i in range(count):
                 exits_offsets.append(list(temp4 + x + 6 * i + 1 for x in range(6)))  # Voici les offsets.
-                # Il devrait être possible d'utiliser Exit() ici.
                 exits_values.append([data[temp4 + x + 6 * i + 1] for x in range(6)])  # Voici les valeurs retrouvées dans chaque offsets.
                 exits_frames.append(frame_i)
                 """
@@ -119,6 +120,7 @@ class Exits:
                         If bit 6 is set (0x20) then it is a vertical line, otherwise it is horizontal or 2x2
                         If bit 6 is not set and bits 1-4 are 0x0F, then the exit is 2x2 (x,y) (x+1,y) (x,y+1) and (x+1,y+1)
                         For horizontal or vertical lines, bits 1-4 specify the length and bit 5 says if it is 1 or 2 tiles thick.
+                        Also if there is elevation (or something. Tu peux réécrire le passage)
                     4 : X position on the destination screen to place Max and/or Goofy
                     5 : Y position on the destination screen to place Max and/or Goofy
                 """

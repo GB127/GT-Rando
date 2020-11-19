@@ -77,7 +77,6 @@ def getter_exits(data, world_i, Frames=[]):
 
         for i in range(count):
             exits_offsets.append(list(temp4 + x + 6 * i + 1 for x in range(6)))  # Voici les offsets.
-            # Il devrait être possible d'utiliser Exit() ici.
             exits_values.append([data[temp4 + x + 6 * i + 1] for x in range(6)])  # Voici les valeurs retrouvées dans chaque offsets.
             exits_frames.append(frame_i)
             """
@@ -88,6 +87,16 @@ def getter_exits(data, world_i, Frames=[]):
                     If bit 6 is set (0x20) then it is a vertical line, otherwise it is horizontal or 2x2
                     If bit 6 is not set and bits 1-4 are 0x0F, then the exit is 2x2 (x,y) (x+1,y) (x,y+1) and (x+1,y+1)
                     For horizontal or vertical lines, bits 1-4 specify the length and bit 5 says if it is 1 or 2 tiles thick.
+
+                    *This is also used for placing player's level (tracked with dynamic offset 0x10C).
+                    In the code, it checks for the very last bit (AND 0x80), then "drags it down" up to
+                    the desired value. If the 8th bit is set, then we have a surelevated level such as 0-4.
+                    If the 8th bit is set.
+                        code used to get value for 10C:
+                            [4] AND 0x80
+                            ASL
+                            ROL
+
                 4 : X position on the destination screen to place Max and/or Goofy
                 5 : Y position on the destination screen to place Max and/or Goofy
             """
