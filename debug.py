@@ -171,7 +171,7 @@ if __name__ == "__main__":
 
         # Here is a code that renders hookshot unusable in 0-15. 
         print(bin(game[0x1F3F0]))  # here is the vanilla value.
-        game[0x1F3F0] += 0x80
+        game[0x1F3F0] += 0x80  # Should use the correct "or" instead. But you get the idea.
         print(bin(game[0x1F3F0]))  # Watch the only difference.
         # Go search a hookshot on 0-1
         # to 0-15 from 0-0
