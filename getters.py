@@ -115,3 +115,14 @@ def getter_passwords(world):
     if world == "all":
         return list(range(0x1C67F, 0x1C693))
     return [x for x in range(0x1C67F + 5*(world -1), 0x1C684 + 5*(world-1))]
+
+
+
+def getter_initial_frame_coordinates(data, world):
+    World = world * 2 * 2
+    offset_x_goofy = 0x1867B + World
+    offset_y_goofy = 0x1867B + World + 1
+    offset_x_max = 0x1867B + World + 2
+    offset_y_max = 0x1867B + World + 3
+
+    return [offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max]

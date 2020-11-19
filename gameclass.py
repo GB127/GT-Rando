@@ -174,6 +174,13 @@ class GT(ROM):
         self[0x1FFAA] = 0
         self[0x1FFAB] = 0
 
+
+
+        # Fix a LDA B7 that should always load 0 and make it a constant instead.
+        self[0x2766] = 0xA9
+        self[0x2767] = 0x0
+
+
     def dark_randomizer(self, count="vanilla"):
         for offset in range(0x1FF35, 0x1FFA7):  # Remove all dark rooms
             self[offset] = self[offset] & 1
