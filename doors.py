@@ -1,6 +1,12 @@
 from debug import debug
 from copy import deepcopy
 
+def getDoorsFromDaya(self, data, world_i):
+    doors_offsets = []
+    doors_values = []
+    doors_frames = []
+    return doors_offsets, doors_values, doors_frames
+
 def getters_doors(data, world, frame):  #82C329
     """ À l'initialisation du monde, les offsets 1144 et 1145 sont settés à 0.
         """
