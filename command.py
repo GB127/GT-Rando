@@ -28,11 +28,11 @@ def getoptions():
     # Exits
     parser.add_argument("-E", "--exits", action="store_true",
     help="Randomize the exits", dest="Rexits")
-    parser.add_argument("-B", "--bossE", action="store_true",
+    parser.add_argument("-B", "--bossE", action="store_false",
     help="Include the boss exits in the exits pool", dest="Rexits_B")
-    parser.add_argument("-X", "--xexits", action="store_true",
+    parser.add_argument("-X", "--xexits", action="store_false",
     help="Do not keep directions", dest="Rexits_X")
-    parser.add_argument("-2", "--pairs", action="store_true",
+    parser.add_argument("-2", "--pairs", action="store_false",
     help="Do not pair exits", dest="Rexits_2")
 
 
@@ -40,7 +40,7 @@ def getoptions():
     # This is done!
     parser.add_argument("-I", "--items", action="store_true",
     help="Randomize the items, each world keep their items pool", dest="Ritems")
-    parser.add_argument("-Q", "--Ritems", action="store_true",
+    parser.add_argument("-Q", "--Ritems", action="store_false",
     help="Completely random items", dest="Ritems_random")
     parser.add_argument("-c", "--candle", action="store_true",
     help="Make sure you have a candle in a world that has at least one dark room", dest="dark_candle")
@@ -60,12 +60,16 @@ def getoptions():
 def analyse_options(options):
     if options.Ritems_random: options.Ritems = True
 
-    # Pour ceci, il y aura des changements à faire. J'ai tout changé pour que tout soit store_true 
+    # Pour ceci, il y aura des changements à faire. 
     # Mais l'idée est là...
-    if any([options.Rexits_B, options.Rexits_X, options.Rexits_2]) and (options.Rexits is False):
-        raise BaseException("Exit randomizer flag must be used if blablabla")
-    if options.Ritems_random and (options.Ritems is False):
-        raise BaseException("Completely random items must be used with The random items flag (I)")
+
+    #if any([options.Rexits_B, options.Rexits_X, options.Rexits_2]) and (options.Rexits is False):
+    #    raise BaseException("Exit randomizer flag must be used if blablabla")
+    #if options.Ritems_random and (options.Ritems is False):
+    #    raise BaseException("Completely random items must be used with The random items flag (I)")
+
+
+    # Ci-desssous devrait fonctionner.
     if options.Rdark and options.RdarkV:
         raise BaseException("Can't have S and s set at the same time.")
     if options.Ricy and options.RicyV:
