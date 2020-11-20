@@ -42,7 +42,7 @@ def getoptions():
     help="Completely random items. You might have to shovel your way through the dark rooms ;)", dest="Ritems_random")
 
     # Seed
-    parser.add_argument("-s","--seed", action="store", help="Seed for the randomization",
+    parser.add_argument("--seed", action="store", help="Seed for the randomization",
                         dest="seed", default=str(random.random())[2:], metavar="", type=str)
 
     # Password cheat
