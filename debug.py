@@ -153,26 +153,20 @@ class debug(GT):
                 (4, self[0x1FFAB])]
 
 info = infos()
+
+def set_seed(seed=None):
+    if seed is None: test = str(random.random())[3:6]  # Au hasard. Restreint le nombre de chiffres
+    print(seed)
+    random.seed(seed)
+
+
+
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as original:
-        test = str(random.random())[3:6]  # Au hasard. Restreint le nombre de chiffres
-        #test = "38"  # Si tu veux tester un seed précis.
-        print(test)
-        random.seed(test)
-
-
-
         startTime = datetime.now()
         game = debug(original.read())
         game.world_select()
-        game.quick_bosses()
 
-
-        game.show_map(0)
-        game.show_map(1)
-        game.show_map(2)
-        game.show_map(3)
-        game.show_map(4)
 
 
         with open("debug.smc", "wb") as newgame:
