@@ -5,6 +5,7 @@ from infos import *  # This is for the tools in infos.
 from getters import *
 from exits import *
 from world import *
+from doors import *
 from datetime import datetime
 
 
@@ -165,9 +166,8 @@ class debug(GT):
 info = infos()
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as original:
-        # test = str(random.random())[3:5]  # Au hasard. Restreint le nombre de chiffres
-        test = "38"  # Si tu veux tester un seed précis.
-        # 38 est un seed précis que j,ai identifié être problématique.
+        test = str(random.random())[3:6]  # Au hasard. Restreint le nombre de chiffres
+        #test = "38"  # Si tu veux tester un seed précis.
         print(test)
         random.seed(test)
 
@@ -177,8 +177,17 @@ if __name__ == "__main__":
         game = debug(original.read())
         game.world_select()
         game.quick_bosses()
-        game.firstframe_randomizer()
-        game.exits_and_items_randomizer_with_verification()
+        #game.firstframe_randomizer()
+        #game.exits_and_items_randomizer_with_verification()
+
+        game.show_map(0)
+        print(getters_doors(game.data, 0, 4))  # Pas de porte barrées
+        print(getters_doors(game.data, 0, 5))  # a une porte barrée grise
+
+
+
+
+
 
         with open("debug.smc", "wb") as newgame:
             print("Time taken to edit files : ", datetime.now() - startTime)
