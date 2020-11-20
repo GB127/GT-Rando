@@ -168,7 +168,8 @@ if __name__ == "__main__":
         game = debug(original.read())
         game.world_select()
         game.quick_bosses()
-        game.early_bosses()
+        game.firstframe_randomizer()
+        game.exits_and_items_randomizer_with_verification()
         startTime = datetime.now()
         # New getter : Now you can get the starting cooridnates 
         # in initial frame and change them.

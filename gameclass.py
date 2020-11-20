@@ -218,10 +218,18 @@ class GT(ROM):
 
 
     def firstframe_randomizer(self):
-        #TODO : Remove boss frames
-        all_nFrames = [15, 15, 25, 29, 25]  # NOTE : The values are -1 since 0 counts. And randint includes b
-        for world, offset in enumerate(range(0x1FFA7, 0x1FFAC)):
-            self[offset] = random.randint(0,all_nFrames[world])
+        for world_i, world_offset in enumerate(range(0x1FFA7, 0x1FFAC)):
+            this_world = self.all_worlds[world_i]
+            boss_exit = this_world.exits.boss_exit
+            all_exits = list(range(this_world.nExits))
+            all_exits.pop(boss_exit)
+            starting_exit = random.choice(all_exits)
+            starting_frame = this_world.exits.source_frames[starting_exit]
+            self[world_offset] = starting_frame
+            initial_frame_coordinates_offsets, initial_frame_coordinates = this_world.set_starting_exit(starting_exit)
+            print(initial_frame_coordinates)
+            for i, pos_offset in enumerate(initial_frame_coordinates_offsets):
+                self[pos_offset] = initial_frame_coordinates[i]
 
 
 
@@ -331,15 +339,15 @@ class GT(ROM):
                 for j in range(max_iter):#exits and items randomization
                     this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
                     this_world.items.randomize(only_switch_positions)
-                    unlocked_exits, unlocked_items, boss_reached = this_world.feasibleWorldVerification(starting_exit=0)
+                    unlocked_exits, unlocked_items, boss_reached = this_world.feasibleWorldVerification()
                     if (all(unlocked_exits) and all(unlocked_items) and boss_reached): break
                     
                 if j<(max_iter-1):
                     print('Found a feasible configuration after',j,'iterations. Calculating feasibility ratio...')
 
                     feasibility_results = []#shows how many times we do not get stuck if we play randomly
-                    for m in range(1000):
-                        unlocked_exits, unlocked_items, boss_reached = this_world.feasibleWorldVerification(starting_exit=0)
+                    for m in range(50):
+                        unlocked_exits, unlocked_items, boss_reached = this_world.feasibleWorldVerification()
                         feasibility_results.append((all(unlocked_exits) and all(unlocked_items) and boss_reached))
                     
                     print(sum(feasibility_results)/len(feasibility_results))
@@ -349,6 +357,10 @@ class GT(ROM):
                             self[this_world.exits.offsets[i][0]] = this_world.exits.destination_frames[i]
                             self[this_world.exits.offsets[i][4]] = this_world.exits.destination_Xpos[i]
                             self[this_world.exits.offsets[i][5]] = this_world.exits.destination_Ypos[i]
+                            #hook bug fix
+                            if self[this_world.exits.offsets[i][3]]>=2**7:self[this_world.exits.offsets[i][3]] = self[this_world.exits.offsets[i][3]]-2**7
+                            self[this_world.exits.offsets[i][3]] = self[this_world.exits.offsets[i][3]]+this_world.exits.destination_hookshotHeightAtArrival[i]*2**7
+
                         for i in range(this_world.items.nItems):
                             self[this_world.items.offsets[i]] = this_world.items.values[i]
                         print('Assigned new exits and items to world',world_i)
@@ -368,6 +380,10 @@ class GT(ROM):
                 self[this_world.exits.offsets[i][0]] = this_world.exits.destination_frames[i]
                 self[this_world.exits.offsets[i][4]] = this_world.exits.destination_Xpos[i]
                 self[this_world.exits.offsets[i][5]] = this_world.exits.destination_Ypos[i]
+                #hook bug fix
+                if self[this_world.exits.offsets[i][3]]>=2**7:self[this_world.exits.offsets[i][3]] = self[this_world.exits.offsets[i][3]]-2**7
+                self[this_world.exits.offsets[i][3]] = self[this_world.exits.offsets[i][3]]+this_world.exits.destination_hookshotHeightAtArrival[i]*2**7
+
             #this_world.showMap()
 
     def items_randomizer(self, only_switch_positions=True):
@@ -382,4 +398,7 @@ class GT(ROM):
         self[this_world.exits.offsets[source_exit][0]] = this_world.exits.destination_frames[source_exit]
         self[this_world.exits.offsets[source_exit][4]] = this_world.exits.destination_Xpos[source_exit]
         self[this_world.exits.offsets[source_exit][5]] = this_world.exits.destination_Ypos[source_exit]
-        
+        #hook bug fix
+        if self[this_world.exits.offsets[i][3]]>=2**7:self[this_world.exits.offsets[i][3]] = self[this_world.exits.offsets[i][3]]-2**7
+        self[this_world.exits.offsets[i][3]] = self[this_world.exits.offsets[i][3]]+this_world.exits.destination_hookshotHeightAtArrival[i]*2**7
+

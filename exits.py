@@ -14,6 +14,7 @@ class Exits:
         self.offsets,values,self.source_frames = self.getExitsFromData(data,world_i,self.nFrames)
         self.nExits = len(values)
         self.destination_frames = [value[0] for value in values]
+        self.destination_hookshotHeightAtArrival = [value[3]>=2**7 for value in values]
         self.source_raw_types = [value[3] for value in values]
         self.destination_Xpos = [value[4] for value in values]
         self.destination_Ypos = [value[5] for value in values]
@@ -25,6 +26,7 @@ class Exits:
         
         # save original values
         self.original_destination_frames = deepcopy(self.destination_frames)
+        self.original_destination_hookshotHeightAtArrival = deepcopy(self.destination_hookshotHeightAtArrival)
         self.original_destination_Xpos = deepcopy(self.destination_Xpos)
         self.original_destination_Ypos = deepcopy(self.destination_Ypos)
         self.original_destination_types = deepcopy(self.destination_types)
@@ -292,6 +294,7 @@ class Exits:
 
         #assign elements in new order
         self.destination_frames = [self.original_destination_frames[i] for i in new_order]
+        self.destination_hookshotHeightAtArrival = [self.original_destination_hookshotHeightAtArrival[i] for i in new_order]
         self.destination_Xpos = [self.original_destination_Xpos[i] for i in new_order]
         self.destination_Ypos = [self.original_destination_Ypos[i] for i in new_order]
         self.destination_types = [self.original_destination_types[i] for i in new_order]
@@ -303,6 +306,7 @@ class Exits:
                 destination_exit = None
             if self.original_destination_exits[i] == destination_exit:
                 self.destination_frames[source_exit] = self.original_destination_frames[i]
+                self.destination_hookshotHeightAtArrival[source_exit] = self.original_destination_hookshotHeightAtArrival[i]
                 self.destination_Xpos[source_exit] = self.original_destination_Xpos[i]
                 self.destination_Ypos[source_exit] = self.original_destination_Ypos[i]
                 self.destination_types[source_exit] = self.original_destination_types[i]

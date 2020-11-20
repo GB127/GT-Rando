@@ -10,7 +10,7 @@ from items import *
 from frames import *
 
 class World():
-    def __init__(self, data, world_i):
+    def __init__(self, data, world_i, starting_exit=0):
         assert isinstance(data, bytearray), "Must be a bytearray"
         assert 0 <= world_i <= 4, "Must be in range 0-4."
 
@@ -24,7 +24,29 @@ class World():
         self.items = Items(data, world_i)
         self.nItems = len(self.items.offsets)
         self.frames = Frames(data, world_i, self.exits.source_frames, self.items.frames)
+
+        self.starting_exit = starting_exit
+        self.initial_frame_coordinates_offsets = self.get_initial_frame_coordinates_offsets_from_data()
+
         print('World ',world_i, ' created!')
+
+    def set_starting_exit(self, starting_exit):
+        self.starting_exit = starting_exit
+        [offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max] = self.initial_frame_coordinates_offsets
+        if starting_exit == 0:
+            return [offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max], [self.data[offset_x_goofy], self.data[offset_y_goofy], self.data[offset_x_max], self.data[offset_y_max]]
+        else:
+            return [offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max], [self.exits.source_Xpos[starting_exit], self.exits.source_Ypos[starting_exit], self.exits.source_Xpos[starting_exit], self.exits.source_Ypos[starting_exit]]
+
+
+    def get_initial_frame_coordinates_offsets_from_data(self):
+        world_offset = self.world_i * 2 * 2
+        offset_x_goofy = 0x1867B + world_offset
+        offset_y_goofy = 0x1867B + world_offset + 1
+        offset_x_max = 0x1867B + world_offset + 2
+        offset_y_max = 0x1867B + world_offset + 3
+
+        return [offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max]
 
     def showMap(self, show_exits=True, show_items=True):
         #map
@@ -78,9 +100,9 @@ class World():
         plt.show()
         return ''
 
-    def feasibleWorldVerification(self, starting_exit=0):
+    def feasibleWorldVerification(self):
         unlocked_exits = [0]*self.nExits
-        unlocked_exits[starting_exit] = 1 #means that we have access to this exit at the start
+        unlocked_exits[self.starting_exit] = 1 #means that we have access to this exit at the start
         used_items = [0]*self.nItems
         items_filled_conditions = [0]*len(self.items.conditions_types) #means that we already put none of the the bridges and hooks to reach the items
         items_filled_conditions[0] = 1 # element 0 should always be set to 1 in this list
