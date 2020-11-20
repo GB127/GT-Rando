@@ -196,6 +196,16 @@ class GT(ROM):
             for no in range(count):
                 self[offsets[no]] += 2
 
+    def world_select(self):
+        # Put a banana on the box of the world you want to go. Example  
+            # Banana on the 3rd box = World 2 (3rd world of the game)
+        # Cherry for all the rest of the boxes
+        self.setmulti(0x1C67F, 0x1C692, 0x0)
+        self[0x1c680] = 0x1
+        self[0x1c686] = 0x1
+        self[0x1c68c] = 0x1
+        self[0x1c692] = 0x1
+
     def ice_randomizer(self, count="vanilla"):
         for offset in range(0x1FF35, 0x1FFA7):  # Remove all ice rooms
             self[offset] = self[offset] & 2
