@@ -185,16 +185,15 @@ class GT(ROM):
         for offset in range(0x1FF35, 0x1FFA7):  # Remove all dark rooms
             self[offset] = self[offset] & 1
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
+
+        for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
+            offsets.pop(offsets.index(self.get_darkice_indice(world, boss_frame)))
         random.shuffle(offsets)
         if count == "vanilla":
             for no in range(6):
                 self[offsets[no]] += 2
         if count == "random":
-            for no in range(random.randint(0,114)):
-                self[offsets[no]] += 2
-        elif isinstance(count, int):
-            for no in range(count):
-                self[offsets[no]] += 2
+            pass  # Will think about it.
 
     def world_select(self):
         # Put a banana on the box of the world you want to go. Example  
