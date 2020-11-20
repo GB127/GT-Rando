@@ -11,9 +11,10 @@ if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as original:  # We will have to change this to not force an exact filename.
         randogame = GT(original.read())
         randogame.add_credits() # Will be gone since it the function will be included in the init directly.
-
-        if options.Rpass:
-            randogame.password_randomizer()
+        randogame.password_randomizer()
+        if options.Wselect:
+            random.choice(range(2))  # To increment the randomization to prevent cheating.
+            randogame.world_select()
         if options.Rfirst:
             pass # Random First frame!
         if options.Ricy or options.RicyV:
