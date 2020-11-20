@@ -6,8 +6,7 @@ def getoptions():
 
 
     # Dark rooms
-        # S for shadow, without shadow there is no dark!
-        # Logic : big S => May be higher than 6, thus capital letter
+        # Logic : big D => May be higher than 6, thus capital letter
     parser.add_argument("-d", "--dark", action="store_true",
     help="Randomize which rooms are dark, same amount of dark rooms as vanilla (6)", dest="Rdark")
     parser.add_argument("-D", "--verydark", action="store_true",
@@ -47,7 +46,7 @@ def getoptions():
 
     # Password cheat
     parser.add_argument("--worldselect", action="store_true",
-    help="Allows to select the world of your choice with a banana...", dest="Dselect")
+    help="Allows to select the world of your choice with a banana...", dest="Wselect")
     
     options = parser.parse_args()
     analyse_options(options)
@@ -65,10 +64,9 @@ def analyse_options(options):
         raise BaseException("Completely random items must be used with The items randomizer (I)")
 
 
-    # Ci-desssous devrait fonctionner.
-    if options.Rdark and options.RdarkV:
-        raise BaseException("Can't have S and s set at the same time.")
-    if options.Ricy and options.RicyV:
+    if options.Rdark and options.Rverydark:
+        raise BaseException("Can't have D and d set at the same time.")
+    if options.Ricy and options.Rveryicy:
         raise BaseException("Can't have W and w set at the same time.")
 
 
