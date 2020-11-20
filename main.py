@@ -26,7 +26,7 @@ if __name__ == "__main__":
             pass  # Random dark rooms!
         if options.Rfirst:
             pass  # Random first frame!
-        if options.Exits:
+        if options.RExits:
             pass  # Random exits! using the other options, see command.py
         if options.Items:
             pass
