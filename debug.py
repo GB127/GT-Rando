@@ -169,37 +169,8 @@ if __name__ == "__main__":
         game.world_select()
         game.quick_bosses()
         game.firstframe_randomizer()
-        game.exits_and_items_randomizer_with_verification()
         startTime = datetime.now()
-        # New getter : Now you can get the starting cooridnates 
-        # in initial frame and change them.
-        # Here is an example usage that randomize the very first world's
-        # starting coordinates.
 
-        # Proof of concept
-        # game.firstframe_randomizer()  # Randomize first frame
-        for world in range(5):  # Randomize starting coordinates for putting any values
-            test = getter_initial_frame_coordinates(game.data, world)
-            for offset in test:
-                game[offset] = random.randint(0,255)
-
-        # Looks like I have disabled unintentionally the initial intro.
-        # I honestly don't mind.
-
-        # I have tested my modifications and I completed world 0 without crashing
-        # or softlocking the game.
-        #  still complete the game and reach credits.  
-
-
-
-        """
-        # Here is a code that renders hookshot unusable in 0-15. 
-        print(bin(game[0x1F3F0]))  # here is the vanilla value.
-        game[0x1F3F0] += 0x80  # Should use the correct "or" instead. But you get the idea.
-        print(bin(game[0x1F3F0]))  # Watch the only difference.
-        # Go search a hookshot on 0-1
-        # to 0-15 from 0-0
-        """ 
         with open("debug.smc", "wb") as newgame:
             #print("Time taken to edit files : ", datetime.now() - startTime)
             print(f"Testing case have been created! {datetime.now()}")
