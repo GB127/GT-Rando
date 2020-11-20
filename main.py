@@ -29,7 +29,7 @@ if __name__ == "__main__":
         if options.Rexits:
             pass  # Random exits! using the other options, see command.py
         if options.Ritems:
-            pass
+            pass  # Random items! using the other options, see command.py
 
         with open(f"{flags}_{options.seed}.smc", "wb") as newgame:
             newgame.write(randogame.data)
