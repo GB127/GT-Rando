@@ -165,14 +165,22 @@ class debug(GT):
 info = infos()
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as original:
+        # test = str(random.random())[3:5]  # Au hasard. Restreint le nombre de chiffres
+        test = "38"  # Si tu veux tester un seed précis.
+        # 38 est un seed précis que j,ai identifié être problématique.
+        print(test)
+        random.seed(test)
+
+
+
+        startTime = datetime.now()
         game = debug(original.read())
         game.world_select()
         game.quick_bosses()
         game.firstframe_randomizer()
         game.exits_and_items_randomizer_with_verification()
-        startTime = datetime.now()
 
         with open("debug.smc", "wb") as newgame:
-            #print("Time taken to edit files : ", datetime.now() - startTime)
+            print("Time taken to edit files : ", datetime.now() - startTime)
             print(f"Testing case have been created! {datetime.now()}")
             newgame.write(game.data)
