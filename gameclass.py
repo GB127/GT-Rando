@@ -51,7 +51,7 @@ class GT(ROM):
         self.modify_data_ice_dark()
         self.modify_data_starting_frame()
         self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
-
+        self.add_credits()
 
 
 
