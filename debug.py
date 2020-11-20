@@ -169,6 +169,7 @@ if __name__ == "__main__":
         game.world_select()
         game.quick_bosses()
         game.firstframe_randomizer()
+        game.exits_and_items_randomizer_with_verification()
         startTime = datetime.now()
 
         with open("debug.smc", "wb") as newgame:

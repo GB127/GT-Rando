@@ -227,7 +227,6 @@ class GT(ROM):
             starting_frame = this_world.exits.source_frames[starting_exit]
             self[world_offset] = starting_frame
             initial_frame_coordinates_offsets, initial_frame_coordinates = this_world.set_starting_exit(starting_exit)
-            print(initial_frame_coordinates)
             for i, pos_offset in enumerate(initial_frame_coordinates_offsets):
                 self[pos_offset] = initial_frame_coordinates[i]
 
