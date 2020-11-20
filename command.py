@@ -46,8 +46,8 @@ def getoptions():
                         dest="seed", default=str(random.random())[2:], metavar="", type=str)
 
     # Password cheat
-    parser.add_argument("-p","--disablepassword", action="store_false",
-    help="Allows to select the world of your choice with a banana...", dest="Dpass")
+    parser.add_argument("--worldselect", action="store_true",
+    help="Allows to select the world of your choice with a banana...", dest="Dselect")
     
     options = parser.parse_args()
     analyse_options(options)
