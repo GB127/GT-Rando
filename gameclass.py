@@ -220,13 +220,8 @@ class GT(ROM):
     def firstframe_randomizer(self):
         for world_i, world_offset in enumerate(range(0x1FFA7, 0x1FFAC)):
             this_world = self.all_worlds[world_i]
-            boss_exit = this_world.exits.boss_exit
-            all_exits = list(range(this_world.nExits))
-            all_exits.pop(boss_exit)
-            starting_exit = random.choice(all_exits)
-            starting_frame = this_world.exits.source_frames[starting_exit]
-            self[world_offset] = starting_frame
-            initial_frame_coordinates_offsets, initial_frame_coordinates = this_world.set_starting_exit(starting_exit)
+            initial_frame_coordinates_offsets, initial_frame_coordinates = this_world.randomize_firstframe()
+            self[this_world.starting_frame_offset] = this_world.starting_frame
             for i, pos_offset in enumerate(initial_frame_coordinates_offsets):
                 self[pos_offset] = initial_frame_coordinates[i]
 
@@ -338,6 +333,8 @@ class GT(ROM):
                 for j in range(max_iter):#exits and items randomization
                     this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
                     this_world.items.randomize(only_switch_positions)
+                    initial_frame_coordinates_offsets, initial_frame_coordinates = this_world.randomize_firstframe()
+                    #check feasability
                     unlocked_exits, unlocked_items, boss_reached = this_world.feasibleWorldVerification()
                     if (all(unlocked_exits) and all(unlocked_items) and boss_reached): break
                     
@@ -362,6 +359,12 @@ class GT(ROM):
 
                         for i in range(this_world.items.nItems):
                             self[this_world.items.offsets[i]] = this_world.items.values[i]
+
+                        #Assign starting frame and coordinates
+                        self[this_world.starting_frame_offset] = this_world.starting_frame
+                        for i, pos_offset in enumerate(initial_frame_coordinates_offsets):
+                            self[pos_offset] = initial_frame_coordinates[i]
+
                         print('Assigned new exits and items to world',world_i)
                         break
                 else: 

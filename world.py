@@ -15,6 +15,9 @@ class World():
         assert 0 <= world_i <= 4, "Must be in range 0-4."
 
         all_nFrames = [16, 16, 26, 30, 26]
+        starting_frame_offsets = list(range(0x1FFA7, 0x1FFAC))
+
+        self.starting_frame_offset = starting_frame_offsets[world_i]
         self.world_i = world_i
         self.data = data
         self.nFrames = all_nFrames[world_i]
@@ -29,6 +32,15 @@ class World():
         self.initial_frame_coordinates_offsets = self.get_initial_frame_coordinates_offsets_from_data()
 
         print('World ',world_i, ' created!')
+
+    def randomize_firstframe(self):
+        boss_exit = self.exits.boss_exit
+        all_exits = list(range(self.nExits))
+        all_exits.pop(boss_exit)
+        starting_exit = random.choice(all_exits)
+        self.starting_frame = self.exits.source_frames[starting_exit]
+        initial_frame_coordinates_offsets, initial_frame_coordinates = self.set_starting_exit(starting_exit)
+        return initial_frame_coordinates_offsets, initial_frame_coordinates
 
     def set_starting_exit(self, starting_exit):
         self.starting_exit = starting_exit
