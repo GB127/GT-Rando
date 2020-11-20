@@ -141,7 +141,7 @@ class debug(GT):
     def __setitem__(self,offset, value):
         if offset in self.freespace:
             self.used.append(offset)
-            self.freespace.pop(offset)
+            self.freespace.pop(self.freespace.index(offset))
         super().__setitem__(offset,value)
 
 
@@ -166,16 +166,13 @@ if __name__ == "__main__":
         game = debug(original.read())
         game.world_select()
         game.quick_bosses()
-        #game.firstframe_randomizer()
-        #game.exits_and_items_randomizer_with_verification()
+
 
         game.show_map(0)
-        print(getters_doors(game.data, 0, 4))  # Pas de porte barrées
-        print(getters_doors(game.data, 0, 5))  # a une porte barrée grise
-
-
-
-
+        game.show_map(1)
+        game.show_map(2)
+        game.show_map(3)
+        game.show_map(4)
 
 
         with open("debug.smc", "wb") as newgame:
