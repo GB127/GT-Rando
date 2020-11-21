@@ -50,13 +50,17 @@ class GT(ROM):
         super().__init__(data)
         self.modify_data_ice_dark()
         self.modify_data_starting_frame()
+        self.removeExitFromData(3,1,0)
+        self.removeExitFromData(1,15,0)
+        self.removeExitFromData(1,13,1)
+
         self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
         self.add_credits()
 
 
-    def removeExitFromData(self, world_i, frame, index):  # J'ai essayé d'être constant avec tes noms de fonctions. Feel free to rename!
+
+    def removeExitFromData(self, world_i, frame, index):
         data = self.data
-        
         # Step 1 : Trouver la base.
         base = data[0x01F303 + world_i]
 
@@ -87,16 +91,15 @@ class GT(ROM):
             values.append([data[temp4 + x + 6 * i + 1] for x in range(6)])  # Voici les valeurs retrouvées dans chaque offsets.
 
         data[temp4] -=1
-
-        print(values)  # For debugging. In the current code, only the 2nd index (1) is removed.
         
         if index == vanilla_count -1:  # On pourra ptet enlever les clauses de if/else.
             pass  # Pcq c'était déjà le dernier de la liste.
         else:  # On décale les valeurs.
             for i in range(index, vanilla_count-1):
-                print(offsets[i], values[i+1])  # ok
                 for no, offset in enumerate(offsets[i]):
                     data[offset] = values[i+1][no] # Should work
+
+
 
 
     def modify_data_ice_dark(self):
@@ -277,10 +280,6 @@ class GT(ROM):
                 self[pos_offset] = initial_frame_coordinates[i]
 
 
-
-
-
-
     def add_credits(self):
         """
             This function will add the credits of the contributors of this project
@@ -425,7 +424,6 @@ class GT(ROM):
                     break
                 
 
-            
 
     def exits_randomizer(self, fix_boss_exit=True, fix_locked_doors=True, keep_direction=True, pair_exits=True):
         # create world objects

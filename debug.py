@@ -152,7 +152,7 @@ class debug(GT):
                 (2, self[0x1FFA9]),
                 (3, self[0x1FFAA]),
                 (4, self[0x1FFAB])]
-    
+
     def testExitsFromData(self, world_i, vanilla_data):
         all_nFrames = [16, 16, 26, 30, 26]
         nFrames = all_nFrames[world_i]
@@ -175,32 +175,8 @@ if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as original:
         startTime = datetime.now()
         game = debug(original.read())
-        game.world_select()
-
-        
-        # sauvegarde data avant la modif
-        vanilla_data = deepcopy(game.data)
-        # applique ta modif
-
-        # Note : ces modifs iront direct dans le init quand tout sera clairé.
-        game.removeExitFromData(3,1,0)
-        game.removeExitFromData(1,15,0)
-        game.removeExitFromData(1,13,1)
-
-        #compare l'output de l'ancienne fonction sur les anciennes données avec l'output de la nouvelle fonction sur tes nouvelles données
-        print(game.testExitsFromData(0, vanilla_data))
-        print(game.testExitsFromData(1, vanilla_data))
-        print(game.testExitsFromData(2, vanilla_data))
-        print(game.testExitsFromData(3, vanilla_data))
-        print(game.testExitsFromData(4, vanilla_data))
-        
-
-
-
+        game.world_select()        
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
             # print(f"Testing case have been created! {datetime.now()}")
             newgame.write(game.data)
-            game.show_map(3)
-            # If we look at the map, there is one arrow that shouldn't be like that.
-
