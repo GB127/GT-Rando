@@ -161,6 +161,11 @@ def set_seed(seed=None):
 
 
 
+
+
+
+
+
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as original:
         startTime = datetime.now()
@@ -168,8 +173,15 @@ if __name__ == "__main__":
         game.world_select()
 
 
+        # Ceci enlève fait sorte que l'exit mène au 0-1 pour vérifier les exits de 0-1.
+        game.setExit(0,0,2)
+
+
 
         with open("debug.smc", "wb") as newgame:
-            print("Time taken to edit files : ", datetime.now() - startTime)
-            print(f"Testing case have been created! {datetime.now()}")
+            # print("Time taken to edit files : ", datetime.now() - startTime)
+            # print(f"Testing case have been created! {datetime.now()}")
             newgame.write(game.data)
+            game.show_map(0)
+            # If we look at the map, there is one arrow that shouldn't be like that.
+

@@ -34,11 +34,11 @@ class Exits:
 
         data[temp4] -=1
 
+        print(values)  # For debugging. In the current code, only the 2nd index (1) is removed.
         
         if index == vanilla_count -1:  # On pourra ptet enlever les clauses de if/else.
             pass  # Pcq c'était déjà le dernier de la liste.
         else:  # On décale les valeurs.
-            print(values)
             for i in range(index, vanilla_count-1):
                 print(offsets[i], values[i+1])  # ok
                 for no, offset in enumerate(offsets[i]):
@@ -49,8 +49,10 @@ class Exits:
 
     def __init__(self, data, world_i):
         if world_i == 0:
-            self.remove_exit_from_data(data, 0,0,1)  # Ceci enlève le deuxième exit de 0-0. Ceci est l'exit de droite.
-
+            # Ceci enlève l'exit à l'index 1 de 0-0., soit l'exit avec les données suivantes:
+                # 1, 95, 1, 36, 16, 88
+            # Ceci est l'exit de droite dans le jeu.
+            self.remove_exit_from_data(data, 0,0,1)
 
         all_nFrames = [16, 16, 26, 30, 26]
         all_boss_exit = [29,27,53,49,49]
