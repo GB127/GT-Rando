@@ -159,7 +159,7 @@ class debug(GT):
         this_world = self.all_worlds[world_i]
         exits_offsets_old, exits_values_old, exits_frames_old = this_world.exits.getExitsFromData_old(vanilla_data, world_i, nFrames) 
         exits_offsets, exits_values, exits_frames = this_world.exits.getExitsFromData(self.data, world_i, nFrames)
-        return (exits_offsets_old == exits_offsets) and (exits_values_old == exits_values) and (exits_frames_old == exits_frames)
+        return (exits_values_old == exits_values) and (exits_frames_old == exits_frames)
 
 info = infos()
 
@@ -181,7 +181,12 @@ if __name__ == "__main__":
         # sauvegarde data avant la modif
         vanilla_data = deepcopy(game.data)
         # applique ta modif
-        #game.removeExitFromData(0, 0, 1)
+
+        # Note : ces modifs iront direct dans le init quand tout sera clairé.
+        game.removeExitFromData(3,1,0)
+        game.removeExitFromData(1,15,0)
+        game.removeExitFromData(1,13,1)
+
         #compare l'output de l'ancienne fonction sur les anciennes données avec l'output de la nouvelle fonction sur tes nouvelles données
         print(game.testExitsFromData(0, vanilla_data))
         print(game.testExitsFromData(1, vanilla_data))
@@ -196,6 +201,6 @@ if __name__ == "__main__":
             # print("Time taken to edit files : ", datetime.now() - startTime)
             # print(f"Testing case have been created! {datetime.now()}")
             newgame.write(game.data)
-            game.show_map(0)
+            game.show_map(3)
             # If we look at the map, there is one arrow that shouldn't be like that.
 
