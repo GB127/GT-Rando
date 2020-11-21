@@ -54,7 +54,49 @@ class GT(ROM):
         self.add_credits()
 
 
+    def removeExitFromData(self, world_i, frame, index):  # J'ai essayé d'être constant avec tes noms de fonctions. Feel free to rename!
+        data = self.data
+        
+        # Step 1 : Trouver la base.
+        base = data[0x01F303 + world_i]
 
+        # On doit trouver l'endroit du count.
+        # On doit aller chercher le GROS byte. et pour cela, on doit avoir un "adjust" qui est dépendant du frame.
+        adjust = 0x1F303 + base + 2*frame
+
+        #Lecture du Gros Byte. On doit lire le byte présent et le byte suivant et les combiner ensemble.
+            # GROS BYTE : 0xHHpp
+        temp1 = data[0x1F303 + base + 2*frame]  # Cecu est l'endroit où es tle count, du moins les deux premiers bytes on a les deux premiers chiffres! (pp)
+        temp2 = data[0x1F303 + base + 2*frame + 1]  # Les deux high bytes (HH)
+
+        # Donc le fond on doit faire 2 shift left pour ajouter deux zeros. 
+        # Puis additionner.
+            # 0xHH => 0xHH00 => 0xHHpp
+        # Je ne comprends pas pourquoi 16^2 ne fonctionne psa ici.
+
+        temp3 = temp2 * 16 * 16 + temp1  
+
+        # Trouvons enfin l'endroit du count.
+        temp4 = 0x10000 + temp3
+
+        vanilla_count = deepcopy(data[temp4])
+        offsets = []
+        values = []
+        for i in range(vanilla_count):
+            offsets.append(list(temp4 + x + 6 * i + 1 for x in range(6)))  # Voici les offsets.
+            values.append([data[temp4 + x + 6 * i + 1] for x in range(6)])  # Voici les valeurs retrouvées dans chaque offsets.
+
+        data[temp4] -=1
+
+        print(values)  # For debugging. In the current code, only the 2nd index (1) is removed.
+        
+        if index == vanilla_count -1:  # On pourra ptet enlever les clauses de if/else.
+            pass  # Pcq c'était déjà le dernier de la liste.
+        else:  # On décale les valeurs.
+            for i in range(index, vanilla_count-1):
+                print(offsets[i], values[i+1])  # ok
+                for no, offset in enumerate(offsets[i]):
+                    data[offset] = values[i+1][no] # Should work
 
 
     def modify_data_ice_dark(self):

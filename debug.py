@@ -7,6 +7,7 @@ from exits import *
 from world import *
 from doors import *
 from datetime import datetime
+from copy import deepcopy
 
 
 
@@ -151,6 +152,14 @@ class debug(GT):
                 (2, self[0x1FFA9]),
                 (3, self[0x1FFAA]),
                 (4, self[0x1FFAB])]
+    
+    def testExitsFromData(self, world_i, vanilla_data):
+        all_nFrames = [16, 16, 26, 30, 26]
+        nFrames = all_nFrames[world_i]
+        this_world = self.all_worlds[world_i]
+        exits_offsets_old, exits_values_old, exits_frames_old = this_world.exits.getExitsFromData_old(vanilla_data, world_i, nFrames) 
+        exits_offsets, exits_values, exits_frames = this_world.exits.getExitsFromData(self.data, world_i, nFrames)
+        return (exits_offsets_old == exits_offsets) and (exits_values_old == exits_values) and (exits_frames_old == exits_frames)
 
 info = infos()
 
@@ -162,19 +171,24 @@ def set_seed(seed=None):
 
 
 
-
-
-
-
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as original:
         startTime = datetime.now()
         game = debug(original.read())
         game.world_select()
 
-
-        # Ceci enlève fait sorte que l'exit mène au 0-1 pour vérifier les exits de 0-1.
-        game.setExit(0,0,2)
+        
+        # sauvegarde data avant la modif
+        vanilla_data = deepcopy(game.data)
+        # applique ta modif
+        #game.removeExitFromData(0, 0, 1)
+        #compare l'output de l'ancienne fonction sur les anciennes données avec l'output de la nouvelle fonction sur tes nouvelles données
+        print(game.testExitsFromData(0, vanilla_data))
+        print(game.testExitsFromData(1, vanilla_data))
+        print(game.testExitsFromData(2, vanilla_data))
+        print(game.testExitsFromData(3, vanilla_data))
+        print(game.testExitsFromData(4, vanilla_data))
+        
 
 
 

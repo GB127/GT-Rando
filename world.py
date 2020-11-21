@@ -150,6 +150,7 @@ class World():
 
         return unlocked_exits, unlocked_items, boss_reached
 
+
     def unlockAFrameCondition(self, condition_i, frames_filled_conditions, unlocked_items, used_items):
         condition_type = self.frames.conditions_types[condition_i]
         frames_filled_conditions[condition_i] = 1
