@@ -2,7 +2,56 @@ import random
 from copy import deepcopy
 
 class Exits:
+    def remove_exit_from_data(self, data, world_i, frame, index):  # J'ai essayé d'être constant avec tes noms de fonctions. Feel free to rename!
+        # Step 1 : Trouver la base.
+        base = data[0x01F303 + world_i]
+
+        # On doit trouver l'endroit du count.
+        # On doit aller chercher le GROS byte. et pour cela, on doit avoir un "adjust" qui est dépendant du frame.
+        adjust = 0x1F303 + base + 2*frame
+
+        #Lecture du Gros Byte. On doit lire le byte présent et le byte suivant et les combiner ensemble.
+            # GROS BYTE : 0xHHpp
+        temp1 = data[0x1F303 + base + 2*frame]  # Cecu est l'endroit où es tle count, du moins les deux premiers bytes on a les deux premiers chiffres! (pp)
+        temp2 = data[0x1F303 + base + 2*frame + 1]  # Les deux high bytes (HH)
+
+        # Donc le fond on doit faire 2 shift left pour ajouter deux zeros. 
+        # Puis additionner.
+            # 0xHH => 0xHH00 => 0xHHpp
+        # Je ne comprends pas pourquoi 16^2 ne fonctionne psa ici.
+
+        temp3 = temp2 * 16 * 16 + temp1  
+
+        # Trouvons enfin l'endroit du count.
+        temp4 = 0x10000 + temp3
+
+        vanilla_count = deepcopy(data[temp4])
+        offsets = []
+        values = []
+        for i in range(vanilla_count):
+            offsets.append(list(temp4 + x + 6 * i + 1 for x in range(6)))  # Voici les offsets.
+            values.append([data[temp4 + x + 6 * i + 1] for x in range(6)])  # Voici les valeurs retrouvées dans chaque offsets.
+
+        data[temp4] -=1
+
+        
+        if index == vanilla_count -1:  # On pourra ptet enlever les clauses de if/else.
+            pass  # Pcq c'était déjà le dernier de la liste.
+        else:  # On décale les valeurs.
+            print(values)
+            for i in range(index, vanilla_count-1):
+                print(offsets[i], values[i+1])  # ok
+                for no, offset in enumerate(offsets[i]):
+                    data[offset] = values[i+1][no] # Should work
+
+
+
+
     def __init__(self, data, world_i):
+        if world_i == 0:
+            self.remove_exit_from_data(data, 0,0,1)  # Ceci enlève le deuxième exit de 0-0. Ceci est l'exit de droite.
+
+
         all_nFrames = [16, 16, 26, 30, 26]
         all_boss_exit = [29,27,53,49,49]
         all_locked_doors = [[11,21],[19,24,25,28],[0,3,28,33],[45,50],[]]
@@ -122,10 +171,11 @@ class Exits:
                         If bit 6 is set (0x20) then it is a vertical line, otherwise it is horizontal or 2x2
                         If bit 6 is not set and bits 1-4 are 0x0F, then the exit is 2x2 (x,y) (x+1,y) (x,y+1) and (x+1,y+1)
                         For horizontal or vertical lines, bits 1-4 specify the length and bit 5 says if it is 1 or 2 tiles thick.
-                        Also if there is elevation (or something. Tu peux réécrire le passage)
+                        If bit 8 is set, then it's elevated.
                     4 : X position on the destination screen to place Max and/or Goofy
                     5 : Y position on the destination screen to place Max and/or Goofy
                 """
+        """
         if world_i == 1:
             exits_offsets.pop(30) #exit from boss to before boss
             exits_values.pop(30)
@@ -137,7 +187,7 @@ class Exits:
             exits_offsets.pop(2) #random imaginary exit
             exits_values.pop(2) 
             exits_frames.pop(2)
-
+        """
         return exits_offsets, exits_values, exits_frames  # On retourne les listes
     
     def getSourcePositions(self):
