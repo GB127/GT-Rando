@@ -175,7 +175,27 @@ if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as original:
         startTime = datetime.now()
         game = debug(original.read())
-        game.world_select()        
+        game.world_select()
+        game.setExit(0,0,12)
+
+        tester_all(game.data)  # Tempo function for testing. Could be tweaked to become your request.
+
+        # This code remove the checker fo keyed door. Comment these if you want to open the doors manually.
+        game[0x14377] = 0xEA
+        game[0x14378] = 0xEA
+
+
+
+        # Values to change for 0-5. See tester_all to see how I got these offsets in the output.
+            # It's a big byte so you need to consider these two values as a whole value (IE 0xXXXX, not 0xXX and 0xXX)
+
+        # Amuses-toi bien :)
+
+        game[0x83177] = # Your value
+        game[0x83178] = # Your value
+
+
+
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
             # print(f"Testing case have been created! {datetime.now()}")
