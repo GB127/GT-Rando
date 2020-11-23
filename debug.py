@@ -192,8 +192,8 @@ if __name__ == "__main__":
 
         # Amuses-toi bien :)
         print(hex(game[0x144EA]), game[0x144E9])  # Here how the game understand the number behind these two offsets.
-        #game[0x144EA] = # Your value
-        #game[0x144E9] = # Your value
+        game[0x144EA] = # Your value
+        game[0x144E9] = # Your value
 
 
         game.setExit(0,0,12)
