@@ -24,7 +24,7 @@ def getters_doors(data, world, frame):  #82C329
                 forme = data[base_door + 2]
                 door_data = data[base_door + 3]
 
-                # Manipulations à faire pour récupérer la bonne information pour la logique. Je décortiquerai sous peu.
+                # Manipulations à faire pour récupérer la bonne information pour la logique.
                 which_door = 0x1144 + int((door_data & 0x7F) / 2 / 2 / 2)
                 bit_offset = door_data & 0x07
                 bit_to_check = data[0x180B8 + bit_offset]
@@ -47,10 +47,10 @@ def getters_doors(data, world, frame):  #82C329
                 # Tu peux changer l'ordre ou le contenu pour retirer hex et bin par exemple. Présentement ça suit le plus fidèlement
                 # possible l'ordre dans le data.
                 liste.append([map_tile_offset, forme, hex(which_door), bin(bit_to_check), orientation])
-                    # which_door : (Présentement stringé, mais à déstringer). 
-                    # bit_to_check : Présentement biné, c'est très visuel ainsi.
-                        # which_door + bit_to_check : ces deux informations permettra de déterminer si deux portes vérifient la même condition
-                            # Pour demeurer barré ou si elles se débarrent. Voir 0-5 et 0-8 pour un exemple.
+                    # which_door : (Présentement stringé)
+                    # bit_to_check : Présentement biné, c'est très visuel ainsi. À débiné lorsque compris. Ces infos sont contenues dans 3 sous une certaine forme...
+                        # which_door + bit_to_check : ces deux informations permettra de déterminer si deux portes vérifient la même condition.
+                            # Pour demeurer barré ou si elles se débarrent. Voir 0-5 et 0-8 pour un exemple. Important pour la logique.
                     # map_tile_offset : These two values are the offsets to experiment with in order to determine NSEW.
                     # orientation : Je ne pense pas que tu en aies besoin de ceci. Mais ça pourrait te servir pour valider tes
                         # affaires?
@@ -72,6 +72,8 @@ def tester_all(data):
                 print(getters_doors(data, world, frame))
 
 def door_remover(data, world, frame, index):  #82C329
+    # Incomplet en quelque sorte vu que ça n'enlève pas le tilemap et toute.
+    # Mais ceci désactive la porte. Même si la porte est là, elle n'est pas là!
     offsets, values = [], []
 
     offset_Y_1 = data[0x14461 + data[0x14461 + world] + frame]
