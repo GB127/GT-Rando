@@ -6,7 +6,6 @@ from getters import *
 from exits import *
 from world import *
 from doors import *
-from doors_remover import *
 from datetime import datetime
 from copy import deepcopy
 
