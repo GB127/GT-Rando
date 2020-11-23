@@ -1,4 +1,37 @@
 from copy import deepcopy
+def door_adder(data,
+                  world, frame,
+                  tile_high, tile_low,
+                  forme,
+                  which_door):  #82C329
+    # WARNING : Je dois faire des modifications dans le jeu pour nous permettre une plus grand flexibilité
+    # dans l'emplacement des portes. Mais le code en soit est fonctionnel.
+
+    # Forme : Forme de l'efface. Argument Possiblement enlèvable avec tile_high et tile_low.
+        # 0, 4 ou 2
+            # 0 = N
+            # 4 = S
+            # 2 = EW
+    # Which door : 0-32
+
+    offset_Y_1 = data[0x14461 + data[0x14461 + world] + frame]
+    if offset_Y_1 != 0:
+        current_offset = (data[0x144D7 + offset_Y_1] & 0x00FF) + 0xC4D8
+        vanilla_count = deepcopy(data[0x8000 + current_offset])
+        data[0x8000 + current_offset] += 1
+        current_offset += 1
+        if vanilla_count != 0:
+            for _ in range(vanilla_count): current_offset += 4
+        base_door = 0x8000 + current_offset
+
+        data[base_door] = tile_low
+        data[base_door + 1] = tile_high
+        data[base_door + 2] = forme
+
+        # manips pour convertir which_door:
+        bits_3_6 = (which_door // 8)  * 2 * 2 * 2
+        bits_0_2 = which_door % 8
+        data[base_door + 3] = bits_0_2 + bits_3_6
 
 def getters_doors(data, world, frame):  #82C329
     # Structure par exits:
@@ -6,9 +39,18 @@ def getters_doors(data, world, frame):  #82C329
     # 1 : Où sur l'écran (High byte)
     # 2 : Forme de la porte (Pour pouvoir bien l'éffacer)
     # 3 : format de la porte
+        # Bit 0-2 :
+
+        # Bit 3-6 : 0x1144, 0x1145, 0x1146 ou 0x1147.
+            # Sera tjs 0x1144 ou 0x1145 dans vanilla.
+
+
         # Pour le retour, ici je l'ai décomposée en deux
             # Which door
             # Bit to check
+        # En y repensant, à long terme, ça peut être considéré comme un seul tableau.
+        # En effet, "which door" représente un ensemble de 8 portes. Bit to check est pour vérifier
+        # quelle des 8 portes est concernée.
 
     liste = []
     offset_Y_1 = data[0x14461 + data[0x14461 + world] + frame]
@@ -28,7 +70,6 @@ def getters_doors(data, world, frame):  #82C329
                 which_door = 0x1144 + int((door_data & 0x7F) / 2 / 2 / 2)
                 bit_offset = door_data & 0x07
                 bit_to_check = data[0x180B8 + bit_offset]
-
 
                 # ne pas changer ce qui est en dessous jusqu'au append.
                 # door_remover

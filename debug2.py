@@ -6,6 +6,7 @@ from getters import *
 from exits import *
 from world import *
 from doors import *
+from doors_adder import *
 from datetime import datetime
 from copy import deepcopy
 
@@ -176,10 +177,17 @@ if __name__ == "__main__":
         startTime = datetime.now()
         game = debug(original.read())
         game.world_select()
+        game.setExit(0,0,12)
+        game.setExit(0,12,28)
+        game.setExit(0,28,12)
 
-        print(getters_doors(game.data,0,5))
+        print(getters_doors(game.data,0,5))  # Vanilla value
         door_remover(game.data, 0,5,0)
-        print(getters_doors(game.data,0,5))
+        print(getters_doors(game.data,0,5))  # Proof that the door is removed
+        door_adder(game.data,0,5,0x0,0xA,0,6)
+        print(getters_doors(game.data,0,5))  # Proof that one door is added.
+
+
 
         with open("debug.smc", "wb") as newgame:
             print("Time taken to edit files : ", datetime.now() - startTime)
