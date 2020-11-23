@@ -1,4 +1,3 @@
-from debug import debug
 from copy import deepcopy
 
 def door_remover(data, world, frame, index):  #82C329
@@ -39,10 +38,6 @@ def door_remover(data, world, frame, index):  #82C329
 
 
                 something_OxA = data[0x8002 + current_offset]
-                # print("0xA", hex(0x8002 + current_offset))
-
-                # ne pas changer ce qui est en dessous jusqu'au append.
-                # door_remover
                 something_OxA //= 2
 
                 tempo.append(0x14452 + something_OxA)  # Tilemap format to remove.
@@ -50,6 +45,10 @@ def door_remover(data, world, frame, index):  #82C329
                 offsets.append(tempo)
                 values.append(tempo_v)
                 current_offset += 4
+
+    # Décalage des valeurs au cas où un frame aurait plus qu'une porte barrée.
+        # N'arrivera jamais en vanilla. Mais possiblement au rando et donc on couvre
+        # cette possibilité avec ceci!
 
     for kit_offset in offsets[index:]:
         tempo = []
@@ -60,20 +59,3 @@ def door_remover(data, world, frame, index):  #82C329
                 tempo.append(data[offset])
         except IndexError:
             pass
-
-
-
-if __name__ == "__main__":
-    with open("Vanilla.smc", "rb") as original:
-        game = debug(original.read())
-        game.world_select()
-        game.setExit(0,0,12)
-        game.setExit(0,12,28)
-        game.setExit(0,28,12)
-
-        door_remover(game.data, 0, 5, 0)
-
-        with open("debug.smc", "wb") as newgame:
-            # print("Time taken to edit files : ", datetime.now() - startTime)
-            # print(f"Testing case have been created! {datetime.now()}")
-            newgame.write(game.data)
