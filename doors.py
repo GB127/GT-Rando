@@ -1,4 +1,3 @@
-from debug import debug
 from copy import deepcopy
 
 def getters_doors(data, world, frame):  #82C329
