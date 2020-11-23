@@ -1,31 +1,30 @@
 from copy import deepcopy
 
 def getters_doors(data, world, frame):  #82C329
+    # Structure par exits:
+    # 0 : Où sur l'écran
+    # 1 : Où sur l'écran (High byte)
+    # 2 : Forme de la porte (Pour pouvoir bien l'éffacer)
+    # 3 : format de la porte
+        # Pour le retour, ici je l'ai décomposée en deux
+            # Which door
+            # Bit to check
+
     liste = []
-    this_world_frame_offset = data[0x14461 + world] + frame
-    offset_Y_1 = data[0x14461 + this_world_frame_offset]
+    offset_Y_1 = data[0x14461 + data[0x14461 + world] + frame]
     if offset_Y_1 != 0:
-        offset_base = data[0x144D7 + offset_Y_1]
-        current_offset = (offset_base & 0x00FF) + 0xC4D8
+        current_offset = (data[0x144D7 + offset_Y_1] & 0x00FF) + 0xC4D8
         count = data[0x8000 + current_offset]
         if count != 0:
             current_offset += 1
             for _ in range(count):
-                # Structure par exits:
-                    # 0 : Où sur l'écran
-                    # 1 : Où sur l'écran (High byte)
-                    # 2 : Forme de la porte (Pour pouvoir bien l'éffacer)
-                    # 3 : format de la porte
-                        # Pour le retour, ici je l'ai décomposée en deux
-                            # Which door
-                            # Bit to check
-                map_tile = (data[0x8000 + current_offset],data[0x8000 + current_offset + 1])  # Ce sont les valeurs. À supprimer lorsque pu besoin.
-                map_tile_offset = (0x8000 + current_offset,
-                                    0x8000 + current_offset + 1)  # 0 et 1 ensemble. À séparer si tu préfères.
-                forme = data[0x8002 + current_offset]
-                door_data = data[0x8003 + current_offset]
+                base_door = 0x8000 + current_offset
+                map_tile_offset = (base_door,
+                                   base_door + 1)  # 0 et 1 ensemble. À séparer si tu préfères.
+                forme = data[base_door + 2]
+                door_data = data[base_door + 3]
 
-                # Manipulations à faire pour récupérer la bonne information. Je décortiquerai sous peu.
+                # Manipulations à faire pour récupérer la bonne information pour la logique. Je décortiquerai sous peu.
                 which_door = 0x1144 + int((door_data & 0x7F) / 2 / 2 / 2)
                 bit_offset = door_data & 0x07
                 bit_to_check = data[0x180B8 + bit_offset]
@@ -45,18 +44,16 @@ def getters_doors(data, world, frame):  #82C329
                 else:
                     raise BaseException(f"Something is wrong")
 
-
-
-                # Tu peux changer l'ordre ou le contenu pour retirer hex et bin par exemple.
+                # Tu peux changer l'ordre ou le contenu pour retirer hex et bin par exemple. Présentement ça suit le plus fidèlement
+                # possible l'ordre dans le data.
                 liste.append([map_tile_offset, forme, hex(which_door), bin(bit_to_check), orientation])
-
                     # which_door : (Présentement stringé, mais à déstringer). 
                     # bit_to_check : Présentement biné, c'est très visuel ainsi.
                         # which_door + bit_to_check : ces deux informations permettra de déterminer si deux portes vérifient la même condition
                             # Pour demeurer barré ou si elles se débarrent. Voir 0-5 et 0-8 pour un exemple.
                     # map_tile_offset : These two values are the offsets to experiment with in order to determine NSEW.
                     # orientation : Je ne pense pas que tu en aies besoin de ceci. Mais ça pourrait te servir pour valider tes
-                        # affaires.
+                        # affaires?
                 current_offset += 4
     return liste
 
