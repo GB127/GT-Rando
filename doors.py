@@ -11,25 +11,31 @@ def getters_doors(data, world, frame):  #82C329
         if count != 0:
             current_offset += 1
             for _ in range(count):
+                # Structure par exits:
+                    # 0 : Où sur l'écran
+                    # 1 : Où sur l'écran (High byte)
+                    # 2 : Forme de la porte (Pour pouvoir bien l'éffacer)
+                    # 3 : format de la porte
+                        # Pour le retour, ici je l'ai décomposée en deux
+                            # Which door
+                            # Bit to check
+                map_tile = (data[0x8000 + current_offset],data[0x8000 + current_offset + 1])  # Ce sont les valeurs. À supprimer lorsque pu besoin.
+                map_tile_offset = (0x8000 + current_offset,
+                                    0x8000 + current_offset + 1)  # 0 et 1 ensemble. À séparer si tu préfères.
+                forme = data[0x8002 + current_offset]
                 door_data = data[0x8003 + current_offset]
+
+                # Manipulations à faire pour récupérer la bonne information. Je décortiquerai sous peu.
                 which_door = 0x1144 + int((door_data & 0x7F) / 2 / 2 / 2)
                 bit_offset = door_data & 0x07
                 bit_to_check = data[0x180B8 + bit_offset]
-                something_0x22 = deepcopy(current_offset)  # Store Y for later?
-                # Preparation just before calling the door remover
-                map_tile = (data[0x8000 + current_offset],data[0x8000 + current_offset + 1])
-                map_tile_offset = (0x8000 + current_offset,0x8000 + current_offset + 1)
-                    # X screen coordinates to start the remover of tilemap and collision.
 
-                # This has been done earlier in the code for some reason.
-                something_OxA = data[0x8002 + current_offset]
-                # print("0xA", hex(0x8002 + current_offset))
 
                 # ne pas changer ce qui est en dessous jusqu'au append.
                 # door_remover
-                something_OxA //= 2
+                forme //= 2
 
-                size_to_remove = data[0x14452 + something_OxA]
+                size_to_remove = data[0x14452 + forme]
                 if size_to_remove == 68:
                     orientation = "N"
                 elif size_to_remove == 66:
@@ -42,7 +48,8 @@ def getters_doors(data, world, frame):  #82C329
 
 
                 # Tu peux changer l'ordre ou le contenu pour retirer hex et bin par exemple.
-                liste.append((hex(which_door), bin(bit_to_check),map_tile_offset, orientation))
+                liste.append([map_tile_offset, forme, hex(which_door), bin(bit_to_check), orientation])
+
                     # which_door : (Présentement stringé, mais à déstringer). 
                     # bit_to_check : Présentement biné, c'est très visuel ainsi.
                         # which_door + bit_to_check : ces deux informations permettra de déterminer si deux portes vérifient la même condition
