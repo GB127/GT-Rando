@@ -7,6 +7,10 @@ def door_adder(data,
     # WARNING : Je dois faire des modifications dans le jeu pour nous permettre une plus grand flexibilité
     # dans l'emplacement des portes. Mais le code en soit est fonctionnel.
 
+    # Comme door remover : Incomplet, car n'enlève pas le tile map. 
+    # Mais le adder détruit le jeu en quelque sorte. À ne pas utiliser pour l'instant, sauf pour tester
+    # seulement si une exit vanilla (préexistante) existait préalablement.
+
     # Forme : Forme de l'efface. Argument Possiblement enlèvable avec tile_high et tile_low.
         # 0, 4 ou 2
             # 0 = N
@@ -32,6 +36,7 @@ def door_adder(data,
         bits_3_6 = (which_door // 8)  * 2 * 2 * 2
         bits_0_2 = which_door % 8
         data[base_door + 3] = bits_0_2 + bits_3_6
+        # J'ose croire que bit # 7 c'est pour la clé du boss. À vérifier.
 
 def getters_doors(data, world, frame):  #82C329
     # Structure par exits:
@@ -48,9 +53,10 @@ def getters_doors(data, world, frame):  #82C329
         # Pour le retour, ici je l'ai décomposée en deux
             # Which door
             # Bit to check
-        # En y repensant, à long terme, ça peut être considéré comme un seul tableau.
-        # En effet, "which door" représente un ensemble de 8 portes. Bit to check est pour vérifier
-        # quelle des 8 portes est concernée.
+        # Ceci peut être modifié pour être en une seule liste pour savoir 
+        # quelle condition est vérifiée. Maintenant que je sais que mes trois fonctions
+        # foncitonnent parfaitement, je ferai cette modification pour simplifier le check de la logique
+        # bientôt.
 
     liste = []
     offset_Y_1 = data[0x14461 + data[0x14461 + world] + frame]
@@ -63,6 +69,8 @@ def getters_doors(data, world, frame):  #82C329
                 base_door = 0x8000 + current_offset
                 map_tile_offset = (base_door,
                                    base_door + 1)  # 0 et 1 ensemble. À séparer si tu préfères.
+                    # C'est avec ce deux infos si-dessuss que l'on va pouvoir déterminer si C'est une porte
+                    # N,S,E ou W.
                 forme = data[base_door + 2]
                 door_data = data[base_door + 3]
 
@@ -71,8 +79,8 @@ def getters_doors(data, world, frame):  #82C329
                 bit_offset = door_data & 0x07
                 bit_to_check = data[0x180B8 + bit_offset]
 
-                # ne pas changer ce qui est en dessous jusqu'au append.
-                # door_remover
+                # Je suis convaincu que ce qui suit ci-dessous peut être enlevé. Mais je l'ai
+                # laissé au cas où pour te permettre de te vérifier après ton gossage de debug.py.
                 forme //= 2
 
                 size_to_remove = data[0x14452 + forme]
@@ -88,11 +96,17 @@ def getters_doors(data, world, frame):  #82C329
                 # Tu peux changer l'ordre ou le contenu pour retirer hex et bin par exemple. Présentement ça suit le plus fidèlement
                 # possible l'ordre dans le data.
                 liste.append([map_tile_offset, forme, hex(which_door), bin(bit_to_check), orientation])
-                    # which_door : (Présentement stringé)
-                    # bit_to_check : Présentement biné, c'est très visuel ainsi. À débiné lorsque compris. Ces infos sont contenues dans 3 sous une certaine forme...
-                        # which_door + bit_to_check : ces deux informations permettra de déterminer si deux portes vérifient la même condition.
-                            # Pour demeurer barré ou si elles se débarrent. Voir 0-5 et 0-8 pour un exemple. Important pour la logique.
+
+                    # Va être BIENTÔT CHANGÉ POUR simplifie rla vie.
+                        # which_door : (Présentement stringé)
+                        # bit_to_check : Présentement biné, c'est très visuel ainsi. À débiné lorsque compris. Ces infos sont contenues dans 3 sous une certaine forme...
+                            # which_door + bit_to_check : ces deux informations permettra de déterminer si deux portes vérifient la même condition.
+                                # Pour demeurer barré ou si elles se débarrent. Voir 0-5 et 0-8 pour un exemple. Important pour la logique.
+                        # Le changement proposé : une liste de 32 éléments (32, car le jeu offre cette possibilité, reste à vérifier si on peut avoir 32 clés en tout).
+
                     # map_tile_offset : These two values are the offsets to experiment with in order to determine NSEW.
+
+                    # À ENLEVER PROBABLEMENT
                     # orientation : Je ne pense pas que tu en aies besoin de ceci. Mais ça pourrait te servir pour valider tes
                         # affaires?
                 current_offset += 4
@@ -100,11 +114,9 @@ def getters_doors(data, world, frame):  #82C329
 
 
 
-# 82C3BE : Door remover!!!!! Donc, de ce que j'en comprends, les portes sont préplacés, et on les enlèves à chaque fois.
-    # Cette fonctione nlève aussi les portes de 1146. C'est donc une enleveuse de portes universelle.
-
-
 def tester_all(data):
+    # Fonction testeuse qui va aller printer tous les getters possibles.
+    # Print seulement s'il y a une porte.
     worlds = [16,16,25,30,25]
     for world, nframes in enumerate(worlds):
         print(f"WORLD {world}-------------------------------------")
@@ -115,6 +127,7 @@ def tester_all(data):
 def door_remover(data, world, frame, index):  #82C329
     # Incomplet en quelque sorte vu que ça n'enlève pas le tilemap et toute.
     # Mais ceci désactive la porte. Même si la porte est là, elle n'est pas là!
+
     offsets, values = [], []
 
     offset_Y_1 = data[0x14461 + data[0x14461 + world] + frame]
