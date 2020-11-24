@@ -63,33 +63,6 @@ class debug(GT):
     def show_map(self, world_i):
         self.all_worlds[world_i].showMap()
 
-
-    def print_passwords(self, world=None):
-        # J'aime mieux ceci dans debug, vu que l'on va imprimer
-        # Le password seulement pour déboguer.
-        translation = {0x0 : "Cherry",
-                       0x1 : "Banana",
-                       0x2 : "Red Gem",
-                       0x3 : "Blue Gem"}
-        if world is None:
-            for one in range(1,5):
-                self.print_passwords(one)
-        else:
-            data = f"World {world} :"
-            for box in getter_passwords(world):
-                data += f'{translation[self.data[box]]:^10}-'
-            print(data.rstrip("-"))
-
-    def print_darkframes(self):
-        """Print the list of tuples that are dark rooms.
-            """
-        print(f'{len(self.get_darkrooms())} Dark rooms: {self.get_darkrooms()}')
-
-    def print_iceframes(self):
-        """Print the list of tuples that are ice rooms
-            """
-        print(f'{len(self.get_icerooms())} Ice rooms: {self.get_icerooms()}')
-
     def __setitem__(self,offset, value):
         if offset in self.freespace:
             self.used.append(offset)
