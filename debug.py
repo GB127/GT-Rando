@@ -90,76 +90,11 @@ class debug(GT):
             """
         print(f'{len(self.get_icerooms())} Ice rooms: {self.get_icerooms()}')
 
-    def get_darkframes(self):
-        """Generate a list of tuples that contains the different frames that are darks.
-
-            Returns:
-                list: list of tuples
-                    tuples : (World, Frame)
-                        World : int
-                        Frame : int
-            """
-        toreturn = []
-        for no, offset in enumerate(range(0x1FF35, 0x1FFA7)):
-            if self[offset] & 2:
-                if no in range(0, 16):
-                    toreturn.append((0, no))
-                elif no in range(16, 32):
-                    toreturn.append((1, no - 16))
-                elif no in range(32, 58):
-                    toreturn.append((2, no - 32))
-                elif no in range(58, 88):
-                    toreturn.append((3, no - 58))
-                else:
-                    toreturn.append((4, no - 88))
-        return toreturn
-
-    def get_iceframes(self):
-        """Generate a list of tuples that contains the different frames that are icy.
-
-            Returns:
-                list: list of tuples
-                    tuples : (World, Frame)
-                        World : int
-                        Frame : int
-            """
-
-        toreturn = []
-        for no, offset in enumerate(range(0x1FF35, 0x1FFA7)):
-            if self[offset] & 1:
-                if no in range(0, 16):
-                    toreturn.append((0, no))
-                elif no in range(16, 32):
-                    toreturn.append((1, no - 16))
-                elif no in range(32, 58):
-                    toreturn.append((2, no - 32))
-                elif no in range(58, 88):
-                    toreturn.append((3, no - 58))
-                else:
-                    toreturn.append((4, no - 88))
-        return toreturn
-
     def __setitem__(self,offset, value):
         if offset in self.freespace:
             self.used.append(offset)
             self.freespace.pop(self.freespace.index(offset))
         super().__setitem__(offset,value)
-
-
-    def get_first_rooms(self):
-        return [(0, self[0x1FFA7]),
-                (1, self[0x1FFA8]),
-                (2, self[0x1FFA9]),
-                (3, self[0x1FFAA]),
-                (4, self[0x1FFAB])]
-
-    def testExitsFromData(self, world_i, vanilla_data):
-        all_nFrames = [16, 16, 26, 30, 26]
-        nFrames = all_nFrames[world_i]
-        this_world = self.all_worlds[world_i]
-        exits_offsets_old, exits_values_old, exits_frames_old = this_world.exits.getExitsFromData_old(vanilla_data, world_i, nFrames) 
-        exits_offsets, exits_values, exits_frames = this_world.exits.getExitsFromData(self.data, world_i, nFrames)
-        return (exits_values_old == exits_values) and (exits_frames_old == exits_frames)
 
 info = infos()
 
