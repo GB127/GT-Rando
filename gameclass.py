@@ -452,6 +452,6 @@ class GT(ROM):
         self[this_world.exits.offsets[source_exit][4]] = this_world.exits.destination_Xpos[source_exit]
         self[this_world.exits.offsets[source_exit][5]] = this_world.exits.destination_Ypos[source_exit]
         #hook bug fix
-        if self[this_world.exits.offsets[i][3]]>=2**7:self[this_world.exits.offsets[i][3]] = self[this_world.exits.offsets[i][3]]-2**7
-        self[this_world.exits.offsets[i][3]] = self[this_world.exits.offsets[i][3]]+this_world.exits.destination_hookshotHeightAtArrival[i]*2**7
+        if self[this_world.exits.offsets[source_exit][3]]>=2**7:self[this_world.exits.offsets[source_exit][3]] = self[this_world.exits.offsets[source_exit][3]]-2**7
+        self[this_world.exits.offsets[source_exit][3]] = self[this_world.exits.offsets[source_exit][3]]+this_world.exits.destination_hookshotHeightAtArrival[source_exit]*2**7
 

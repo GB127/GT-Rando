@@ -69,6 +69,11 @@ class debug(GT):
             self.freespace.pop(self.freespace.index(offset))
         super().__setitem__(offset,value)
 
+    def do_not_place_doors(self):
+        # This code remove the checker fo keyed door. Comment these if you want to open the doors manually.
+        game[0x14377] = 0xEA
+        game[0x14378] = 0xEA
+
 info = infos()
 
 def set_seed(seed=None):
@@ -85,15 +90,7 @@ if __name__ == "__main__":
         game = debug(original.read())
         game.world_select()
 
-        # tester_all(game.data)  # Tempo function for testing. Could be tweaked to become your request.
-
-        print(getters_doors(game.data,0,5))
-
-        # This code remove the checker fo keyed door. Comment these if you want to open the doors manually.
-        game[0x14377] = 0xEA
-        game[0x14378] = 0xEA
-
-
+        
 
         # Values to change for 0-5. See tester_all to see how I got these offsets in the output.
             # It's a big byte so you need to consider these two values as a whole value (IE 0xXXXX, not 0xXX and 0xXX)

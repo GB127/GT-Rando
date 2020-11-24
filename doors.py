@@ -1,10 +1,93 @@
 from copy import deepcopy
 
 
-# IMPORTANT : Je devrai changer quelques affaires pour que ces fonctions fonctionnent n'importe où.
-# Je devrai juste déplacer de informations... 
-# Donc pour le door adder, il faudra l'utiliser seulement
-# dans les frames où il y a une porte barrée par une clé dans le vanilla comme 0-5.
+class Doors():
+    def __init__(self, data, world_i):
+        all_nFrames = [16, 16, 26, 30, 26]
+        self.nFrames = all_nFrames[world_i]
+
+        self.positions_offsets = []
+        self.positions = []
+        self.shape_types = []
+        self.lock_bit_i = []
+        self.frames = []
+        for frame_i in range(self.nFrames):
+            results = self.getDoorsFromData(data, world_i, frame_i)
+            if results:
+                for elem in results:
+                    self.positions_offsets.append(elem[0])
+                    self.positions.append( (data[elem[0][0]],data[elem[0][1]]) )
+                    self.shape_types.append(elem[1])
+                    self.lock_bit_i.append(elem[2])
+                    self.frames.append(frame_i)
+        print(self.positions)
+
+    def getDoorsFromData(self, data, world_i, frame_i):  #82C329
+        """Get all doors of said world-frame.
+
+            Args:
+                data (bytearray): data of the game
+                world (int): world_i
+                frame (int): frame_i
+
+            Raises:
+                BaseException: [description]
+
+            Returns:
+                (0, 1) : Où sur l'écran
+                2 : Forme de la porte (Pour pouvoir bien l'éffacer)
+                3 : format de la porte
+                    Bit 0-2 : offset for getting the correct bit
+                    Bit 3-6 : 0x1144 + X depending on the bit sets.
+                        Sera tjs 0x1144 ou 0x1145 dans vanilla.
+                orientation : Orientation.. Will disappear most likely.
+        """
+        result = []
+        offset_Y_1 = data[0x14461 + data[0x14461 + world_i] + frame_i]
+        if offset_Y_1 != 0:
+            current_offset = (data[0x144D7 + offset_Y_1] & 0x00FF) + 0xC4D8
+            count = data[0x8000 + current_offset]
+            if count != 0:
+                current_offset += 1
+                for _ in range(count):
+                    base_door = 0x8000 + current_offset
+                    map_tile_offset = (base_door,
+                                    base_door + 1)  # 0 et 1 ensemble. À séparer si tu préfères.
+                        # C'est avec ce deux infos si-dessuss que l'on va pouvoir déterminer si C'est une porte
+                        # N,S,E ou W.
+                    shape = data[base_door + 2]
+                    door_data = data[base_door + 3]
+
+                    # Manipulations à faire pour récupérer la bonne information pour la logique.
+                    bit_offset = door_data & 0x07
+                    which_door = (int((door_data & 0x7F) / 2 / 2 / 2) * 8) + bit_offset
+
+
+                    #bit_to_check = data[0x180B8 + bit_offset]
+
+                    # Je suis convaincu que ce qui suit ci-dessous peut être enlevé. Mais je l'ai
+                    # laissé au cas où pour te permettre de te vérifier après ton gossage de debug.py.
+                    shape //= 2
+
+                    size_to_remove = data[0x14452 + shape]
+                    if size_to_remove == 68:
+                        orientation = "N"
+                    elif size_to_remove == 66:
+                        orientation = "S"
+                    elif size_to_remove == 36:
+                        orientation = "EW"
+                    else:
+                        raise BaseException(f"Something is wrong")
+
+                    # Tu peux changer l'ordre ou le contenu pour retirer hex et bin par exemple. Présentement ça suit le plus fidèlement
+                    # possible l'ordre dans le data.
+                    result.append([map_tile_offset, shape, which_door, orientation])
+
+                        # À ENLEVER PROBABLEMENT
+                        # orientation : Je ne pense pas que tu en aies besoin de ceci. Mais ça pourrait te servir pour valider tes
+                            # affaires?
+                    current_offset += 4
+        return result
 
 
 def door_adder(data, world, frame, tile_high, tile_low, forme, which_door):  #82C329
@@ -72,7 +155,7 @@ def getters_doors(data, world, frame):  #82C329
                     Sera tjs 0x1144 ou 0x1145 dans vanilla.
             orientation : Orientation.. Will disappear most likely.
     """
-    liste = []
+    result = []
     offset_Y_1 = data[0x14461 + data[0x14461 + world] + frame]
     if offset_Y_1 != 0:
         current_offset = (data[0x144D7 + offset_Y_1] & 0x00FF) + 0xC4D8
@@ -111,13 +194,13 @@ def getters_doors(data, world, frame):  #82C329
 
                 # Tu peux changer l'ordre ou le contenu pour retirer hex et bin par exemple. Présentement ça suit le plus fidèlement
                 # possible l'ordre dans le data.
-                liste.append([map_tile_offset, forme, which_door, orientation])
+                result.append([map_tile_offset, forme, which_door, orientation])
 
                     # À ENLEVER PROBABLEMENT
                     # orientation : Je ne pense pas que tu en aies besoin de ceci. Mais ça pourrait te servir pour valider tes
                         # affaires?
                 current_offset += 4
-    return liste
+    return result
 
 
 
