@@ -189,11 +189,13 @@ if __name__ == "__main__":
 
         # Values to change for 0-5. See tester_all to see how I got these offsets in the output.
             # It's a big byte so you need to consider these two values as a whole value (IE 0xXXXX, not 0xXX and 0xXX)
+            # Avec les valeurs actuelles, tu pourras ouvrir l'arbre à la gauche de la porte.
+
 
         # Amuses-toi bien :)
         print(hex(game[0x144EA]), game[0x144E9])  # Here how the game understand the number behind these two offsets.
-        game[0x144EA] = # Your value
-        game[0x144E9] = # Your value
+        game[0x144EA] = 0x0 # Your value
+        game[0x144E9] = 0xA# Your value
 
 
         game.setExit(0,0,12)
