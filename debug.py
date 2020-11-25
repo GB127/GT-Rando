@@ -69,7 +69,7 @@ class debug(GT):
             self.freespace.pop(self.freespace.index(offset))
         super().__setitem__(offset,value)
 
-    def do_not_place_doors(self):
+    def do_not_place_keydoors(self):
         # This code remove the checker fo keyed door. Comment these if you want to open the doors manually.
         game[0x14377] = 0xEA
         game[0x14378] = 0xEA
