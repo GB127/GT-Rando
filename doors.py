@@ -90,7 +90,7 @@ class Doors():
         return result
 
 
-def door_adder(data, world, frame, tile_high, tile_low, forme, which_door):  #82C329
+def door_adder(data, world_i, frame_i, tile_high, tile_low, forme, which_door):  #82C329
     """Ajoute une porte.
 
         IMPORTANT : Toujours retirer une porte présente avant d'utiliser cette fonction.
@@ -102,8 +102,8 @@ def door_adder(data, world, frame, tile_high, tile_low, forme, which_door):  #82
 
         Args:
             data ([type]): data of the game.
-            world (int): World you want to add a door.
-            frame ([type]): frame you want to add a door.
+            world_i (int): World you want to add a door.
+            frame_i ([type]): frame you want to add a door.
             tile_high ([type]): [description]
             tile_low ([type]): [description]
             forme (0, 4 ou 2): Forme de la porte.
@@ -115,7 +115,7 @@ def door_adder(data, world, frame, tile_high, tile_low, forme, which_door):  #82
                 In vanilla, it will never fo over 15 (16 bits available, but not all used).
         """
 
-    offset_Y_1 = data[0x14461 + data[0x14461 + world] + frame]
+    offset_Y_1 = data[0x14461 + data[0x14461 + world_i] + frame_i]
     if offset_Y_1 != 0:
         current_offset = (data[0x144D7 + offset_Y_1] & 0x00FF) + 0xC4D8
         vanilla_count = deepcopy(data[0x8000 + current_offset])
@@ -135,13 +135,13 @@ def door_adder(data, world, frame, tile_high, tile_low, forme, which_door):  #82
         data[base_door + 3] = bits_0_2 + bits_3_6
         # Je crois que bit # 7 c'est pour la clé du boss. À vérifier.
 
-def getters_doors(data, world, frame):  #82C329
+def getters_doors(data, world_i, frame_i):  #82C329
     """Get all doors of said world-frame.
 
         Args:
             data (bytearray): data of the game
-            world (int): World
-            frame (int): frmae
+            world_i (int): World
+            frame_i (int): frmae
 
         Raises:
             BaseException: [description]
@@ -156,7 +156,7 @@ def getters_doors(data, world, frame):  #82C329
             orientation : Orientation.. Will disappear most likely.
     """
     result = []
-    offset_Y_1 = data[0x14461 + data[0x14461 + world] + frame]
+    offset_Y_1 = data[0x14461 + data[0x14461 + world_i] + frame_i]
     if offset_Y_1 != 0:
         current_offset = (data[0x144D7 + offset_Y_1] & 0x00FF) + 0xC4D8
         count = data[0x8000 + current_offset]
