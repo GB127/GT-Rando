@@ -88,7 +88,6 @@ def read_big(data, offset):
     return high * 16 *16 + low
 
 def write_big(data, offset, value):
-    print(hex(value))
     low = value & 0xFF
     high = (value & 0xFF00) // 16 // 16
     data[offset] = low
