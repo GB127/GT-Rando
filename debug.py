@@ -82,6 +82,17 @@ def set_seed(seed=None):
     random.seed(seed)
 
 
+def read_big(data, offset):
+    low = data[offset]
+    high = data[offset +1]
+    return high * 16 *16 + low
+
+def write_big(data, offset, value):
+    print(hex(value))
+    low = value & 0xFF
+    high = (value & 0xFF00) // 16 // 16
+    data[offset] = low
+    data[offset +1] = high
 
 
 if __name__ == "__main__":
@@ -90,20 +101,11 @@ if __name__ == "__main__":
         game = debug(original.read())
         game.world_select()
 
-        
 
-        # Values to change for 0-5. See tester_all to see how I got these offsets in the output.
-            # It's a big byte so you need to consider these two values as a whole value (IE 0xXXXX, not 0xXX and 0xXX)
-            # Avec les valeurs actuelles, tu pourras ouvrir l'arbre à la gauche de la porte.
+        print(read_big(game.data,40))  # Valeur des offsets 40 et 41.
+        write_big(game.data,40,1003)
+        print(read_big(game.data,40))  # Nouvelle valeur
 
-
-        # Amuses-toi bien :)
-        print(hex(game[0x144EA]), game[0x144E9])  # Here how the game understand the number behind these two offsets.
-        game[0x144EA] = 0x0 # Your value
-        game[0x144E9] = 0xA# Your value
-
-
-        game.setExit(0,0,12)
 
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
