@@ -16,13 +16,15 @@ class Doors():
             if results:
                 for elem in results:
                     self.positions_offsets.append(elem[0])
-
-                    # Il faudra réfléchir concernant ceci. En effet, on doit utiliser
-                    # Big read maintenant. Je toruve que ça simplifie la vie maintenant
+                    # Maintenant converti en un seul offset.
+                    # Mais on doit obligatoirement lire cet offset avec
+                    # le big_read que j'ai écris dans tools.py. Et pour changer
+                    # Ce offset, il faut absolument utiliser le big_write dans tools.py.
+                    # On doit utiliser Big read maintenant. Je trouve que ça simplifie la vie maintenant
                     # Vu que maintenant ça retourne les deux valeurs ave cune seule valeur genre.
                     self.positions.append( read_big(data, elem[0]) )
 
-                    # Old
+                    # Old  ( À retirer si approuvé)
                     #self.positions.append( (data[elem[0][0]],data[elem[0][1]]) )
 
                     self.shape_types.append(elem[1])
@@ -60,11 +62,6 @@ class Doors():
                 for _ in range(count):
                     base_door = 0x8000 + current_offset
                     map_tile_offset = base_door  # [0] et [1], c'est une grosse lecture!
-                        # Maintenant converti en un seul offset.
-                        # Mais on doit obligatoirement lire cet offset avec
-                        # le big_read que j'ai écris dans tools.py. Et pour changer
-                        # Ce offset, il faut absolument utiliser le big_write dans tools.py.
-
                         # C'est avec cette info ci-dessus que l'on va pouvoir déterminer si C'est une porte
                         # N,S,E ou W.
                     shape = data[base_door + 2]
@@ -74,27 +71,7 @@ class Doors():
                     bit_offset = door_data & 0x07
                     which_door = (int((door_data & 0x7F) / 2 / 2 / 2) * 8) + bit_offset
 
-                    # Je suis convaincu que ce qui suit ci-dessous peut être enlevé. Mais je l'ai
-                    # laissé au cas où pour te permettre de te vérifier après ton gossage de debug.py.
-                    shape //= 2
-
-                    size_to_remove = data[0x14452 + shape]
-                    if size_to_remove == 68:
-                        orientation = "N"
-                    elif size_to_remove == 66:
-                        orientation = "S"
-                    elif size_to_remove == 36:
-                        orientation = "EW"
-                    else:
-                        raise BaseException(f"Something is wrong")
-
-                    # Tu peux changer l'ordre ou le contenu pour retirer hex et bin par exemple. Présentement ça suit le plus fidèlement
-                    # possible l'ordre dans le data.
-                    result.append([map_tile_offset, shape, which_door, orientation])
-
-                        # À ENLEVER PROBABLEMENT
-                        # orientation : Je ne pense pas que tu en aies besoin de ceci. Mais ça pourrait te servir pour valider tes
-                            # affaires?
+                    result.append([map_tile_offset, shape, which_door])
                     current_offset += 4
         return result
 
