@@ -1,20 +1,8 @@
 from gameclass import GT, ROM
-import datetime
-import random
+import datetime, random
 from infos import *  # This is for the tools in infos.
 from getters import *
-from exits import *
-from world import *
-from doors import *
 from datetime import datetime
-from copy import deepcopy
-
-
-
-
-
-
-
 
 class debug(GT):
     def __str__(self):
