@@ -2,7 +2,6 @@ from infos import *
 import random
 from world import *
 from getters import getter_passwords
-from tools import *
 
 class ROM:
     header = bytearray(
@@ -70,7 +69,16 @@ class GT(ROM):
             index ([type]): which exit
         """
         offsets, values = [], []
-        count_offset = 0x10000 + read_big(self, 0x1F303 + self[0x01F303 + world_i] + 2*frame_i)
+        base = self[0x01F303 + world_i]
+        adjust = 0x1F303 + base + 2*frame_i
+
+        #Lecture du Gros Byte. On doit lire le byte présent et le byte suivant et les combiner ensemble.
+            # GROS BYTE : 0xHHpp
+        temp1 = self[0x1F303 + base + 2*frame_i]  # Cecu est l'endroit où es tle count, du moins les deux premiers bytes on a les deux premiers chiffres! (pp)
+        temp2 = self[0x1F303 + base + 2*frame_i + 1]  # Les deux high bytes (HH)
+        temp3 = temp2 * 16 * 16 + temp1
+
+        count_offset = 0x10000 + temp3
         vanilla_count = self[count_offset]
 
         # Preparation for removal

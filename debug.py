@@ -6,7 +6,6 @@ from getters import *
 from exits import *
 from world import *
 from doors import *
-from tools import *
 from datetime import datetime
 from copy import deepcopy
 
@@ -113,7 +112,7 @@ if __name__ == "__main__":
         startTime = datetime.now()
         game = debug(original.read())
 
-        print(game.all_worlds[1])
+        print(game)
 
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)

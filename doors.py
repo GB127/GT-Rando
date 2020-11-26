@@ -1,5 +1,4 @@
 from copy import deepcopy
-from tools import *
 
 class Doors():
     def __init__(self, data, world_i):
@@ -16,13 +15,11 @@ class Doors():
             if results:
                 for elem in results:
                     self.positions_offsets.append(elem[0])
-                    # Maintenant converti en un seul offset.
-                    # Mais on doit obligatoirement lire cet offset avec
-                    # le big_read que j'ai écris dans tools.py. Et pour changer
-                    # Ce offset, il faut absolument utiliser le big_write dans tools.py.
-                    # On doit utiliser Big read maintenant. Je trouve que ça simplifie la vie maintenant
-                    # Vu que maintenant ça retourne les deux valeurs ave cune seule valeur genre.
-                    self.positions.append( read_big(data, elem[0]) )
+
+                    low = data[elem[0]]
+                    high = data[elem[0] +1]
+
+                    self.positions.append(high*16*16 + low)
 
                     # Old  ( À retirer si approuvé. )
                     #self.positions.append( (data[elem[0][0]],data[elem[0][1]]) )
