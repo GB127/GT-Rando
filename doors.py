@@ -1,5 +1,5 @@
 from copy import deepcopy
-
+from tools import *
 
 class Doors():
     def __init__(self, data, world_i):
@@ -16,7 +16,15 @@ class Doors():
             if results:
                 for elem in results:
                     self.positions_offsets.append(elem[0])
-                    self.positions.append( (data[elem[0][0]],data[elem[0][1]]) )
+
+                    # Il faudra réfléchir concernant ceci. En effet, on doit utiliser
+                    # Big read maintenant. Je toruve que ça simplifie la vie maintenant
+                    # Vu que maintenant ça retourne les deux valeurs ave cune seule valeur genre.
+                    self.positions.append( read_big(data, elem[0]) )
+
+                    # Old
+                    #self.positions.append( (data[elem[0][0]],data[elem[0][1]]) )
+
                     self.shape_types.append(elem[1])
                     self.lock_bit_i.append(elem[2])
                     self.frames.append(frame_i)
@@ -51,9 +59,13 @@ class Doors():
                 current_offset += 1
                 for _ in range(count):
                     base_door = 0x8000 + current_offset
-                    map_tile_offset = (base_door,
-                                    base_door + 1)  # 0 et 1 ensemble. À séparer si tu préfères.
-                        # C'est avec ce deux infos si-dessuss que l'on va pouvoir déterminer si C'est une porte
+                    map_tile_offset = base_door  # [0] et [1], c'est une grosse lecture!
+                        # Maintenant converti en un seul offset.
+                        # Mais on doit obligatoirement lire cet offset avec
+                        # le big_read que j'ai écris dans tools.py. Et pour changer
+                        # Ce offset, il faut absolument utiliser le big_write dans tools.py.
+
+                        # C'est avec cette info ci-dessus que l'on va pouvoir déterminer si C'est une porte
                         # N,S,E ou W.
                     shape = data[base_door + 2]
                     door_data = data[base_door + 3]
@@ -61,9 +73,6 @@ class Doors():
                     # Manipulations à faire pour récupérer la bonne information pour la logique.
                     bit_offset = door_data & 0x07
                     which_door = (int((door_data & 0x7F) / 2 / 2 / 2) * 8) + bit_offset
-
-
-                    #bit_to_check = data[0x180B8 + bit_offset]
 
                     # Je suis convaincu que ce qui suit ci-dessous peut être enlevé. Mais je l'ai
                     # laissé au cas où pour te permettre de te vérifier après ton gossage de debug.py.
