@@ -12,7 +12,7 @@ class Doors():
         self.lock_bit_i = []
         self.frames = []
         for frame_i in range(self.nFrames):
-            results = self.getDoorsFromData(data, world_i, frame_i)
+            results = self.getKeyDoorsFromData(data, world_i, frame_i)
             if results:
                 for elem in results:
                     self.positions_offsets.append(elem[0])
@@ -32,7 +32,7 @@ class Doors():
                     self.frames.append(frame_i)
         print(self.positions)
 
-    def getDoorsFromData(self, data, world_i, frame_i):  #82C329
+    def getKeyDoorsFromData(self, data, world_i, frame_i):  #82C329
         """Get all doors of said world-frame.
 
             Args:
