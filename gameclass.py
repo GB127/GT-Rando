@@ -2,6 +2,7 @@ from infos import *
 import random
 from world import *
 from getters import getter_passwords
+from tools import *
 
 class ROM:
     header = bytearray(
@@ -45,61 +46,46 @@ class ROM:
         self.data[offset] = value
 
 class GT(ROM):
-
     def __init__(self,data):
-        super().__init__(data)
-        self.modify_data_ice_dark()
-        self.modify_data_starting_frame()
-        self.removeExitFromData(3,1,0)
-        self.removeExitFromData(1,15,0)
-        self.removeExitFromData(1,13,1)
+        super().__init__(data)  # Header removal
+        self.modify_data_ice_dark()  # Changement du code en prévision du randomizer pour pouvoir changer le nombre.
+        self.modify_data_starting_frame()  # CHangement du code pour permettre une randomization du first frame. Side effect : Pu d'introduction.
+        self.removeExitFromData(3,1,0)  # Enlever exit inutilisé
+        self.removeExitFromData(1,15,0) # Enlever exit inutilisé
+        self.removeExitFromData(1,13,1) # Enlever exit inutilisé
+        self.add_credits()  # Ajout credits
 
+
+        # Création des différents world pour permettre leur randomization isolé.
         self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
-        self.add_credits()
 
 
 
-    def removeExitFromData(self, world_i, frame, index):
-        data = self.data
-        # Step 1 : Trouver la base.
-        base = data[0x01F303 + world_i]
+    def removeExitFromData(self, world_i, frame_i, index):
+        """Remove a specific exit from a said world-frame. 
 
-        # On doit trouver l'endroit du count.
-        # On doit aller chercher le GROS byte. et pour cela, on doit avoir un "adjust" qui est dépendant du frame.
-        adjust = 0x1F303 + base + 2*frame
+        Args:
+            world_i (int): Which world
+            frame ([type]): which frame
+            index ([type]): which exit
+        """
+        offsets, values = [], []
+        count_offset = 0x10000 + read_big(self, 0x1F303 + self[0x01F303 + world_i] + 2*frame_i)
+        vanilla_count = self[count_offset]
 
-        #Lecture du Gros Byte. On doit lire le byte présent et le byte suivant et les combiner ensemble.
-            # GROS BYTE : 0xHHpp
-        temp1 = data[0x1F303 + base + 2*frame]  # Cecu est l'endroit où es tle count, du moins les deux premiers bytes on a les deux premiers chiffres! (pp)
-        temp2 = data[0x1F303 + base + 2*frame + 1]  # Les deux high bytes (HH)
-
-        # Donc le fond on doit faire 2 shift left pour ajouter deux zeros. 
-        # Puis additionner.
-            # 0xHH => 0xHH00 => 0xHHpp
-        # Je ne comprends pas pourquoi 16^2 ne fonctionne psa ici.
-
-        temp3 = temp2 * 16 * 16 + temp1  
-
-        # Trouvons enfin l'endroit du count.
-        temp4 = 0x10000 + temp3
-
-        vanilla_count = deepcopy(data[temp4])
-        offsets = []
-        values = []
+        # Preparation for removal
         for i in range(vanilla_count):
-            offsets.append(list(temp4 + x + 6 * i + 1 for x in range(6)))  # Voici les offsets.
-            values.append([data[temp4 + x + 6 * i + 1] for x in range(6)])  # Voici les valeurs retrouvées dans chaque offsets.
+            offsets.append(list(count_offset + x + 6 * i + 1 for x in range(6)))
+            values.append([self[count_offset + x + 6 * i + 1] for x in range(6)])
 
-        data[temp4] -=1
-        
+        # Actual removal of exit
         if index == vanilla_count -1:  # On pourra ptet enlever les clauses de if/else.
             pass  # Pcq c'était déjà le dernier de la liste.
         else:  # On décale les valeurs.
             for i in range(index, vanilla_count-1):
                 for no, offset in enumerate(offsets[i]):
-                    data[offset] = values[i+1][no] # Should work
-
-
+                    self[offset] = values[i+1][no] # Should work
+        self[count_offset] -=1
 
 
     def modify_data_ice_dark(self):
@@ -109,8 +95,8 @@ class GT(ROM):
             
             old dark rooms locations: 0x186B5 to 0x186B5 + 12
 
-        Big thank you to Zarby89, the following code is the litteral translation
-        of his code on this link: https://pastebin.com/PVucvGyy
+            Big thank you to Zarby89, the following code is the litteral translation
+            of his code on this link: https://pastebin.com/PVucvGyy
 
         """
         self[0x28CC] = 0x64
@@ -167,6 +153,9 @@ class GT(ROM):
             self[self.get_darkice_indice(couple[0], couple[1])] += 1
 
     def modify_data_starting_frame(self):
+        """Change the code to allow randomization of first frame.
+            Unfortunate effect : Removal of intro cs.
+            """
         self[0x1DFD] = 0xA9
         self[0x1DFE] = 0x04
         self[0x1DFF] = 0x85
@@ -226,7 +215,12 @@ class GT(ROM):
         self[0x2767] = 0x0
 
 
-    def dark_randomizer(self, count="vanilla"):
+    def dark_randomizer(self, count=6):
+        """Randomize which rooms are dark.
+
+            Args:
+                count (int, optional): How many rooms. Defaults to vanilla value (6).
+            """
         for offset in range(0x1FF35, 0x1FFA7):  # Remove all dark rooms
             self[offset] = self[offset] & 1
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
@@ -234,40 +228,38 @@ class GT(ROM):
         for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
             offsets.pop(offsets.index(self.get_darkice_indice(world, boss_frame)))
         random.shuffle(offsets)
-        if count == "vanilla":
-            for no in range(6):
-                self[offsets[no]] += 2
-        if count == "random":
-            pass  # Will think about it.
+        for no in range(count):
+            self[offsets[no]] += 2
 
     def world_select(self):
-        # Put a banana on the box of the world you want to go. Example  
-            # Banana on the 3rd box = World 2 (3rd world of the game)
-        # Cherry for all the rest of the boxes
+        """Put a banana on the box of the world you want to go.
+            Cherry for all the rest of the boxes
+            Example : Banana on the 3rd box = World 2 (3rd world of the game)
+            """
         self.setmulti(0x1C67F, 0x1C692, 0x0)
         self[0x1c680] = 0x1
         self[0x1c686] = 0x1
         self[0x1c68c] = 0x1
         self[0x1c692] = 0x1
 
-    def ice_randomizer(self, count="vanilla"):
+    def ice_randomizer(self, count=2):
+        """Randomize which rooms are icy.
+            Args:
+                count (int, optional): How many rooms. Defaults to vanilla value (2).
+            """
+
         for offset in range(0x1FF35, 0x1FFA7):  # Remove all ice rooms
             self[offset] = self[offset] & 2
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
         random.shuffle(offsets)
-        if count == "vanilla":
-            for no in range(2):
-                self[offsets[no]] += 1
-        if count == "random":
-            for no in range(random.randint(0,114)):
-                self[offsets[no]] += 1
-        elif isinstance(count, int):
-            for no in range(count):
-                self[offsets[no]] += 1
+        for no in range(count):
+            self[offsets[no]] += 1
 
-    def get_darkice_indice(self, world,frame):
+    def get_darkice_indice(self, world_i,frame_i):
+        """Formula to get the indice.
+            """
         offsets = [0, 16, 32, 58, 88]
-        return offsets[world] + frame + 0x1FF35
+        return offsets[world_i] + frame_i + 0x1FF35
 
 
 
@@ -445,7 +437,13 @@ class GT(ROM):
             for i in range(this_world.items.nItems):
                 self[this_world.items.offsets[i]] = this_world.items.values[i]
 
-    def setExit(self, world_i, source_exit, destination_exit):
+    def setExit(self, world_i, source_exit, destination_exit, match=False):
+        """Set a specific exit to a specific exit.
+            Args:
+                world_i ([type]): Which world the exit is in.
+                source_exit ([type]): Which exit you want to change.
+                destination_exit ([type]): New destination.
+            """
         this_world = self.all_worlds[world_i]
         this_world.exits.setExit(source_exit, destination_exit)
         self[this_world.exits.offsets[source_exit][0]] = this_world.exits.destination_frames[source_exit]
@@ -455,3 +453,5 @@ class GT(ROM):
         if self[this_world.exits.offsets[source_exit][3]]>=2**7:self[this_world.exits.offsets[source_exit][3]] = self[this_world.exits.offsets[source_exit][3]]-2**7
         self[this_world.exits.offsets[source_exit][3]] = self[this_world.exits.offsets[source_exit][3]]+this_world.exits.destination_hookshotHeightAtArrival[source_exit]*2**7
 
+        if match:
+            self.setExit(world_i, destination_exit, source_exit)
