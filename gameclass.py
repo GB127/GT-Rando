@@ -450,25 +450,3 @@ class GT(ROM):
                 else: 
                     print('Was not able to find a feasible configuration with these settings for this world')
                     break
-                
-
-
-
-    def setExit(self, world_i, source_exit, destination_exit, match=False):
-        """Set a specific exit to a specific exit.
-            Args:
-                world_i ([type]): Which world the exit is in.
-                source_exit ([type]): Which exit you want to change.
-                destination_exit ([type]): New destination.
-            """
-        this_world = self.all_worlds[world_i]
-        this_world.exits.setExit(source_exit, destination_exit)
-        self[this_world.exits.offsets[source_exit][0]] = this_world.exits.destination_frames[source_exit]
-        self[this_world.exits.offsets[source_exit][4]] = this_world.exits.destination_Xpos[source_exit]
-        self[this_world.exits.offsets[source_exit][5]] = this_world.exits.destination_Ypos[source_exit]
-        #hook bug fix
-        if self[this_world.exits.offsets[source_exit][3]]>=2**7:self[this_world.exits.offsets[source_exit][3]] = self[this_world.exits.offsets[source_exit][3]]-2**7
-        self[this_world.exits.offsets[source_exit][3]] = self[this_world.exits.offsets[source_exit][3]]+this_world.exits.destination_hookshotHeightAtArrival[source_exit]*2**7
-
-        if match:
-            self.setExit(world_i, destination_exit, source_exit)

@@ -64,6 +64,26 @@ class debug(GT):
     def show_map(self, world_i):
         self.all_worlds[world_i].showMap()
 
+    def setExit(self, world_i, source_exit, destination_exit, match=False):
+        """Set a specific exit to a specific exit.
+            Args:
+                world_i ([type]): Which world the exit is in.
+                source_exit ([type]): Which exit you want to change.
+                destination_exit ([type]): New destination.
+            """
+        this_world = self.all_worlds[world_i]
+        this_world.exits.setExit(source_exit, destination_exit)
+        self[this_world.exits.offsets[source_exit][0]] = this_world.exits.destination_frames[source_exit]
+        self[this_world.exits.offsets[source_exit][4]] = this_world.exits.destination_Xpos[source_exit]
+        self[this_world.exits.offsets[source_exit][5]] = this_world.exits.destination_Ypos[source_exit]
+        #hook bug fix
+        if self[this_world.exits.offsets[source_exit][3]]>=2**7:self[this_world.exits.offsets[source_exit][3]] = self[this_world.exits.offsets[source_exit][3]]-2**7
+        self[this_world.exits.offsets[source_exit][3]] = self[this_world.exits.offsets[source_exit][3]]+this_world.exits.destination_hookshotHeightAtArrival[source_exit]*2**7
+
+        if match:
+            self.setExit(world_i, destination_exit, source_exit)
+
+
     def __setitem__(self,offset, value):
         if offset in self.freespace:
             self.used.append(offset)
@@ -71,7 +91,6 @@ class debug(GT):
         super().__setitem__(offset,value)
 
     def do_not_place_keydoors(self):
-        # This code remove the checker fo keyed door. Comment these if you want to open the doors manually.
         game[0x14377] = 0xEA
         game[0x14378] = 0xEA
 
@@ -91,13 +110,7 @@ if __name__ == "__main__":
         game = debug(original.read())
         game.world_select()
 
-
-        print(read_big(game.data,40))  # Valeur des offsets 40 et 41.
-        write_big(game.data,40,1003)
-        print(read_big(game.data,40))  # Nouvelle valeur
-
-
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
-            # print(f"Testing case have been created! {datetime.now()}")
+            print(f"Testing case have been created! {datetime.now()}")
             newgame.write(game.data)
