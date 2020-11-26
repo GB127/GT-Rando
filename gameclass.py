@@ -89,16 +89,7 @@ class GT(ROM):
 
 
     def modify_data_ice_dark(self):
-        """Change old code to new code to be more flexible.
-
-            Will reduce number of lines eventually.
-            
-            old dark rooms locations: 0x186B5 to 0x186B5 + 12
-
-            Big thank you to Zarby89, the following code is the litteral translation
-            of his code on this link: https://pastebin.com/PVucvGyy
-
-        """
+        """Change old code to new code to be more flexible."""
         self[0x28CC] = 0x64
         self[0x28CD] = 0xCA
         self[0x28CE] = 0xA6

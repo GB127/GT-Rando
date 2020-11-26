@@ -11,27 +11,59 @@ from frames import *
 
 class World():
     def __init__(self, data, world_i, starting_exit=0):
+        """Create a world object that includes all characteristics of the world
+
+        Args:
+            data (bytearray): game data
+            world_i (int): World index (0-4)
+
+
+
+            starting_exit (int, optional): [description]. Defaults to 0.
+        """
         assert isinstance(data, bytearray), "Must be a bytearray"
         assert 0 <= world_i <= 4, "Must be in range 0-4."
 
-        all_nFrames = [16, 16, 26, 30, 26]
-        starting_frame_offsets = list(range(0x1FFA7, 0x1FFAC))
+        all_nFrames = [16, 16, 26, 30, 26]  # Number of frames per world.
+        starting_frame_offsets = list(range(0x1FFA7, 0x1FFAC))  # Offset for world id
 
-        self.starting_frame_offset = starting_frame_offsets[world_i]
+        # General data
         self.world_i = world_i
         self.data = data
-        self.nFrames = all_nFrames[world_i]
+        self.nFrames = all_nFrames[world_i]  # Number of frames of this world
+        self.starting_frame_offset = starting_frame_offsets[world_i]  # get the offset of world's first frame 
+
+        # Exits related.
         self.exits = Exits(data, world_i)
         self.nExits = len(self.exits.offsets)
         self.original_exits = deepcopy(self.exits)
-        self.items = Items(data, world_i)
+
+        # Items related.
+        self.items = Items(data, world_i)  # Items of all the world
         self.nItems = len(self.items.offsets)
-        self.frames = Frames(data, world_i, self.exits.source_frames, self.items.frames)
+
+
+        self.frames = Frames(data, 
+                            world_i, 
+                            self.exits.source_frames,
+                            self.items.frames
+                            )
 
         self.starting_exit = starting_exit
         self.initial_frame_coordinates_offsets = self.get_initial_frame_coordinates_offsets_from_data()
 
-        print('World ',world_i, ' created!')
+    def __str__(self):
+        result = f'World {self.world_i} | {self.nFrames} frames | Boss frame : {[14, 15, 25, 25, 25][self.world_i]}\n'
+        result += f'{self.nItems} items\n'
+        result += str(self.items)
+
+
+        return result
+
+
+
+
+
 
     def randomize_firstframe(self):
         boss_exit = self.exits.boss_exit

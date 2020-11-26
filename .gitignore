@@ -20,3 +20,5 @@ debug-1.bst
 debug-trace.log
 debug.bp
 debug.srm
+stats.py
+spoilers.py

@@ -18,10 +18,19 @@ from copy import deepcopy
 
 
 class debug(GT):
+    def __str__(self):
+        string = ""
+        for world in self.all_worlds:
+            string += str(world)
+        return string
+
+
 
     def __init__(self,data):
         self.list_freespace()
         super().__init__(data)
+
+
 
     def list_freespace(self):
         self.freespace = [offset for offset in range(0x7374, 0x7FB0)]
@@ -65,12 +74,7 @@ class debug(GT):
         self.all_worlds[world_i].showMap()
 
     def setExit(self, world_i, source_exit, destination_exit, match=False):
-        """Set a specific exit to a specific exit.
-            Args:
-                world_i ([type]): Which world the exit is in.
-                source_exit ([type]): Which exit you want to change.
-                destination_exit ([type]): New destination.
-            """
+        """Set a specific exit to a specific exit."""
         this_world = self.all_worlds[world_i]
         this_world.exits.setExit(source_exit, destination_exit)
         self[this_world.exits.offsets[source_exit][0]] = this_world.exits.destination_frames[source_exit]
@@ -108,7 +112,8 @@ if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as original:
         startTime = datetime.now()
         game = debug(original.read())
-        game.world_select()
+
+        print(game.all_worlds[1])
 
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
