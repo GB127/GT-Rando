@@ -370,6 +370,42 @@ class GT(ROM):
                 Worlds_passwords.append(list(self.data[offset] for offset in getter_passwords(world)))
             check = all([1 == Worlds_passwords.count(x) for x in Worlds_passwords])
 
+
+    def randomizers_with_verification(self, param_items=False, param_exits=False, param_doors=False):
+        """Randomize stuffs and check if doable.
+
+        Args:
+            param_items ([type]): [description]
+                only_switch_positions=True
+            param_exits ([type]): [description]
+                fix_boss_exit=True,
+                fix_locked_doors=True,
+                keep_direction=True,
+                pair_exits=True
+            param_doors ([type]): [description]
+                les paramètres que l'on va mettre.
+        """
+        # max iter
+        # for world, this world...
+        # if param_items:
+            # this_world.items.randomize(param_items)
+        # Etc.
+
+        """ L'idée derrière une telle approche est de permettre 
+        l'utilisation de ton vérificateur peu importe les randomizers que l'on utiliserait.
+        En ce moment, ça force les randomizers d'objets et de exits ensemble sans négociation.
+        Ceci me pose problème un petit peu, car si on procède ainsi, il faudra multiplier les méthodes
+        pour vérifier les combinaisons (exemple : item + exits, doors + items, doors + exits, les trois ensemble... 
+        Et ptet une quatrième éventuellement.)
+        
+        On enverrait les paramètres en dictionnaire genre. Comme ça, on aua moins
+        d'argument à gérer dans la méthode qui implique les randomizers et le vérificateur
+        et nous permet de se focusser un petit peu plus sur le vérificateur genre.
+        """
+        
+        pass
+
+
     def exits_and_items_randomizer_with_verification(self, fix_boss_exit=True, fix_locked_doors=True, keep_direction=True, pair_exits=True, only_switch_positions=True):
         max_iter = 5000
         for world_i, this_world in enumerate(self.all_worlds):
@@ -417,25 +453,6 @@ class GT(ROM):
                 
 
 
-    def exits_randomizer(self, fix_boss_exit=True, fix_locked_doors=True, keep_direction=True, pair_exits=True):
-        # create world objects
-        for this_world in self.all_worlds:
-            this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
-            for i in range(this_world.exits.nExits):
-                self[this_world.exits.offsets[i][0]] = this_world.exits.destination_frames[i]
-                self[this_world.exits.offsets[i][4]] = this_world.exits.destination_Xpos[i]
-                self[this_world.exits.offsets[i][5]] = this_world.exits.destination_Ypos[i]
-                #hook bug fix
-                if self[this_world.exits.offsets[i][3]]>=2**7:self[this_world.exits.offsets[i][3]] = self[this_world.exits.offsets[i][3]]-2**7
-                self[this_world.exits.offsets[i][3]] = self[this_world.exits.offsets[i][3]]+this_world.exits.destination_hookshotHeightAtArrival[i]*2**7
-
-            #this_world.showMap()
-
-    def items_randomizer(self, only_switch_positions=True):
-        for this_world in self.all_worlds:
-            this_world.items.randomize(only_switch_positions)
-            for i in range(this_world.items.nItems):
-                self[this_world.items.offsets[i]] = this_world.items.values[i]
 
     def setExit(self, world_i, source_exit, destination_exit, match=False):
         """Set a specific exit to a specific exit.
