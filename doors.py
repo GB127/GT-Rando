@@ -24,7 +24,7 @@ class Doors():
                     # Vu que maintenant ça retourne les deux valeurs ave cune seule valeur genre.
                     self.positions.append( read_big(data, elem[0]) )
 
-                    # Old  ( À retirer si approuvé)
+                    # Old  ( À retirer si approuvé. )
                     #self.positions.append( (data[elem[0][0]],data[elem[0][1]]) )
 
                     self.shape_types.append(elem[1])
