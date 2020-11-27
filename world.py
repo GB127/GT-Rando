@@ -55,6 +55,9 @@ class World():
         self.initial_frame_coordinates_offsets = self.getInitialFrameCoordinatesOffsetsFromData()
         self.initial_frame_coordinates = self.getInitialFrameCoordinates()
 
+        self.initial_frame_coordinates_offsets_vanilla = deepcopy(self.initial_frame_coordinates_offsets)
+        self.initial_frame_coordinates_vanilla = deepcopy(self.initial_frame_coordinates)
+
     def __str__(self):
         result = f'World {self.world_i} | {self.nFrames} frames | Starting frame : {self.starting_frame} | Boss frame : {[14, 15, 25, 25, 25][self.world_i]}\n'
         result += f'{self.nItems} items\n'
@@ -103,7 +106,7 @@ class World():
         self.starting_exit = starting_exit
         [offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max] = self.initial_frame_coordinates_offsets
         if starting_exit == 0:
-            self.initial_frame_coordinates_offsets, self.initial_frame_coordinates =[offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max], [self.data[offset_x_goofy], self.data[offset_y_goofy], self.data[offset_x_max], self.data[offset_y_max]]
+            self.initial_frame_coordinates_offsets, self.initial_frame_coordinates =self.initial_frame_coordinates_offsets_vanilla, self.initial_frame_coordinates_vanilla
         else:
             self.initial_frame_coordinates_offsets, self.initial_frame_coordinates =[offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max], [self.exits.source_Xpos[starting_exit], self.exits.source_Ypos[starting_exit], self.exits.source_Xpos[starting_exit], self.exits.source_Ypos[starting_exit]]
         return self.initial_frame_coordinates_offsets, self.initial_frame_coordinates
