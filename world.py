@@ -229,7 +229,7 @@ class World():
         elif (condition_type == 8): required_items = [0x8,0xA]
         for required_item in required_items:
             for item_i in range(self.nItems):
-                if unlocked_items[item_i] and not used_items[item_i] and self.items.values[item_i]==required_item::
+                if unlocked_items[item_i] and not used_items[item_i] and self.items.values[item_i]==required_item:
                     used_items[item_i] = 1 #we use that item
                     break
 
@@ -251,7 +251,7 @@ class World():
 
         for required_item in required_items:
             for item_i in range(self.nItems):
-                if unlocked_items[item_i] and not used_items[item_i] and self.items.values[item_i]==required_item::
+                if unlocked_items[item_i] and not used_items[item_i] and self.items.values[item_i]==required_item:
                     used_items[item_i] = 1 #we use that item
                     break
 

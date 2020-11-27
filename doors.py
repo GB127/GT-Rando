@@ -21,7 +21,6 @@ class Doors():
                     self.shape_types.append(elem[1])
                     self.lock_bit_i.append(elem[2])
                     self.frames.append(frame_i)
-        print(self.positions)
 
     def getKeyDoorsFromData(self, data, world_i, frame_i):  #82C329
         """Get all doors of said world-frame.
