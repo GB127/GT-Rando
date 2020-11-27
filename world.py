@@ -8,6 +8,7 @@ import numpy as np
 from exits import *
 from items import *
 from frames import *
+from doors import *
 
 class World():
     def __init__(self, data, world_i, starting_exit=0):
@@ -41,6 +42,8 @@ class World():
         self.items = Items(data, world_i)  # Items of all the world
         self.nItems = len(self.items.offsets)
 
+        # Doors related
+        self.doors = Doors(data, world_i)
 
         self.frames = Frames(data, 
                             world_i, 
