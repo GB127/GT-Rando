@@ -28,7 +28,10 @@ def flag_string(options):
 
 if __name__ == "__main__":
     options = getoptions()
+
     random.seed(options.seed)
+    flags = flag_string(options)
+
     with open("Vanilla.smc", "rb") as original:  # We will have to change this to not force an exact filename.
         randogame = GT(original.read())
         randogame.passwordRandomizer()
@@ -43,6 +46,5 @@ if __name__ == "__main__":
                 with open("error_flags_seed.txt", "w") as report:
                     report.write(f'python main.py -{flags} --seed {options.seed}')
 
-        flags = flag_string(options)
         with open(f"{flags}_{options.seed}.smc", "wb") as newgame:
             newgame.write(randogame.data)

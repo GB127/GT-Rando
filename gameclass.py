@@ -368,10 +368,10 @@ class GT(ROM):
         fix_locked_doors = True
         keep_direction = options.Rexits_matchdir
         pair_exits = options.Rexits_pair
-        only_switch_positions = options.Ritems_pos
+        only_switch_positions = options.Ritems
 
         exits_rando = options.Rexits or options.Rexits_matchdir or options.Rexits_pair
-        items_rando = options.Ritems or options.Ritems_pos
+        items_rando = options.Ritems_pos
         firstframe_rando = options.Rfirst
 
         max_iter = 5000
