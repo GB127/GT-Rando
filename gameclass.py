@@ -363,9 +363,6 @@ class GT(ROM):
 
 
     def randomizerWithVerification(self, options):
-        print(options.Ritems)
-        print(options.Ritems_pos)
-
 
         fix_boss_exit = True
         fix_locked_doors = True
