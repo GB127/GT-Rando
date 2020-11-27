@@ -3,6 +3,9 @@ import random
 from world import *
 from getters import getter_passwords
 
+class RandomizerError(BaseException):
+    pass
+
 class ROM:
     header = bytearray(
         [0x47,0x4F,0x4F,0x46,0x20,0x54,0x52,0x4F,0x4F,0x50,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x30,0x00,0x09,0x00,0x01,0x08,0x00,0x2F,0xA5,0xD0,0x5A
@@ -367,7 +370,7 @@ class GT(ROM):
         pair_exits = options.Rexits_pair
         only_switch_positions = options.Ritems_pos
 
-        exits_rando = options.Rexits or options.Rexits_fixboss or options.Rexits_matchdir or options.Rexits_pair
+        exits_rando = options.Rexits or options.Rexits_matchdir or options.Rexits_pair
         items_rando = options.Ritems or options.Ritems_pos
         firstframe_rando = options.Rfirst
 
@@ -400,8 +403,7 @@ class GT(ROM):
                         print('Assigned new exits and items to world',world_i)
                         break
                 else: 
-                    print('Was not able to find a feasible configuration with these settings for this world')
-                    break
+                    raise RandomizerError(f"Was not able to find a feasible configuration with these settings for world {world_i}")
 
 
     def exits_and_items_randomizer_with_verification(self, fix_boss_exit=True, fix_locked_doors=True, keep_direction=True, pair_exits=True, only_switch_positions=True):
