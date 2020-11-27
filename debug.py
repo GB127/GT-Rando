@@ -3,6 +3,7 @@ import datetime, random
 from infos import *  # This is for the tools in infos.
 from getters import *
 from datetime import datetime
+from world import *
 
 class debug(GT):
     def __str__(self):
@@ -96,16 +97,18 @@ def set_seed(seed=None):
     print(seed)
     random.seed(seed)
 
-
+class randomized(debug):
+    def __init__(self, data):
+        self.data = bytearray(data)
+        self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
 
 
 if __name__ == "__main__":
-    with open("Vanilla.smc", "rb") as original:
+    with open("buggy.smc", "rb") as original:
         startTime = datetime.now()
-        game = debug(original.read())
+        game = randomized(original.read())
 
-        print(game.all_worlds[0].exits.determineRandomizationOrder(fix_boss_exit=False, fix_locked_doors=True, keep_direction=True, pair_exits=True))
-
+        game.show_map(3)
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
             print(f"Testing case have been created! {datetime.now()}")
