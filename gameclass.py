@@ -412,7 +412,7 @@ class GT(ROM):
                 for j in range(max_iter):#exits and items randomization
                     this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
                     this_world.items.randomize(only_switch_positions)
-                    initial_frame_coordinates_offsets, initial_frame_coordinates = this_world.randomize_firstframe()
+                    this_world.randomizeFirstExit()
                     #check feasability
                     unlocked_exits, unlocked_items, boss_reached = this_world.feasibleWorldVerification()
                     if (all(unlocked_exits) and all(unlocked_items) and boss_reached): break
@@ -427,22 +427,7 @@ class GT(ROM):
                     
                     print(sum(feasibility_results)/len(feasibility_results))
                     if(sum(feasibility_results)/len(feasibility_results))>0.9: 
-                        #assign new exits and items to the ROM
-                        for i in range(this_world.exits.nExits):
-                            self[this_world.exits.offsets[i][0]] = this_world.exits.destination_frames[i]
-                            self[this_world.exits.offsets[i][4]] = this_world.exits.destination_Xpos[i]
-                            self[this_world.exits.offsets[i][5]] = this_world.exits.destination_Ypos[i]
-                            #hook bug fix
-                            if self[this_world.exits.offsets[i][3]]>=2**7:self[this_world.exits.offsets[i][3]] = self[this_world.exits.offsets[i][3]]-2**7
-                            self[this_world.exits.offsets[i][3]] = self[this_world.exits.offsets[i][3]]+this_world.exits.destination_hookshotHeightAtArrival[i]*2**7
-
-                        for i in range(this_world.items.nItems):
-                            self[this_world.items.offsets[i]] = this_world.items.values[i]
-
-                        #Assign starting frame and coordinates
-                        self[this_world.starting_frame_offset] = this_world.starting_frame
-                        for i, pos_offset in enumerate(initial_frame_coordinates_offsets):
-                            self[pos_offset] = initial_frame_coordinates[i]
+                        this_world.writeWorldInData()
 
                         print('Assigned new exits and items to world',world_i)
                         break

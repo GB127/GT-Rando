@@ -17,8 +17,6 @@ class World():
             data (bytearray): game data
             world_i (int): World index (0-4)
 
-
-
             starting_exit (int, optional): [description]. Defaults to 0.
         """
         assert isinstance(data, bytearray), "Must be a bytearray"
@@ -33,7 +31,6 @@ class World():
         self.nFrames = all_nFrames[world_i]  # Number of frames of this world
         self.starting_frame_offset = starting_frame_offsets[world_i]  # get the offset of world's first frame 
         self.starting_frame = data[self.starting_frame_offset]
-
 
         # Exits related.
         self.exits = Exits(data, world_i)
@@ -52,19 +49,34 @@ class World():
                             )
 
         self.starting_exit = starting_exit
-        self.initial_frame_coordinates_offsets = self.get_initial_frame_coordinates_offsets_from_data()
+        self.initial_frame_coordinates_offsets = self.getInitialFrameCoordinatesOffsetsFromData()
 
     def __str__(self):
         result = f'World {self.world_i} | {self.nFrames} frames | Starting frame : {self.starting_frame} | Boss frame : {[14, 15, 25, 25, 25][self.world_i]}\n'
         result += f'{self.nItems} items\n'
         result += str(self.items)
 
-
         return result
 
+    def writeWorldInData(self):
+        #assign new exits and items to the ROM
+        for i in range(self.exits.nExits):
+            self.data[self.exits.offsets[i][0]] = self.exits.destination_frames[i]
+            self.data[self.exits.offsets[i][4]] = self.exits.destination_Xpos[i]
+            self.data[self.exits.offsets[i][5]] = self.exits.destination_Ypos[i]
+            #hook bug fix
+            if self.data[self.exits.offsets[i][3]]>=2**7:self.data[self.exits.offsets[i][3]] = self.data[self.exits.offsets[i][3]]-2**7
+            self.data[self.exits.offsets[i][3]] = self.data[self.exits.offsets[i][3]]+self.exits.destination_hookshotHeightAtArrival[i]*2**7
 
+        for i in range(self.items.nItems):
+            self.data[self.items.offsets[i]] = self.items.values[i]
 
-    def randomize_firstframe(self):
+        #Assign starting frame and coordinates
+        self.data[self.starting_frame_offset] = self.starting_frame
+        for i, pos_offset in enumerate(self.initial_frame_coordinates_offsets):
+            self.data[pos_offset] = self.initial_frame_coordinates[i]
+
+    def randomizeFirstFrame(self):
         all_nFrames = [16, 16, 26, 30, 26]  # Number of frames per world.
         boss_frame = [14, 15, 25, 25, 25][self.world_i]
         frames = list(range(all_nFrames[self.world_i]))
@@ -72,22 +84,18 @@ class World():
         frames.pop(boss_frame_index)
         self.starting_frame = random.choice(frames)
         all_exits = self.exits.getExitsFromData(self.data, self.world_i, [self.starting_frame])
-        all_coords, all_coords_2 = all_exits[4], all_exits[5]
-        print(all_coords)
 
-
-    def randomize_firstframe_old(self):
+    def randomizeFirstExit(self):
         boss_exit = self.exits.boss_exit
         all_exits = list(range(self.nExits))
         all_exits.pop(boss_exit)
         starting_exit = random.choice(all_exits)
 
-        print(all_exits)
         self.starting_frame = self.exits.source_frames[starting_exit]
-        initial_frame_coordinates_offsets, initial_frame_coordinates = self.set_starting_exit(starting_exit)
-        return initial_frame_coordinates_offsets, initial_frame_coordinates
+        self.initial_frame_coordinates_offsets, self.initial_frame_coordinates = self.setStartingExit(starting_exit)
+        return self.initial_frame_coordinates_offsets, self.initial_frame_coordinates
 
-    def set_starting_exit(self, starting_exit):
+    def setStartingExit(self, starting_exit):
         self.starting_exit = starting_exit
         [offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max] = self.initial_frame_coordinates_offsets
         if starting_exit == 0:
@@ -96,7 +104,7 @@ class World():
             return [offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max], [self.exits.source_Xpos[starting_exit], self.exits.source_Ypos[starting_exit], self.exits.source_Xpos[starting_exit], self.exits.source_Ypos[starting_exit]]
 
 
-    def get_initial_frame_coordinates_offsets_from_data(self):
+    def getInitialFrameCoordinatesOffsetsFromData(self):
         world_offset = self.world_i * 2 * 2
         offset_x_goofy = 0x1867B + world_offset
         offset_y_goofy = 0x1867B + world_offset + 1

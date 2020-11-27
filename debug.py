@@ -100,6 +100,7 @@ if __name__ == "__main__":
         startTime = datetime.now()
         game = debug(original.read())
 
+        game.exits_and_items_randomizer_with_verification()
         print(game)
 
         with open("debug.smc", "wb") as newgame:

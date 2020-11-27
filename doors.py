@@ -16,13 +16,7 @@ class Doors():
                 for elem in results:
                     self.positions_offsets.append(elem[0])
 
-                    low = data[elem[0]]
-                    high = data[elem[0] +1]
-
-                    self.positions.append(high*16*16 + low)
-
-                    # Old  ( À retirer si approuvé. )
-                    #self.positions.append( (data[elem[0][0]],data[elem[0][1]]) )
+                    self.positions.append(data[elem[0] +1]*16*16 + data[elem[0]])
 
                     self.shape_types.append(elem[1])
                     self.lock_bit_i.append(elem[2])
