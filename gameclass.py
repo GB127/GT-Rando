@@ -372,7 +372,7 @@ class GT(ROM):
         exits_rando = options.Rexits
         items_rando = options.Ritems_pos or options.Ritems
         firstframe_rando = options.Rfirst
-        max_iter = 5000
+        max_iter = 20000
         for world_i, this_world in enumerate(self.all_worlds):
             for i in range(100):
                 for j in range(max_iter):#exits and items randomization
