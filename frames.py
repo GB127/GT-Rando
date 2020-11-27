@@ -22,7 +22,7 @@ class Frames:
                     self.exit_to_exits.append(deepcopy(self.exits[frame_i])) #exit_i unlocks these exits
                     self.exit_to_items.append(deepcopy(self.items[frame_i])) #exit_i unlocks these items
 
-        isolated_exits = [[19,24],[25],[17,19,28,31],[32,33,34,35,45],[9,10,24,26,36,37,45]] 
+        isolated_exits = [[19,24],[15,25],[17,19,28,31,7,27,30,43,47],[32,33,34,35,45],[9,10,24,26,36,37,45]] 
         for exit_i in range(self.nExits):
             for isolated_exit in isolated_exits[world_i]:
                 if exit_i == isolated_exit:
@@ -30,7 +30,7 @@ class Frames:
                 elif isolated_exit in self.exit_to_exits[exit_i]:
                     self.exit_to_exits[exit_i].remove(isolated_exit)
 
-        one_ways = [[],[(26,25)],[(28,31)],[(33,32),(35,34),(46,45),(45,46)],[(10,9),(23,24),(24,23),(26,27),(28,26),(26,28),(37,36),(45,46)]]# start, destination
+        one_ways = [[],[(16,15),(26,25)],[(28,31),(8,7),(26,27),(29,30),(44,43),(48,47)],[(33,32),(35,34),(46,45),(45,46)],[(10,9),(23,24),(24,23),(26,27),(28,26),(26,28),(37,36),(45,46)]]# start, destination
         for one_way in one_ways[world_i]:
             self.exit_to_exits[one_way[0]].append(one_way[1])
 
