@@ -147,9 +147,9 @@ class GT(ROM):
         ice_rooms_vanilla = [(3,5),(3,6)]
 
         for couple in dark_rooms_vanilla:
-            self[self.get_darkice_indice(couple[0], couple[1])] += 2
+            self[self.get_darkice_index(couple[0], couple[1])] += 2
         for couple in ice_rooms_vanilla:
-            self[self.get_darkice_indice(couple[0], couple[1])] += 1
+            self[self.get_darkice_index(couple[0], couple[1])] += 1
 
     def modify_data_starting_frame(self):
         """Change the code to allow randomization of first frame.
@@ -214,7 +214,7 @@ class GT(ROM):
         self[0x2767] = 0x0
 
 
-    def dark_randomizer(self, count=6):
+    def darkRandomizer(self, count=6):
         """Randomize which rooms are dark.
 
             Args:
@@ -225,12 +225,12 @@ class GT(ROM):
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
 
         for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
-            offsets.pop(offsets.index(self.get_darkice_indice(world, boss_frame)))
+            offsets.pop(offsets.index(self.get_darkice_index(world, boss_frame)))
         random.shuffle(offsets)
         for no in range(count):
             self[offsets[no]] += 2
 
-    def world_select(self):
+    def activateWorldSelection(self):
         """Put a banana on the box of the world you want to go.
             Cherry for all the rest of the boxes
             Example : Banana on the 3rd box = World 2 (3rd world of the game)
@@ -241,7 +241,7 @@ class GT(ROM):
         self[0x1c68c] = 0x1
         self[0x1c692] = 0x1
 
-    def ice_randomizer(self, count=2):
+    def iceRandomizer(self, count=2):
         """Randomize which rooms are icy.
             Args:
                 count (int, optional): How many rooms. Defaults to vanilla value (2).
@@ -254,22 +254,11 @@ class GT(ROM):
         for no in range(count):
             self[offsets[no]] += 1
 
-    def get_darkice_indice(self, world_i,frame_i):
+    def get_darkice_index(self, world_i,frame_i):
         """Formula to get the indice.
             """
         offsets = [0, 16, 32, 58, 88]
         return offsets[world_i] + frame_i + 0x1FF35
-
-
-
-    def firstframe_randomizer(self):
-        for world_i, world_offset in enumerate(range(0x1FFA7, 0x1FFAC)):
-            this_world = self.all_worlds[world_i]
-            initial_frame_coordinates_offsets, initial_frame_coordinates = this_world.randomize_firstframe()
-            self[this_world.starting_frame_offset] = this_world.starting_frame
-            for i, pos_offset in enumerate(initial_frame_coordinates_offsets):
-                self[pos_offset] = initial_frame_coordinates[i]
-
 
     def add_credits(self):
         """
@@ -344,7 +333,7 @@ class GT(ROM):
         add_credits_line(self, "PsychoManiac", spacing=2)
         add_credits_line(self, "Zarby89", spacing=2)
 
-    def password_randomizer(self):
+    def passwordRandomizer(self):
         """
             This is the password shuffler.
 
@@ -370,39 +359,49 @@ class GT(ROM):
             check = all([1 == Worlds_passwords.count(x) for x in Worlds_passwords])
 
 
-    def randomizers_with_verification(self, param_items=False, param_exits=False, param_doors=False):
-        """Randomize stuffs and check if doable.
+    def randomizerWithVerification(self, options):
 
-        Args:
-            param_items ([type]): [description]
-                only_switch_positions=True
-            param_exits ([type]): [description]
-                fix_boss_exit=True,
-                fix_locked_doors=True,
-                keep_direction=True,
-                pair_exits=True
-            param_doors ([type]): [description]
-                les paramètres que l'on va mettre.
-        """
-        # max iter
-        # for world, this world...
-        # if param_items:
-            # this_world.items.randomize(param_items)
-        # Etc.
+        fix_boss_exit = options.Rexits_fixboss
+        fix_locked_doors = True
+        keep_direction = options.Rexits_matchdir
+        pair_exits = options.Rexits_pair
+        only_switch_positions = options.Ritems_pos
 
-        """ L'idée derrière une telle approche est de permettre 
-        l'utilisation de ton vérificateur peu importe les randomizers que l'on utiliserait.
-        En ce moment, ça force les randomizers d'objets et de exits ensemble sans négociation.
-        Ceci me pose problème un petit peu, car si on procède ainsi, il faudra multiplier les méthodes
-        pour vérifier les combinaisons (exemple : item + exits, doors + items, doors + exits, les trois ensemble... 
-        Et ptet une quatrième éventuellement.)
-        
-        On enverrait les paramètres en dictionnaire genre. Comme ça, on aua moins
-        d'argument à gérer dans la méthode qui implique les randomizers et le vérificateur
-        et nous permet de se focusser un petit peu plus sur le vérificateur genre.
-        """
-        
-        pass
+        exits_rando = options.Rexits or options.Rexits_fixboss or options.Rexits_matchdir or options.Rexits_pair
+        items_rando = options.Ritems or options.Ritems_pos
+        firstframe_rando = options.Rfirst
+
+        max_iter = 5000
+        for world_i, this_world in enumerate(self.all_worlds):
+            for i in range(100):
+                for j in range(max_iter):#exits and items randomization
+                    if exits_rando:
+                        this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
+                    if items_rando:
+                        this_world.items.randomize(only_switch_positions)
+                    if firstframe_rando:
+                        this_world.randomizeFirstExit()
+                    #check feasability
+                    unlocked_exits, unlocked_items, boss_reached = this_world.feasibleWorldVerification()
+                    if (all(unlocked_exits) and all(unlocked_items) and boss_reached): break
+                    
+                if j<(max_iter-1):
+                    print('Found a feasible configuration after',j,'iterations. Calculating feasibility ratio...')
+
+                    feasibility_results = []#shows how many times we do not get stuck if we play randomly
+                    for m in range(50):
+                        unlocked_exits, unlocked_items, boss_reached = this_world.feasibleWorldVerification()
+                        feasibility_results.append((all(unlocked_exits) and all(unlocked_items) and boss_reached))
+                    
+                    print(sum(feasibility_results)/len(feasibility_results))
+                    if(sum(feasibility_results)/len(feasibility_results))>0.9: 
+                        this_world.writeWorldInData()
+
+                        print('Assigned new exits and items to world',world_i)
+                        break
+                else: 
+                    print('Was not able to find a feasible configuration with these settings for this world')
+                    break
 
 
     def exits_and_items_randomizer_with_verification(self, fix_boss_exit=True, fix_locked_doors=True, keep_direction=True, pair_exits=True, only_switch_positions=True):

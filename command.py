@@ -9,16 +9,12 @@ def getoptions():
         # Logic : big D => May be higher than 6, thus capital letter
     parser.add_argument("-d", "--dark", action="store_true",
     help="Randomize which rooms are dark, same amount of dark rooms as vanilla (6)", dest="Rdark")
-    parser.add_argument("-D", "--verydark", action="store_true",
-    help="Randomize which rooms are dark. For those who like playing around with darkness", dest="Rverydark")
 
     # Icy rooms
         # Logic : W for winter, winter = snow and ice, thus icy rooms!
         # Logic : big W => May be higher than 2, thus capital letter
     parser.add_argument("-w", "--icy", action="store_true",
     help="Randomize which rooms are icy, same amount of icy rooms as vanilla (2)", dest="Ricy")
-    parser.add_argument("-W", "--veryicy", action="store_true",
-    help="Randomize which rooms are icy. For those who like playing around with the weather", dest="Rveryicy")
 
     # First frame randomizer
     parser.add_argument("-f", "--first", action="store_true",
@@ -28,17 +24,17 @@ def getoptions():
     parser.add_argument("-e", "--exits", action="store_true",
     help="Randomize the exits", dest="Rexits")
     parser.add_argument("-u", "--unmatchdir", action="store_false",
-    help="Do not match the direction for the exits and their destination", dest="Rexits_X")
+    help="Do not match the direction for the exits and their destination", dest="Rexits_matchdir")
     parser.add_argument("-U", "--unpair", action="store_false",
-    help="Do not pair exits. Be careful not to get lost!", dest="Rexits_2")
-    parser.add_argument("-b", "--preboss", action="store_false",
-    help="Include the exit leading to the boss in the exits pools", dest="Rexits")
+    help="Do not pair exits. Be careful not to get lost!", dest="Rexits_pair")
+    parser.add_argument("-b", "--moveboss", action="store_false",
+    help="Include the exit leading to the boss in the exits pools", dest="Rexits_fixboss")
 
     # Items
-    parser.add_argument("-i", "--items", action="store_true",
-    help="Randomize the items, each world keeps its items pool", dest="Ritems")
-    parser.add_argument("-I", "--Ritems", action="store_false",
-    help="Completely random items. You might have to shovel your way through the dark rooms ;)", dest="Ritems_random")
+    parser.add_argument("-i", "--itemspos", action="store_true",
+    help="Randomize the items position, each world keeps its items pool", dest="Ritems_pos")
+    parser.add_argument("-I", "--items", action="store_false",
+    help="Completely random items. You might have to shovel your way through the dark rooms ;)", dest="Ritems")
 
     # Seed
     parser.add_argument("--seed", action="store", help="Seed for the randomization",
@@ -53,21 +49,10 @@ def getoptions():
     return options
 
 def analyse_options(options):
-    if options.Ritems_random and not options.Ritems:
-        raise BaseException("Completely random items randomizer (I) must be used with the item randomizer (i)")
-    # B,X,2  Need #E
-    if any([not options.Rexits_B,not options.Rexits_X,not options.Rexits_2]) and (options.Rexits is False):
+
+    if any([not options.Rexits_fixboss,not options.Rexits_matchdir,not options.Rexits_pair]) and (options.Rexits is False):
         raise BaseException("Boss exits in pools (b), unmatching exits direction (u) and unpairing the exits (U) must be used with the exits randomizer (e)")
-
-    # Q needs I
-    if not options.Ritems_random and (options.Ritems is False):
-        raise BaseException("Completely random items must be used with The items randomizer (I)")
-
-
-    if options.Rdark and options.Rverydark:
-        raise BaseException("Can't have D and d set at the same time.")
-    if options.Ricy and options.Rveryicy:
-        raise BaseException("Can't have W and w set at the same time.")
+    
 
 
 
