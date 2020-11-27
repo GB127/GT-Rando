@@ -363,15 +363,17 @@ class GT(ROM):
 
 
     def randomizerWithVerification(self, options):
+        print(options.Ritems)
+        print(options.Ritems_pos)
+
 
         fix_boss_exit = True
         fix_locked_doors = True
         keep_direction = options.Rexits_matchdir
         pair_exits = options.Rexits_pair
-        only_switch_positions = options.Ritems
 
         exits_rando = options.Rexits or options.Rexits_matchdir or options.Rexits_pair
-        items_rando = options.Ritems_pos
+        items_rando = options.Ritems_pos or options.Ritems
         firstframe_rando = options.Rfirst
 
         max_iter = 5000
@@ -381,7 +383,7 @@ class GT(ROM):
                     if exits_rando:
                         this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
                     if items_rando:
-                        this_world.items.randomize(only_switch_positions)
+                        this_world.items.randomize(options.Ritems_pos)
                     if firstframe_rando:
                         this_world.randomizeFirstExit()
                     #check feasability
