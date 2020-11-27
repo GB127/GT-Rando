@@ -35,11 +35,12 @@ if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as original:  # We will have to change this to not force an exact filename.
         randogame = GT(original.read())
         randogame.passwordRandomizer()
+        print()
         if options.Ricy:
             randogame.iceRandomizer()
         if options.Rdark:
             randogame.darkRandomizer()
-        if options.Rfirst or options.Rexits or options.Ritems_pos:
+        if options.Rfirst or options.Rexits or options.Ritems_pos or options.Ritems:
             try:
                 randogame.randomizerWithVerification(options)
             except RandomizerError:
