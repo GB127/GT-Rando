@@ -20,7 +20,7 @@ if __name__ == "__main__":
         if options.Rdark:
             randogame.darkRandomizer()
         if options.Rfirst or options.Rexits or options.Ritems or options.Ritems_pos:
-            
+            randogame.randomizerWithVerification(options)
 
         with open(f"{flags}_{options.seed}.smc", "wb") as newgame:
             newgame.write(randogame.data)
