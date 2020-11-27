@@ -30,7 +30,7 @@ class Frames:
                 elif isolated_exit in self.exit_to_exits[exit_i]:
                     self.exit_to_exits[exit_i].remove(isolated_exit)
 
-        one_ways = [[],[],[(28,31)],[(33,32),(35,34),(46,45),(45,46)],[(10,9),(23,24),(24,23),(26,27),(28,26),(26,28),(37,36),(45,46)]]# start, destination
+        one_ways = [[],[],[(28,31)],[(33,32),(35,34),(46,45),(45,46)],[(10,9),(23,24),(24,23),(26,27),(28,26),(26,28),(37,36),(45,46),(46,47)]]# start, destination
         for one_way in one_ways[world_i]:
             self.exit_to_exits[one_way[0]].append(one_way[1])
 
