@@ -32,6 +32,8 @@ class World():
         self.data = data
         self.nFrames = all_nFrames[world_i]  # Number of frames of this world
         self.starting_frame_offset = starting_frame_offsets[world_i]  # get the offset of world's first frame 
+        self.starting_frame = data[self.starting_frame_offset]
+
 
         # Exits related.
         self.exits = Exits(data, world_i)
@@ -53,7 +55,7 @@ class World():
         self.initial_frame_coordinates_offsets = self.get_initial_frame_coordinates_offsets_from_data()
 
     def __str__(self):
-        result = f'World {self.world_i} | {self.nFrames} frames | Boss frame : {[14, 15, 25, 25, 25][self.world_i]}\n'
+        result = f'World {self.world_i} | {self.nFrames} frames | Starting frame : {self.starting_frame} | Boss frame : {[14, 15, 25, 25, 25][self.world_i]}\n'
         result += f'{self.nItems} items\n'
         result += str(self.items)
 
@@ -62,14 +64,25 @@ class World():
 
 
 
-
-
-
     def randomize_firstframe(self):
+        all_nFrames = [16, 16, 26, 30, 26]  # Number of frames per world.
+        boss_frame = [14, 15, 25, 25, 25][self.world_i]
+        frames = list(range(all_nFrames[self.world_i]))
+        boss_frame_index = frames.index(boss_frame)
+        frames.pop(boss_frame_index)
+        self.starting_frame = random.choice(frames)
+        all_exits = self.exits.getExitsFromData(self.data, self.world_i, [self.starting_frame])
+        all_coords, all_coords_2 = all_exits[4], all_exits[5]
+        print(all_coords)
+
+
+    def randomize_firstframe_old(self):
         boss_exit = self.exits.boss_exit
         all_exits = list(range(self.nExits))
         all_exits.pop(boss_exit)
         starting_exit = random.choice(all_exits)
+
+        print(all_exits)
         self.starting_frame = self.exits.source_frames[starting_exit]
         initial_frame_coordinates_offsets, initial_frame_coordinates = self.set_starting_exit(starting_exit)
         return initial_frame_coordinates_offsets, initial_frame_coordinates
