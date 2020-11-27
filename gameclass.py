@@ -372,7 +372,7 @@ class GT(ROM):
         keep_direction = options.Rexits_matchdir
         pair_exits = options.Rexits_pair
 
-        exits_rando = options.Rexits or options.Rexits_matchdir or options.Rexits_pair
+        exits_rando = options.Rexits
         items_rando = options.Ritems_pos or options.Ritems
         firstframe_rando = options.Rfirst
 

@@ -20,8 +20,8 @@ def flag_string(options):
             flags += "U"
     if options.Ritems_pos:
         flags += "i"
-        if options.Ritems:
-            flags += "I"
+    if options.Ritems:
+        flags += "I"
 
     return flags
 
@@ -43,8 +43,8 @@ if __name__ == "__main__":
             try:
                 randogame.randomizerWithVerification(options)
             except RandomizerError:
-                with open("error_flags_seed.txt", "w") as report:
-                    report.write(f'python main.py -{flags} --seed {options.seed}')
-
+                with open("error_flags_seed.txt", "a") as report:
+                    report.write(f'python main.py -{flags} --seed {options.seed}\n')
+                    flags += "_ERROR"
         with open(f"{flags}_{options.seed}.smc", "wb") as newgame:
             newgame.write(randogame.data)
