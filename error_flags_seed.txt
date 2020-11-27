@@ -1,0 +1,4 @@
+python main.py -i --seed 7571959490225014
+python main.py -i --seed 7571959490225014
+python main.py -i --seed 7571959490225014
+python main.py -i --seed 7571959490225014
