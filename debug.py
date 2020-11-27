@@ -81,6 +81,10 @@ class debug(GT):
             self.freespace.pop(self.freespace.index(offset))
         super().__setitem__(offset,value)
 
+    def set_item(self, world_i,item_i,  value):
+        self.all_worlds[world_i].items.set_item(item_i, value)
+        self.all_worlds[world_i].writeWorldInData()
+
     def do_not_place_keydoors(self):
         game[0x14377] = 0xEA
         game[0x14378] = 0xEA
@@ -100,9 +104,7 @@ if __name__ == "__main__":
         startTime = datetime.now()
         game = debug(original.read())
 
-        game.exits_and_items_randomizer_with_verification()
-        print(game)
-
+        game.set_item(0,0,0xA)
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
             print(f"Testing case have been created! {datetime.now()}")
