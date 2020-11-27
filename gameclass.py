@@ -361,7 +361,7 @@ class GT(ROM):
 
     def randomizerWithVerification(self, options):
 
-        fix_boss_exit = options.Rexits_fixboss
+        fix_boss_exit = True
         fix_locked_doors = True
         keep_direction = options.Rexits_matchdir
         pair_exits = options.Rexits_pair
@@ -394,7 +394,7 @@ class GT(ROM):
                         feasibility_results.append((all(unlocked_exits) and all(unlocked_items) and boss_reached))
                     
                     print(sum(feasibility_results)/len(feasibility_results))
-                    if(sum(feasibility_results)/len(feasibility_results))>0.9: 
+                    if(sum(feasibility_results)/len(feasibility_results))==1: 
                         this_world.writeWorldInData()
 
                         print('Assigned new exits and items to world',world_i)
@@ -425,7 +425,7 @@ class GT(ROM):
                         feasibility_results.append((all(unlocked_exits) and all(unlocked_items) and boss_reached))
                     
                     print(sum(feasibility_results)/len(feasibility_results))
-                    if(sum(feasibility_results)/len(feasibility_results))>0.9: 
+                    if(sum(feasibility_results)/len(feasibility_results))==1: 
                         this_world.writeWorldInData()
 
                         print('Assigned new exits and items to world',world_i)

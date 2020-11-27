@@ -27,8 +27,7 @@ def getoptions():
     help="Do not match the direction for the exits and their destination", dest="Rexits_matchdir")
     parser.add_argument("-U", "--unpair", action="store_false",
     help="Do not pair exits. Be careful not to get lost!", dest="Rexits_pair")
-    parser.add_argument("-b", "--moveboss", action="store_false",
-    help="Include the exit leading to the boss in the exits pools", dest="Rexits_fixboss")
+    
 
     # Items
     parser.add_argument("-i", "--itemspos", action="store_true",
@@ -50,8 +49,8 @@ def getoptions():
 
 def analyse_options(options):
 
-    if any([not options.Rexits_fixboss,not options.Rexits_matchdir,not options.Rexits_pair]) and (options.Rexits is False):
-        raise BaseException("Boss exits in pools (b), unmatching exits direction (u) and unpairing the exits (U) must be used with the exits randomizer (e)")
+    if any([not options.Rexits_matchdir,not options.Rexits_pair]) and (options.Rexits is False):
+        raise BaseException("Unmatching exits direction (u) and unpairing the exits (U) must be used with the exits randomizer (e)")
     
 
 

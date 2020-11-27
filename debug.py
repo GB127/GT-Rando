@@ -104,7 +104,8 @@ if __name__ == "__main__":
         startTime = datetime.now()
         game = debug(original.read())
 
-        game.set_item(0,0,0xA)
+        print(game.all_worlds[0].exits.determineRandomizationOrder(fix_boss_exit=False, fix_locked_doors=True, keep_direction=True, pair_exits=True))
+
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
             print(f"Testing case have been created! {datetime.now()}")
