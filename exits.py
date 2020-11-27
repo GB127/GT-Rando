@@ -9,6 +9,7 @@ class Exits:
         self.nFrames = all_nFrames[world_i]
         self.boss_exit = all_boss_exits[world_i]
         self.locked_doors = all_locked_doors[world_i]
+        self.world_i = world_i
 
         # getter utilization
         self.offsets,values,self.source_frames = self.getExitsFromData(data,world_i,self.nFrames)
@@ -373,7 +374,8 @@ class Exits:
         new_unlocks = [0]*self.nExits
         boss_reached = 0
         for source_i in range(self.nExits):
-            if currently_unlocked[source_i]:
+            if self.world_i == 3 and source_i == 0 and currently_unlocked[2]==0: pass
+            elif currently_unlocked[source_i]:
                 destination_i = self.destination_exits[source_i]
                 if destination_i == None:
                     boss_reached = 1
