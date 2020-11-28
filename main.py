@@ -48,5 +48,5 @@ if __name__ == "__main__":
                 with open("error_flags_seed.txt", "a") as report:
                     report.write(f'python main.py -{flags} --seed {options.seed}\n')
                     flags += "_ERROR"
-        with open(f"{flags}_{options.seed}.smc", "wb") as newgame:
+        with open(f"GT_{flags}_{options.seed}.smc", "wb") as newgame:
             newgame.write(randogame.data)
