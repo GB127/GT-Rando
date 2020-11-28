@@ -393,7 +393,7 @@ class GT(ROM):
                     if find: break
                     
                 if j<(max_iter-1):
-                    print('Found a feasible configuration after',j,'iterations. Calculating feasibility ratio...')
+                    print('Found a feasible configuration. Calculating feasibility ratio...')
 
                     feasibility_results = []#shows how many times we do not get stuck if we play randomly
                     early_boss_results = []
@@ -411,34 +411,3 @@ class GT(ROM):
                         break
                 else: 
                     raise RandomizerError(f"Was not able to find a feasible configuration with these settings for world {world_i}")
-
-
-    def exits_and_items_randomizer_with_verification(self, fix_boss_exit=True, fix_locked_doors=True, keep_direction=True, pair_exits=True, only_switch_positions=True):
-        max_iter = 5000
-        for world_i, this_world in enumerate(self.all_worlds):
-            for i in range(100):
-                for j in range(max_iter):#exits and items randomization
-                    this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
-                    this_world.items.randomize(only_switch_positions)
-                    this_world.randomizeFirstExit()
-                    #check feasability
-                    unlocked_exits, unlocked_items, boss_reached = this_world.feasibleWorldVerification()
-                    if (all(unlocked_exits) and all(unlocked_items) and boss_reached): break
-                    
-                if j<(max_iter-1):
-                    print('Found a feasible configuration after',j,'iterations. Calculating feasibility ratio...')
-
-                    feasibility_results = []#shows how many times we do not get stuck if we play randomly
-                    for m in range(50):
-                        unlocked_exits, unlocked_items, boss_reached = this_world.feasibleWorldVerification()
-                        feasibility_results.append((all(unlocked_exits) and all(unlocked_items) and boss_reached))
-                    
-                    print(sum(feasibility_results)/len(feasibility_results))
-                    if(sum(feasibility_results)/len(feasibility_results))==1: 
-                        this_world.writeWorldInData()
-
-                        print('Assigned new exits and items to world',world_i)
-                        break
-                else: 
-                    print('Was not able to find a feasible configuration with these settings for this world')
-                    break
