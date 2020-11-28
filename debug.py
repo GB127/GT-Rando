@@ -13,6 +13,12 @@ class debug(GT):
         return string
 
 
+    def print_world(self, world_i, arg=None):
+        if arg == "items": 
+            print(f"World {world_i} items")
+            print(self.all_worlds[world_i].items)
+        else: print(self.all_worlds[world_i])
+
 
     def __init__(self,data):
         self.list_freespace()
@@ -75,6 +81,11 @@ class debug(GT):
         if match:
             self.setExit(world_i, destination_exit, source_exit)
 
+    def disable_heart_loss(self):
+        self[0x5D1B] = 0xEA
+        self[0x5D1C] = 0xEA
+
+
 
     def __setitem__(self,offset, value):
         if offset in self.freespace:
@@ -111,7 +122,27 @@ if __name__ == "__main__":
         game = debug(original.read())
 
 
-        game.show_map(3)
+        test = 9
+        game[0x18E1D] += test
+        game[0x18E2D] -= test
+
+        game[0x18E17] -= test
+        game[0x18E27] += test
+
+
+
+        game.disable_heart_loss()
+        print(hex(game[0x18E16]))
+        print(hex(game[0x18E17]))
+
+
+
+
+
+
+
+
+
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
             print(f"Testing case have been created! {datetime.now()}")
