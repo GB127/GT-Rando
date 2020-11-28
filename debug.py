@@ -104,9 +104,12 @@ class randomized(debug):
 
 
 if __name__ == "__main__":
-    with open("buggy.smc", "rb") as original:
+#    with open("buggy.smc", "rb") as original:
+    with open("Vanilla.smc", "rb") as original:
         startTime = datetime.now()
-        game = randomized(original.read())
+#        game = randomized(original.read())
+        game = debug(original.read())
+
 
         game.show_map(3)
         with open("debug.smc", "wb") as newgame:
