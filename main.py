@@ -35,7 +35,8 @@ if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as original:  # We will have to change this to not force an exact filename.
         randogame = GT(original.read())
         randogame.passwordRandomizer()
-        print()
+        if options.Wselect:
+            randogame.activateWorldSelection()
         if options.Ricy:
             randogame.iceRandomizer()
         if options.Rdark:
