@@ -43,7 +43,7 @@ class Frames:
         elif world_i == 1:
             conditions = [(5,[27]),(6,[25,26]),(7,[15]),(7,[19,24])]
         elif world_i == 2:
-            conditions = [(3,[22,23]),(4,[39,40]),(5,[53]),(2,[47,48]),(7,[7]),(7,[27]),(7,[30]),(7,[43]),(7,[47])]
+            conditions = [(3,[22,23]),(4,[39,40]),(5,[53]),(8,[47,48]),(7,[7]),(7,[27]),(7,[30]),(7,[43])]
         elif world_i == 3:
             conditions = [(2,[45,46])] 
             #45 and 46 are treated as one ways towards eachother previously in order to exclude 47 here
