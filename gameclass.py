@@ -372,30 +372,39 @@ class GT(ROM):
         exits_rando = options.Rexits
         items_rando = options.Ritems_pos or options.Ritems
         firstframe_rando = options.Rfirst
-        max_iter = 20000
+        max_iter = 50
         for world_i, this_world in enumerate(self.all_worlds):
-            for i in range(100):
+            for i in range(max_iter):
                 for j in range(max_iter):#exits and items randomization
                     if exits_rando:
-                        this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
-                    if items_rando:
-                        this_world.items.randomize(options.Ritems_pos)
-                    if firstframe_rando:
-                        this_world.randomizeFirstExit()
-                    #check feasability
-                    unlocked_exits, unlocked_items, boss_reached = this_world.feasibleWorldVerification()
-                    if (all(unlocked_exits) and all(unlocked_items) and boss_reached): break
+                        for k in range(max_iter):
+                            this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
+                            if this_world.allFramesConnectedVerification(): break
+                    find = False
+                    for k in range(max_iter):
+                        if items_rando:
+                            this_world.items.randomize(options.Ritems_pos)
+                        if firstframe_rando:
+                            this_world.randomizeFirstExit()
+                        #check feasability
+                        unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
+                        if (all(unlocked_exits) and all(unlocked_items) and boss_reached): find = True
+                        if find: break
+                    if find: break
                     
                 if j<(max_iter-1):
                     print('Found a feasible configuration after',j,'iterations. Calculating feasibility ratio...')
 
                     feasibility_results = []#shows how many times we do not get stuck if we play randomly
+                    early_boss_results = []
                     for m in range(50):
-                        unlocked_exits, unlocked_items, boss_reached = this_world.feasibleWorldVerification()
+                        unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
                         feasibility_results.append((all(unlocked_exits) and all(unlocked_items) and boss_reached))
+                        early_boss_results.append(early_boss_indicator)
                     
                     print(sum(feasibility_results)/len(feasibility_results))
-                    if(sum(feasibility_results)/len(feasibility_results))==1: 
+                    print(sum(early_boss_results)/len(early_boss_results))
+                    if (sum(feasibility_results)/len(feasibility_results))==1 and (sum(early_boss_results)/len(early_boss_results))>0.85: 
                         this_world.writeWorldInData()
 
                         print('Assigned new exits and items to world',world_i)
