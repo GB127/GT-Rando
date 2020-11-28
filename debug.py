@@ -85,6 +85,21 @@ class debug(GT):
         self[0x5D1B] = 0xEA
         self[0x5D1C] = 0xEA
 
+    def speed_goofy(self, value):
+        game[0x18E1B] -= value
+        game[0x18E1D] += value
+
+        game[0x18E2B] += value
+        game[0x18E2D] -= value
+
+        game[0x18E17] -= value
+        game[0x18E27] += value
+
+
+        game[0x18E23] += value
+        game[0x18E33] -= value
+
+
 
 
     def __setitem__(self,offset, value):
@@ -122,19 +137,8 @@ if __name__ == "__main__":
         game = debug(original.read())
 
 
-        test = 9
-        game[0x18E1D] += test
-        game[0x18E2D] -= test
-
-        game[0x18E17] -= test
-        game[0x18E27] += test
-
-
-
+        game.speed_goofy(4)
         game.disable_heart_loss()
-        print(hex(game[0x18E16]))
-        print(hex(game[0x18E17]))
-
 
 
 
