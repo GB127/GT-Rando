@@ -380,7 +380,6 @@ class GT(ROM):
                         for k in range(max_iter):
                             this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
                             if this_world.allFramesConnectedVerification(): break
-                            print(this_world.feasibleWorldVerification())
                     find = False
                     for k in range(max_iter):
                         if items_rando:
@@ -405,7 +404,7 @@ class GT(ROM):
                     
                     print(sum(feasibility_results)/len(feasibility_results))
                     print(sum(early_boss_results)/len(early_boss_results))
-                    if (sum(feasibility_results)/len(feasibility_results))==1 and (sum(early_boss_results)/len(early_boss_results))>0.8: 
+                    if (sum(feasibility_results)/len(feasibility_results))==1 and (sum(early_boss_results)/len(early_boss_results))>0.85: 
                         this_world.writeWorldInData()
 
                         print('Assigned new exits and items to world',world_i)
