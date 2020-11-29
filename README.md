@@ -17,7 +17,7 @@ To run the program, you need to learn how to run a script from a command line (t
 In short :
 1. Open the terminal line in the Randomizer folder. Here is a link that might help you : https://www.groovypost.com/howto/open-command-window-terminal-window-specific-folder-windows-mac-linux/
 2. Type the command. To see the options, use -h : python main.py -h
---WINDOWS:python main.py -[FLAGS] --seed [SEED] --worldselect
---MAC : python3 main.py  -[FLAGS] --seed [SEED] --worldselect
----EXAMPLE : python main.py -eiwd --seed 342
+    1. WINDOWS:python main.py -[FLAGS] --seed [SEED] --worldselect
+    2. MAC : python3 main.py  -[FLAGS] --seed [SEED] --worldselect
+        1. ---EXAMPLE : python main.py -eiwd --seed 342
 3. Enjoy!
