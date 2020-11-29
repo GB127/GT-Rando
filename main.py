@@ -8,8 +8,12 @@ def flag_string(options):
     flags = ""
     if options.Ricy:
         flags += "w"
+    elif options.Rveryicy:
+        flags += "W"
     if options.Rdark:
         flags += "d"
+    elif options.Rverydark:
+        flags += "D"
     if options.Rfirst:
         flags += "f"
     if options.Rexits:
