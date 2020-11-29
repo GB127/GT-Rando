@@ -388,7 +388,9 @@ class GT(ROM):
                         if items_rando:
                             this_world.items.randomize(options.Ritems_pos)
                         if firstframe_rando:
-                            this_world.randomizeFirstExit()
+                            # this_world.randomizeFirstExit()
+                            this_world.randomizeFirstFrame()
+
                         #check feasability
                         unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
                         if (all(unlocked_exits) and all(unlocked_items) and boss_reached): find = True

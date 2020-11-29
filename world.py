@@ -83,14 +83,33 @@ class World():
         for i, pos_offset in enumerate(self.initial_frame_coordinates_offsets):
             self.data[pos_offset] = self.initial_frame_coordinates[i]
 
-    def randomizeFirstExit(self):
+    def randomizeFirstFrame(self):
         all_nFrames = [16, 16, 26, 30, 26]  # Number of frames per world.
         boss_frame = [14, 15, 25, 25, 25][self.world_i]
         frames = list(range(all_nFrames[self.world_i]))
         boss_frame_index = frames.index(boss_frame)
-        frames.pop(boss_frame_index)
-        self.starting_frame = random.choice(frames)
-        all_frame_exits = self.exits.getExitsFromData(self.data, self.world_i, [self.starting_frame])
+        frames.remove(boss_frame_index)
+        while True:
+            try:
+                self.starting_frame = random.choice(frames)
+                
+                all_exits = list(enumerate(self.exits.destination_frames))
+                locked_exits = self.doors.locked_exits
+                locked_exits.sort(reverse=True)
+                for locked_exit in locked_exits:
+                    all_exits.pop(locked_exit)
+                valid_exits_i = []
+                for exit in all_exits:
+                    if exit[1] == self.starting_frame:
+                        valid_exits_i.append(exit[0])
+
+                starting_exit = random.choice(valid_exits_i)
+
+                self.starting_frame = self.exits.source_frames[starting_exit]
+                self.initial_frame_coordinates_offsets, self.initial_frame_coordinates = self.setStartingExit(starting_exit)
+                return self.initial_frame_coordinates_offsets, self.initial_frame_coordinates
+            except:
+                pass
 
 
     def randomizeFirstExit_old(self):
