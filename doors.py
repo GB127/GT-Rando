@@ -104,11 +104,8 @@ class Doors():
                     bit_offset = door_data & 0x07
                     which_door = (int((door_data & 0x7F) / 2 / 2 / 2) * 8) + bit_offset
 
-                    boss = door_data & 0x80
-                    if boss != 0:
-                        result.append([map_tile_offset, shape, which_door, 1])
-                    else:
-                        result.append([map_tile_offset, shape, which_door, 0])
+                    boss = (door_data & 0x80) // 0x80
+                    result.append([map_tile_offset, shape, which_door, boss])
 
                     current_offset += 4
         return result
