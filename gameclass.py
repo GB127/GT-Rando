@@ -398,7 +398,7 @@ class GT(ROM):
                     if find: break
                     
                 if j<(max_iter-1):
-                    print('Found a feasible configuration. Calculating feasibility ratio...')
+                    print('Found a new feasible configuration. Calculating feasibility ratio...')
 
                     feasibility_results = []#shows how many times we do not get stuck if we play randomly
                     early_boss_results = []
@@ -407,8 +407,8 @@ class GT(ROM):
                         feasibility_results.append((all(unlocked_exits) and all(unlocked_items) and boss_reached))
                         early_boss_results.append(early_boss_indicator)
                     
-                    print(sum(feasibility_results)/len(feasibility_results))
-                    print(sum(early_boss_results)/len(early_boss_results))
+                    #print(sum(feasibility_results)/len(feasibility_results))
+                    #print(sum(early_boss_results)/len(early_boss_results))
                     if (sum(feasibility_results)/len(feasibility_results))==1 and (sum(early_boss_results)/len(early_boss_results))>0.85: 
                         this_world.writeWorldInData()
 

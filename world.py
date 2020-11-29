@@ -112,7 +112,7 @@ class World():
                 pass
 
 
-    def randomizeFirstExit_old(self):
+    def randomizeFirstExit(self):
         boss_exit = self.exits.boss_exit
         all_exits = list(range(self.nExits))
         all_exits.remove(boss_exit)

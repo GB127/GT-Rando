@@ -139,6 +139,8 @@ if __name__ == "__main__":
         game.early_bosses()
         game.quick_bosses()
 
+        game.all_worlds[0].randomizeFirstFrame()
+
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
             print(f"Testing case have been created! {datetime.now()}")

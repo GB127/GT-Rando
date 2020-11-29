@@ -23,7 +23,6 @@ class Doors():
                     self.lock_bit_i.append(elem[2])
                     self.boss_door.append(elem[3])
                     self.frames.append(frame_i)
-        print(self.boss_door)
         self.nDoors = len(self.frames)
 
         self.types = self.getDoorTypes()

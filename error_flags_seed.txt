@@ -1,4 +1,2 @@
-python main.py -i --seed 7571959490225014
-python main.py -i --seed 7571959490225014
-python main.py -i --seed 7571959490225014
-python main.py -i --seed 7571959490225014
+python main.py -dfei --seed 6783084118677378
+python main.py -dfei --seed 6783084118677378
