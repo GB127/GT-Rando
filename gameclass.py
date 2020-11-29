@@ -342,7 +342,7 @@ class GT(ROM):
         add_credits_line(self, "Developpers", underlined=True, color=5)
         add_credits_line(self, "Data structure & management", underlined=True, color=5, spacing = 0x4)
         add_credits_line(self, "Guylain Breton - Niamek", spacing=1)
-        # add_credits_line(self, "Randomization logic & code organisation", underlined=True, color=5, spacing=0x4)
+        add_credits_line(self, "Randomization logic & code", underlined=True, color=5, spacing=0x4)
         add_credits_line(self, "Charles Matte-Breton", spacing=1)
         add_credits_line(self, "Special thanks", underlined=True, color=3)
         add_credits_line(self, "PsychoManiac", spacing=2)

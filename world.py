@@ -177,7 +177,7 @@ class World():
         return ''
 
     def feasibleWorldVerification(self):
-        early_boss_indicator = 0
+        early_boss_indicator = -0.1
         unlocked_exits = [0]*self.nExits
         unlocked_exits[self.starting_exit] = 1 #means that we have access to this exit at the start
         used_items = [0]*self.nItems
@@ -189,9 +189,10 @@ class World():
             for small_step in range(random.randint(2, 8)): #how much exploration before we unlock something
                 #exits links
                 unlocked_exits, boss_reached = self.exits.getUnlockedExits(unlocked_exits)
-                if boss_reached and early_boss_indicator == 0:
+                if boss_reached and early_boss_indicator == -0.1:
                     unlocked_items = self.items.getUnlockedItems(unlocked_exits, items_filled_conditions)
                     early_boss_indicator = (sum(unlocked_items)+sum(unlocked_exits))/(len(unlocked_items)+len(unlocked_exits))
+                    early_boss_indicator = self.bossKeyAlreadyUsed(used_items)*early_boss_indicator #Always too early if the boss key was not used
                 #internal frame links
                 unlocked_exits = self.frames.getUnlockedExits(unlocked_exits, frames_filled_conditions)
             #unlocked items
@@ -218,6 +219,13 @@ class World():
 
         return unlocked_exits, unlocked_items, boss_reached, early_boss_indicator
 
+    def bossKeyAlreadyUsed(self, used_items):
+        bossKeyItemValues = [0xB,0xB,0xB,0x8,0xB] #boss key in world 3 is a hook ... sort of
+        if bossKeyItemValues[self.world_i] in self.items.values:
+            bosskey_i = self.items.values.index(bossKeyItemValues[self.world_i])
+            return used_items[bosskey_i]
+        else:
+            return False # no boss key in items
 
     def unlockAFrameCondition(self, condition_i, frames_filled_conditions, unlocked_items, used_items):
         condition_type = self.frames.conditions_types[condition_i]
