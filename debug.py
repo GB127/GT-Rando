@@ -22,7 +22,7 @@ class debug(GT):
 
     def __init__(self,data):
         self.list_freespace()
-        super().__init__(data)
+        super().__init__(data, seed="Debug")
 
 
 
@@ -50,7 +50,7 @@ class debug(GT):
         self.used = []
 
     def quick_bosses(self):
-        self[0xB4AB] = 0x1  # For now, only kill one to clear the boss for world 0.
+        #self[0xB4AB] = 0x1  # For now, only kill one to clear the boss for world 0.
 
         self[0xC563] = 0x1
 
@@ -86,18 +86,18 @@ class debug(GT):
         self[0x5D1C] = 0xEA
 
     def speed_goofy(self, value):
-        game[0x18E1B] -= value
-        game[0x18E1D] += value
+        self[0x18E1B] -= value
+        self[0x18E1D] += value
 
-        game[0x18E2B] += value
-        game[0x18E2D] -= value
+        self[0x18E2B] += value
+        self[0x18E2D] -= value
 
-        game[0x18E17] -= value
-        game[0x18E27] += value
+        self[0x18E17] -= value
+        self[0x18E27] += value
 
 
-        game[0x18E23] += value
-        game[0x18E33] -= value
+        self[0x18E23] += value
+        self[0x18E33] -= value
 
 
 
@@ -113,8 +113,8 @@ class debug(GT):
         self.all_worlds[world_i].writeWorldInData()
 
     def do_not_place_keydoors(self):
-        game[0x14377] = 0xEA
-        game[0x14378] = 0xEA
+        self[0x14377] = 0xEA
+        self[0x14378] = 0xEA
 
 info = infos()
 
@@ -135,17 +135,9 @@ if __name__ == "__main__":
         startTime = datetime.now()
 #        game = randomized(original.read())
         game = debug(original.read())
-
-
-        game.speed_goofy(4)
-        game.disable_heart_loss()
-
-
-
-
-
-
-
+        game.activateWorldSelection()
+        game.early_bosses()
+        game.quick_bosses()
 
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)

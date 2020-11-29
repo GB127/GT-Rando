@@ -48,14 +48,16 @@ class ROM:
         self.data[offset] = value
 
 class GT(ROM):
-    def __init__(self,data):
+    def __init__(self,data, seed):
         super().__init__(data)  # Header removal
         self.modify_data_ice_dark()  # Changement du code en prévision du randomizer pour pouvoir changer le nombre.
         self.modify_data_starting_frame()  # CHangement du code pour permettre une randomization du first frame. Side effect : Pu d'introduction.
         self.removeExitFromData(3,1,0)  # Enlever exit inutilisé
         self.removeExitFromData(1,15,0) # Enlever exit inutilisé
         self.removeExitFromData(1,13,1) # Enlever exit inutilisé
+        self.seed = seed
         self.add_credits()  # Ajout credits
+
 
 
         # Création des différents world pour permettre leur randomization isolé.
@@ -358,7 +360,7 @@ class GT(ROM):
 
         add_credits_line(self, "Goof Troop randomizer", underlined=True, color=4)
         add_credits_line(self, "Version alpha", spacing=1)
-        add_credits_line(self, "Seed : alpha", spacing=1)
+        add_credits_line(self, f"Seed : {self.seed}", spacing=1)
         add_credits_line(self, "Flags used : alpha", spacing=1)
         add_credits_line(self, "Developpers", underlined=True, color=5)
         add_credits_line(self, "Data structure & management", underlined=True, color=5, spacing = 0x4)

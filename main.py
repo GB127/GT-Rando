@@ -33,7 +33,7 @@ if __name__ == "__main__":
     flags = flag_string(options)
 
     with open("Vanilla.smc", "rb") as original:  # We will have to change this to not force an exact filename.
-        randogame = GT(original.read())
+        randogame = GT(original.read(), options.seed)
         randogame.passwordRandomizer()
         if options.Wselect:
             randogame.activateWorldSelection()
