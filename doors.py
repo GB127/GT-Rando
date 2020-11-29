@@ -23,6 +23,7 @@ class Doors():
                     self.lock_bit_i.append(elem[2])
                     self.boss_door.append(elem[3])
                     self.frames.append(frame_i)
+        print(self.boss_door)
         self.nDoors = len(self.frames)
 
         self.types = self.getDoorTypes()
@@ -106,7 +107,12 @@ class Doors():
                     bit_offset = door_data & 0x07
                     which_door = (int((door_data & 0x7F) / 2 / 2 / 2) * 8) + bit_offset
 
-                    result.append([map_tile_offset, shape, which_door])
+                    boss = door_data & 0x80
+                    if boss != 0:
+                        result.append([map_tile_offset, shape, which_door, 1])
+                    else:
+                        result.append([map_tile_offset, shape, which_door, 0])
+
                     current_offset += 4
         return result
 
