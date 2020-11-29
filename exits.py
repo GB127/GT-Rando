@@ -12,7 +12,7 @@ class Exits:
         self.world_i = world_i
 
         # getter utilization
-        self.offsets,values,self.source_frames = self.getExitsFromData(data,world_i,self.nFrames)
+        self.offsets,values,self.source_frames = self.getExitsFromData(data,world_i,range(self.nFrames))
         self.nExits = len(values)
         self.destination_frames = [value[0] for value in values]
         self.destination_hookshotHeightAtArrival = [value[3]>=2**7 for value in values]
@@ -91,7 +91,7 @@ class Exits:
 
         # Step 1 : Trouver la base.
         base = data[0x01F303 + world_i]
-        for frame_i in range(nFrames):
+        for frame_i in nFrames:
             # On doit trouver l'endroit du count.
             # On doit aller chercher le GROS byte. et pour cela, on doit avoir un "adjust" qui est dépendant du frame.
             adjust = 0x1F303 + base + 2*frame_i
@@ -142,61 +142,6 @@ class Exits:
             exits_frames.pop(2)
         """
         return exits_offsets, exits_values, exits_frames  # On retourne les listes
-
-    def getExitsFromData_old(self, data, world_i, nFrames):
-            
-        # J'ai fait ces deux checks au cas où.
-        assert isinstance(data, bytearray), "Must be a bytearray"
-        assert 0 <= world_i <= 4, "Must be in range 0-4."
-
-        exits_values = []
-        exits_offsets = []
-        exits_frames = []
-
-        # Step 1 : Trouver la base.
-        base = data[0x01F303 + world_i]
-        for frame_i in range(nFrames):
-            # On doit trouver l'endroit du count.
-            # On doit aller chercher le GROS byte. et pour cela, on doit avoir un "adjust" qui est dépendant du frame.
-            adjust = 0x1F303 + base + 2*frame_i
-
-            #Lecture du Gros Byte. On doit lire le byte présent et le byte suivant et les combiner ensemble.
-                # GROS BYTE : 0xHHpp
-            temp1 = data[0x1F303 + base + 2*frame_i]  # Cecu est l'endroit où es tle count, du moins les deux premiers bytes on a les deux premiers chiffres! (pp)
-            temp2 = data[0x1F303 + base + 2*frame_i + 1]  # Les deux high bytes (HH)
-
-            # Donc le fond on doit faire 2 shift left pour ajouter deux zeros. 
-            # Puis additionner.
-                # 0xHH => 0xHH00 => 0xHHpp
-            # Je ne comprends pas pourquoi 16^2 ne fonctionne psa ici.
-
-            temp3 = temp2 * 16 * 16 + temp1  
-
-            # Trouvons enfin l'endroit du count.
-            temp4 = 0x10000 + temp3
-            count = data[temp4]  # This will be the count.
-
-            for i in range(count):
-                exits_offsets.append(list(temp4 + x + 6 * i + 1 for x in range(6)))  # Voici les offsets.
-                exits_values.append([data[temp4 + x + 6 * i + 1] for x in range(6)])  # Voici les valeurs retrouvées dans chaque offsets.
-                exits_frames.append(frame_i)
-
-        
-        if world_i == 1:
-            exits_offsets.pop(30) #exit from boss to before boss
-            exits_values.pop(30)
-            exits_frames.pop(30)
-            exits_offsets.pop(26) #random imaginary exit
-            exits_values.pop(26) 
-            exits_frames.pop(26)
-        elif world_i == 3:
-            exits_offsets.pop(2) #random imaginary exit
-            exits_values.pop(2) 
-            exits_frames.pop(2)
-        
-        return exits_offsets, exits_values, exits_frames  # On retourne les listes
-
-
     
     def getSourcePositions(self):
         source_Xpos = []

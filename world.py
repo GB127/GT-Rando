@@ -83,7 +83,7 @@ class World():
         for i, pos_offset in enumerate(self.initial_frame_coordinates_offsets):
             self.data[pos_offset] = self.initial_frame_coordinates[i]
 
-    def randomizeFirstFrame(self):
+    def randomizeFirstExit(self):
         all_nFrames = [16, 16, 26, 30, 26]  # Number of frames per world.
         boss_frame = [14, 15, 25, 25, 25][self.world_i]
         frames = list(range(all_nFrames[self.world_i]))
@@ -100,7 +100,7 @@ class World():
         return self.initial_frame_coordinates_offsets, self.initial_frame_coordinates
 
 
-    def randomizeFirstExit(self):
+    def randomizeFirstExit_old(self):
         boss_exit = self.exits.boss_exit
         all_exits = list(range(self.nExits))
         all_exits.remove(boss_exit)
