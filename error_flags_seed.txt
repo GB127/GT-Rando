@@ -1,2 +1,2 @@
 python main.py -dfei --seed 6783084118677378
-python main.py -dfei --seed 6783084118677378
+python main.py -fe --seed 9601747387452519
