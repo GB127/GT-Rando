@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 class Doors():
-    def __init__(self, data, world_i):
+    def __init__(self, data, world_i, exits):
         all_nFrames = [16, 16, 26, 30, 26]
         self.nFrames = all_nFrames[world_i]
 
@@ -21,6 +21,47 @@ class Doors():
                     self.shape_types.append(elem[1])
                     self.lock_bit_i.append(elem[2])
                     self.frames.append(frame_i)
+        self.nDoors = len(self.frames)
+
+        self.types = self.getDoorTypes()
+        self.locked_exits = self.getLockedExits(exits)
+
+    def getDoorTypes(self):
+        types = []
+
+        N_list = [14]
+        S_list = [846]
+        W_list = [256, 448]
+        E_list = []
+        center_list = [526, 654]
+        
+        for door_i in range(self.nDoors):
+            if self.positions[door_i] in N_list:
+                types.append('N')
+            elif self.positions[door_i] in S_list:
+                types.append('S')
+            elif self.positions[door_i] in W_list:
+                types.append('W')
+            elif self.positions[door_i] in E_list:
+                types.append('E')
+            elif self.positions[door_i] in center_list:
+                types.append('?')
+            else:
+                raise DoorTypeError('Could not assign a type to this door')
+        
+        return types
+
+    def getLockedExits(self, exits):
+        locked_exits = []
+        for door_i in range(self.nDoors):
+            for exit_i in range(exits.nExits):
+                if (self.frames[door_i] == exits.source_frames[exit_i]) and (self.types[door_i] == exits.source_types[exit_i]):
+                    locked_exits.append(exit_i)
+                    break
+
+        return locked_exits
+
+
 
     def getKeyDoorsFromData(self, data, world_i, frame_i):  #82C329
         """Get all doors of said world-frame.

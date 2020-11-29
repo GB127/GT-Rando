@@ -43,7 +43,7 @@ class World():
         self.nItems = len(self.items.offsets)
 
         # Doors related
-        self.doors = Doors(data, world_i)
+        self.doors = Doors(data, world_i, self.exits)
 
         self.frames = Frames(data, 
                             world_i, 
@@ -95,7 +95,10 @@ class World():
     def randomizeFirstExit(self):
         boss_exit = self.exits.boss_exit
         all_exits = list(range(self.nExits))
-        all_exits.pop(boss_exit)
+        all_exits.remove(boss_exit)
+        for locked_exit in self.doors.locked_exits:
+            if locked_exit in all_exits:
+                all_exits.remove(locked_exit)
         starting_exit = random.choice(all_exits)
 
         self.starting_frame = self.exits.source_frames[starting_exit]
