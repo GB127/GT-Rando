@@ -2,6 +2,7 @@ import argparse
 import random
 
 def getoptions():
+
     parser = argparse.ArgumentParser(description="Goof Troop Randomizer, Version alpha", epilog="Written by Guylain Breton & Charles Matte-Breton")
 
 
@@ -10,11 +11,19 @@ def getoptions():
     parser.add_argument("-d", "--dark", action="store_true",
     help="Randomize which rooms are dark, same amount of dark rooms as vanilla (6)", dest="Rdark")
 
+    parser.add_argument("-D", "--Vdark", action="store_true",
+    help="Randomize which rooms are dark, random & higher count than vanilla", dest="Rverydark")
+
+
     # Icy rooms
         # Logic : W for winter, winter = snow and ice, thus icy rooms!
         # Logic : big W => May be higher than 2, thus capital letter
     parser.add_argument("-w", "--icy", action="store_true",
     help="Randomize which rooms are icy, same amount of icy rooms as vanilla (2)", dest="Ricy")
+
+    parser.add_argument("-W", "--Vicy", action="store_true",
+    help="Randomize which rooms are icy,random & higher count than vanilla", dest="Rveryicy")
+
 
     # First frame randomizer
     parser.add_argument("-f", "--first", action="store_true",
@@ -51,8 +60,12 @@ def analyse_options(options):
 
     if any([not options.Rexits_matchdir,not options.Rexits_pair]) and (options.Rexits is False):
         raise BaseException("Unmatching exits direction (u) and unpairing the exits (U) must be used with the exits randomizer (e)")
-    
-
+    if all([options.Rdark, options.Rverydark]):
+        raise BaseException("Cannot use d and D at the same time.")
+    if all([options.Ricy, options.Rveryicy]):
+        raise BaseException("Cannot use w and W at the same time.")
+    if all([options.Ritems, options.Ritems_pos]):
+        raise BaseException("Cannot use i and I at the same time.")
 
 
 if __name__ == "__main__":
