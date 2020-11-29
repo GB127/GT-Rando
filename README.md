@@ -1,5 +1,5 @@
 # Goof Troop Randomizer : Version 1.0
-Data & Project management by Niamek, 
+Data structure & Project management by Niamek, 
 
 Randomizer logic and code organization by Charles342
 
