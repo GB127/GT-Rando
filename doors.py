@@ -40,6 +40,8 @@ class Doors():
                     Bit 0-2 : offset for getting the correct bit
                     Bit 3-6 : 0x1144 + X depending on the bit sets.
                         Sera tjs 0x1144 ou 0x1145 dans vanilla.
+                    Bit 7 : Détermine si la porte est une porte de boss
+                        ou une porte normale.
                 orientation : Orientation.. Will disappear most likely.
         """
         result = []
