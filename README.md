@@ -1,14 +1,9 @@
-# Goof Troop Randomizer
-Current version : 1.0
-
-Data & Project management by Niamek
+# Goof Troop Randomizer : Version 1.0
+Data & Project management by Niamek, 
 
 Randomizer logic and code organization by Charles342
 
 
-Github project : https://github.com/GB127/GT-Rando
-
-Goof Troop's Discord server : https://discord.gg/4MJT3Y5tgk
 # How to use the script:
 First you must have python 3.8 installed in your computer.
 
@@ -29,3 +24,8 @@ In short :
         2. EXAMPLE : python3 main.py -eiwd
         3. EXAMPLE : python3 main.py -eiwd --seed 342
 3. Enjoy!
+
+# Community or links
+Github project : https://github.com/GB127/GT-Rando
+
+Goof Troop's Discord server : https://discord.gg/4MJT3Y5tgk
