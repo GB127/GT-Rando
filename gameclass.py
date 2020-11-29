@@ -374,7 +374,7 @@ class GT(ROM):
         exits_rando = options.Rexits
         items_rando = options.Ritems_pos or options.Ritems
         firstframe_rando = options.Rfirst
-        max_iter = 50
+        max_iter = 100
         for world_i, this_world in enumerate(self.all_worlds):
             for i in range(max_iter):
                 for j in range(max_iter):#exits and items randomization
@@ -388,7 +388,7 @@ class GT(ROM):
                             this_world.items.randomize(options.Ritems_pos)
                         if firstframe_rando:
                             # this_world.randomizeFirstExit()
-                            this_world.randomizeFirstFrame()
+                            this_world.randomizeFirstExit()
 
                         #check feasability
                         unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
