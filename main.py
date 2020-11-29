@@ -39,8 +39,18 @@ if __name__ == "__main__":
             randogame.activateWorldSelection()
         if options.Ricy:
             randogame.iceRandomizer()
+        elif options.Rveryicy:
+            tempo = int(random.gauss(12,5))
+            while tempo < 7:
+                tempo = int(random.gauss(7,5))
+            randogame.iceRandomizer(count=tempo)
         if options.Rdark:
             randogame.darkRandomizer()
+        elif options.Rverydark:
+            tempo = int(random.gauss(12,5))
+            while tempo < 7:
+                tempo = int(random.gauss(7,5))
+            randogame.darkRandomizer(count=tempo)
         if options.Rfirst or options.Rexits or options.Ritems_pos or options.Ritems:
             try:
                 randogame.randomizerWithVerification(options)
