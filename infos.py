@@ -54,11 +54,6 @@ class infos:
                 hex(0x21C) : "Current(?) boss HP",
                 hex(0x21D) : "Current(?) boss HP",
 
-            # Item
-                hex(0x140) : "Item P1 check : 2 if has 2 items, else 0",
-                hex(0x142) : "Item P1 selected : left = 0, right = 2",
-
-
             # P1
                 # Related to P1
                 hex(0x11D) : "P1 Hearts",
@@ -68,9 +63,6 @@ class infos:
 
             hex(0x1144) : "Doors unlocked",
             hex(0x1145) : "Doors unlocked",  # Perhaps 1146? Will have to test further
-            hex(0x140B) : "Level's Item : infos.items(2)",
-                # Note : the items are always -2. 
-                # For example : the bell will be 10 (or A).
 
             # Credits
                 hex(0x1414F) : "Credits : Speed of the THE END Credits",
