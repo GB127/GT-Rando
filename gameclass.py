@@ -158,6 +158,8 @@ class GT(ROM):
         """Change the code to allow randomization of first frame.
             Unfortunate effect : Removal of intro cs.
             """
+
+
         self[0x1DFD] = 0xA9
         self[0x1DFE] = 0x04
         self[0x1DFF] = 0x85
@@ -173,6 +175,10 @@ class GT(ROM):
         self[0x1E06] = 0x81
         self[0x1E07] = 0xF3
         self[0x1E08] = 0xEA
+
+
+
+
 
         # TAX
         self[0x7381] = 0xAA
@@ -215,6 +221,33 @@ class GT(ROM):
         # Fix a LDA B7 that should always load 0 and make it a constant instead.
         self[0x2766] = 0xA9
         self[0x2767] = 0x0
+
+
+
+        self[0X23E2] = 0x20
+        self[0x23E3] = 0x8C
+        self[0x23E4] = 0xF3
+        self[0x23E5] = 0xEA    
+        
+        # 80A3E2 INC B6
+
+
+        self[0x738C] = 0xE6
+        self[0x738D] = 0xB6
+        self[0x738E] = 0xA6
+        self[0x738F] = 0xB6
+
+        # LDA,X
+        self[0x7390] = 0xBD
+        self[0x7391] = 0xA7  # TO FIX
+        self[0x7392] = 0xFF
+
+        # STA B7
+        self[0x7393] = 0x85
+        self[0x7394] = 0xB7
+
+        self[0x7395] = 0x60
+
 
 
     def darkRandomizer(self, count=6):
@@ -330,7 +363,7 @@ class GT(ROM):
         add_credits_line(self, "Developpers", underlined=True, color=5)
         add_credits_line(self, "Data structure & management", underlined=True, color=5, spacing = 0x4)
         add_credits_line(self, "Guylain Breton - Niamek", spacing=1)
-        add_credits_line(self, "Randomization logic & code organisation", underlined=True, color=5, spacing=0x4)
+        # add_credits_line(self, "Randomization logic & code organisation", underlined=True, color=5, spacing=0x4)
         add_credits_line(self, "Charles Matte-Breton", spacing=1)
         add_credits_line(self, "Special thanks", underlined=True, color=3)
         add_credits_line(self, "PsychoManiac", spacing=2)
