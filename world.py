@@ -90,14 +90,7 @@ class World():
         boss_frame_index = frames.index(boss_frame)
         frames.pop(boss_frame_index)
         self.starting_frame = random.choice(frames)
-        all_exits = self.exits.getExitsFromData(self.data, self.world_i, [self.starting_frame])
-        for locked_exit in self.doors.locked_exits:
-            if locked_exit in all_exits:
-                all_exits.remove(locked_exit)
-        starting_exit = random.choice(all_exits)
-        self.starting_frame = self.exits.source_frames[starting_exit]
-        self.initial_frame_coordinates_offsets, self.initial_frame_coordinates = self.setStartingExit(starting_exit)
-        return self.initial_frame_coordinates_offsets, self.initial_frame_coordinates
+        all_frame_exits = self.exits.getExitsFromData(self.data, self.world_i, [self.starting_frame])
 
 
     def randomizeFirstExit_old(self):
