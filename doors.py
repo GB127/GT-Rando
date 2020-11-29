@@ -69,15 +69,7 @@ class Doors():
     def getKeyDoorsFromData(self, data, world_i, frame_i):  #82C329
         """Get all doors of said world-frame.
 
-            Args:
-                data (bytearray): data of the game
-                world (int): world_i
-                frame (int): frame_i
-
-            Raises:
-                BaseException: [description]
-
-            Returns:
+            Data structure:
                 (0, 1) : Où sur l'écran
                 2 : Forme de la porte (Pour pouvoir bien l'éffacer)
                 3 : format de la porte
@@ -86,8 +78,13 @@ class Doors():
                         Sera tjs 0x1144 ou 0x1145 dans vanilla.
                     Bit 7 : Détermine si la porte est une porte de boss
                         ou une porte normale.
-                orientation : Orientation.. Will disappear most likely.
-        """
+
+            Returns:
+                (0, 1) : Où sur l'écran
+                2 : Forme de la porte (Pour pouvoir bien l'éffacer)
+                3 : Indice checké par la porte
+                4 : 1 if boss door
+            """
         result = []
         offset_Y_1 = data[0x14461 + data[0x14461 + world_i] + frame_i]
         if offset_Y_1 != 0:
