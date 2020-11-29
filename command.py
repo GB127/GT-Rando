@@ -30,8 +30,8 @@ def getoptions():
     
 
     # Items
-    parser.add_argument("-i", "--itemspos", action="store_true",
-    help="Randomize the items position, each world keeps its items pool", dest="Ritems_pos")
+    parser.add_argument("-i", "--itemsshuff", action="store_true",
+    help="Shuffle the items, each world keeps its items pool", dest="Ritems_pos")
     parser.add_argument("-I", "--items", action="store_true",
     help="Completely random items. You might have to shovel your way through the dark rooms ;)", dest="Ritems")
 
