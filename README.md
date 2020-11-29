@@ -10,7 +10,11 @@ First you must have python 3.8 installed in your computer.
 Follow the instructions on this link.
 https://realpython.com/installing-python/
 
-To run the program, you need to learn how to run a script from a command line (the black windows stuffs). In the future we will make it more user friendly.
+
+Second, you need to have a Goof Troop USA ROM in the same folder of the script. And, rename it to Vanilla.smc. (note the capital V). We will change that eventually.
+
+
+Third, To run the program, you need to learn how to run a script from a command line (the black windows stuffs). In the future we will make it more user friendly.
 
 In short :
 1. Open the terminal line in the Randomizer folder. Here is a link that might help you : https://www.groovypost.com/howto/open-command-window-terminal-window-specific-folder-windows-mac-linux/
