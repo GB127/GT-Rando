@@ -337,7 +337,6 @@ class GT(ROM):
         add_credits_line(self, "Goof Troop randomizer", underlined=True, color=4, spacing=16)
         add_credits_line(self, "Version 1.0", spacing=1)
         add_credits_line(self, f"Seed : {self.seed}", spacing=1)
-        add_credits_line(self, "Flags used : alpha", spacing=1)
         add_credits_line(self, "Developpers", underlined=True, color=5)
         add_credits_line(self, "Data structure & management", underlined=True, color=5, spacing = 0x4)
         add_credits_line(self, "Guylain Breton - Niamek", spacing=1)
