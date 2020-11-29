@@ -10,6 +10,7 @@ class Doors():
         self.shape_types = []
         self.lock_bit_i = []
         self.frames = []
+        self.boss_door = []
         for frame_i in range(self.nFrames):
             results = self.getKeyDoorsFromData(data, world_i, frame_i)
             if results:
@@ -20,6 +21,7 @@ class Doors():
 
                     self.shape_types.append(elem[1])
                     self.lock_bit_i.append(elem[2])
+                    self.boss_door.append(elem[3])
                     self.frames.append(frame_i)
         self.nDoors = len(self.frames)
 
