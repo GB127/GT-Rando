@@ -335,7 +335,7 @@ class GT(ROM):
                 add_credits_line(self, string ,center=center, color=color, spacing=0x1)
 
         add_credits_line(self, "Goof Troop randomizer", underlined=True, color=4, spacing=16)
-        add_credits_line(self, "Version alpha", spacing=1)
+        add_credits_line(self, "Version 1.0", spacing=1)
         add_credits_line(self, f"Seed : {self.seed}", spacing=1)
         add_credits_line(self, "Flags used : alpha", spacing=1)
         add_credits_line(self, "Developpers", underlined=True, color=5)
