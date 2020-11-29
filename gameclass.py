@@ -1,4 +1,3 @@
-from infos import *
 import random
 from world import *
 from getters import getter_passwords
