@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-from matplotlib.patches import Circle
-import cv2
+# from matplotlib.patches import Circle
+# import cv2
 import numpy as np
 from exits import *
 from items import *
@@ -144,6 +144,7 @@ class World():
 
         return [offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max]
 
+    """
     def showMap(self, show_exits=True, show_items=True):
         #map
         filenames = ['map0.png','map1.png','map2.png','map3.png','map4.png']
@@ -195,7 +196,7 @@ class World():
 
         plt.show()
         return ''
-
+    """
     def feasibleWorldVerification(self):
         early_boss_indicator = -0.1
         unlocked_exits = [0]*self.nExits
