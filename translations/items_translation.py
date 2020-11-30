@@ -1,4 +1,4 @@
-from gameclass import GT
+
 
 def getter_items(data, world):
     def boucle1(E,offset, liste=liste):
