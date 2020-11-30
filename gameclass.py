@@ -1,4 +1,3 @@
-import random
 from world import *
 from getters import getter_passwords
 
@@ -50,7 +49,7 @@ class GT(ROM):
     def __init__(self,data, seed):
         super().__init__(data)  # Header removal
         self.modify_data_ice_dark()  # Changement du code en prévision du randomizer pour pouvoir changer le nombre.
-        self.modify_data_starting_frame()  # CHangement du code pour permettre une randomization du first frame. Side effect : Pu d'introduction.
+        self.modify_data_starting_frame()  # Changement du code pour permettre une randomization du first frame. Side effect : Pu d'introduction.
         self.removeExitFromData(3,1,0)  # Enlever exit inutilisé
         self.removeExitFromData(1,15,0) # Enlever exit inutilisé
         self.removeExitFromData(1,13,1) # Enlever exit inutilisé
@@ -142,7 +141,7 @@ class GT(ROM):
         self[0x1FF31] = 16+5# World 1
         self[0x1FF32] = 32+5# World 2
         self[0x1FF33] = 58+5# World 3
-        self[0x1FF34] = 88+5# World4
+        self[0x1FF34] = 88+5# World 4
         self.setmulti(0x1FF35, 0x1FFA6, 0x0)
 
         dark_rooms_vanilla = [(2,4),(2,20),
@@ -323,7 +322,7 @@ class GT(ROM):
                     # bit 2 - 5 : Color stuffs
                     # byte 6-7 : Mirrors stuffs
 
-            for letter in text:  # Writting the string
+            for letter in text:  # Writing the string
                 offset += 1
                 self[offset] = ord(letter.upper())
             for value in stats:
@@ -337,7 +336,7 @@ class GT(ROM):
         add_credits_line(self, "Goof Troop randomizer", underlined=True, color=4, spacing=16)
         add_credits_line(self, "Version 1.0", spacing=1)
         add_credits_line(self, f"Seed : {self.seed}", spacing=1)
-        add_credits_line(self, "Developpers", underlined=True, color=5)
+        add_credits_line(self, "Developers", underlined=True, color=5)
         add_credits_line(self, "Data structure & management", underlined=True, color=5, spacing = 0x4)
         add_credits_line(self, "Guylain Breton - Niamek", spacing=1)
         add_credits_line(self, "Randomization logic & code", underlined=True, color=5, spacing=0x4)
@@ -361,7 +360,6 @@ class GT(ROM):
             for world in range(1,5):
                 Worlds_passwords.append(list(self.data[offset] for offset in getter_passwords(world)))
             check = all([1 == Worlds_passwords.count(x) for x in Worlds_passwords])
-
 
     def randomizerWithVerification(self, options):
 
@@ -410,7 +408,7 @@ class GT(ROM):
                     if (sum(feasibility_results)/len(feasibility_results))==1 and (sum(early_boss_results)/len(early_boss_results))>0.85: 
                         this_world.writeWorldInData()
 
-                        print('Assigned new exits and items to world',world_i)
+                        print(f"Assigned new exits and items to world {world_i+1}")  # print world number as 1-indexed for readability
                         break
                 else: 
-                    raise RandomizerError(f"Was not able to find a feasible configuration with these settings for world {world_i}")
+                    raise RandomizerError(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")  # print world number as 1-indexed for readability
