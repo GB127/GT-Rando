@@ -1,7 +1,5 @@
-from gameclass import GT, ROM
-import datetime, random
+from gameclass import GT
 from infos import *  # This is for the tools in infos.
-from getters import *
 from datetime import datetime
 from world import *
 

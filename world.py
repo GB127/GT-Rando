@@ -1,7 +1,4 @@
-import random
-from copy import deepcopy
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 from matplotlib.patches import Circle
 import cv2
 import numpy as np
