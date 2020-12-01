@@ -1,7 +1,8 @@
-# import matplotlib.pyplot as plt
-# from matplotlib.patches import Circle
-# import cv2
-# import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.patches import Circle
+import cv2
+import numpy as np
+
 from exits import *
 from items import *
 from frames import *
@@ -144,7 +145,7 @@ class World():
 
         return [offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max]
 
-    """
+    
     def showMap(self, show_exits=True, show_items=True):
         #map
         filenames = ['map0.png','map1.png','map2.png','map3.png','map4.png']
@@ -196,7 +197,7 @@ class World():
 
         plt.show()
         return ''
-    """
+    
     def feasibleWorldVerification(self):
         early_boss_indicator = -0.1
         unlocked_exits = [0]*self.nExits
@@ -207,7 +208,7 @@ class World():
         frames_filled_conditions = [0]*len(self.frames.conditions_types) #means that we already put none of the the bridges and hooks to reach the exits
         frames_filled_conditions[0] = 1 # element 0 should always be set to 1 in this list
         for big_step in range(50): #max number or loops
-            for small_step in range(random.randint(2, 8)): #how much exploration before we unlock something
+            for small_step in range(10): #how much exploration before we unlock something
                 #exits links
                 unlocked_exits, boss_reached = self.exits.getUnlockedExits(unlocked_exits)
                 if boss_reached and early_boss_indicator == -0.1:
@@ -233,6 +234,77 @@ class World():
                     random_i = random_i-len(frames_unlockable_conditions)
                     condition_i = items_unlockable_conditions[random_i]
                     items_filled_conditions, used_items = self.unlockAnItemCondition(condition_i, items_filled_conditions, unlocked_items, used_items)
+
+            #verify if the world is completed
+            if all(unlocked_exits) and all(unlocked_items) and boss_reached:
+                break
+
+        return unlocked_exits, unlocked_items, boss_reached, early_boss_indicator
+
+
+    def feasibleWorldVerification_debug(self):
+        print('----- NEW RUN -----')
+        early_boss_indicator = -0.1
+        unlocked_exits = [0]*self.nExits
+        unlocked_exits[self.starting_exit] = 1 #means that we have access to this exit at the start
+        used_items = [0]*self.nItems
+        unlocked_items = [0]*self.nItems
+        items_filled_conditions = [0]*len(self.items.conditions_types) #means that we already put none of the the bridges and hooks to reach the items
+        items_filled_conditions[0] = 1 # element 0 should always be set to 1 in this list
+        frames_filled_conditions = [0]*len(self.frames.conditions_types) #means that we already put none of the the bridges and hooks to reach the exits
+        frames_filled_conditions[0] = 1 # element 0 should always be set to 1 in this list
+        for big_step in range(50): #max number or loops
+            for small_step in range(random.randint(3, 8)): #how much exploration before we unlock something
+                #exits links
+
+                previous = deepcopy(unlocked_exits)
+                unlocked_exits, boss_reached = self.exits.getUnlockedExits(unlocked_exits)
+                new = deepcopy(unlocked_exits)
+                for exit_i in range(self.nExits):
+                    if new[exit_i] and not previous[exit_i]:
+                        print('Unlocked exit:',exit_i)
+
+                if boss_reached and early_boss_indicator == -0.1:
+                    unlocked_items = self.items.getUnlockedItems(unlocked_exits, items_filled_conditions)
+                    early_boss_indicator = (sum(unlocked_items)+sum(unlocked_exits))/(len(unlocked_items)+len(unlocked_exits))
+                    early_boss_indicator = self.bossKeyAlreadyUsed(used_items)*early_boss_indicator #Always too early if the boss key was not used
+                #internal frame links
+                previous = deepcopy(unlocked_exits)
+                unlocked_exits = self.frames.getUnlockedExits(unlocked_exits, frames_filled_conditions)
+                new = deepcopy(unlocked_exits)
+                for exit_i in range(self.nExits):
+                    if new[exit_i] and not previous[exit_i]:
+                        print('Unlocked exit:',exit_i)
+            print('-------------')
+            #unlocked items
+            previous = deepcopy(unlocked_items)
+            unlocked_items = self.items.getUnlockedItems(unlocked_exits, items_filled_conditions)
+            new = deepcopy(unlocked_items)
+            for item_i in range(self.nItems):
+                if new[item_i] and not previous[item_i]:
+                    print('Unlocked item:',item_i, ' (',self.items.names[item_i],')')
+
+
+            #We now have to unlock something in order to move further?
+            #what can we unlock right now?
+            frames_reachable_conditions, items_reachable_conditions = self.getReachableConditions(unlocked_exits, frames_filled_conditions, items_filled_conditions)
+            frames_unlockable_conditions, items_unlockable_conditions = self.getUnlockableConditions(frames_reachable_conditions, items_reachable_conditions, unlocked_items, used_items)
+            #randomly chose which condition to unlock
+
+            previous = deepcopy(used_items)
+            if len(frames_unlockable_conditions)+len(items_unlockable_conditions)>0:
+                random_i = random.randint(0, len(frames_unlockable_conditions)+len(items_unlockable_conditions)-1)
+                if random_i<len(frames_unlockable_conditions): #we unlock a frame condition
+                    condition_i = frames_unlockable_conditions[random_i]
+                    frames_filled_conditions, used_items = self.unlockAFrameCondition(condition_i, frames_filled_conditions, unlocked_items, used_items)
+                else: #we unlock an item condition
+                    random_i = random_i-len(frames_unlockable_conditions)
+                    condition_i = items_unlockable_conditions[random_i]
+                    items_filled_conditions, used_items = self.unlockAnItemCondition(condition_i, items_filled_conditions, unlocked_items, used_items)
+            new = used_items
+            for item_i in range(self.nItems):
+                if new[item_i] and not previous[item_i]:
+                    print('Used item:',item_i, ' (',self.items.names[item_i],')')
 
             #verify if the world is completed
             if all(unlocked_exits) and all(unlocked_items) and boss_reached:

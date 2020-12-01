@@ -398,7 +398,7 @@ class GT(ROM):
 
                     feasibility_results = []#shows how many times we do not get stuck if we play randomly
                     early_boss_results = []
-                    for m in range(50):
+                    for m in range(200):
                         unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
                         feasibility_results.append((all(unlocked_exits) and all(unlocked_items) and boss_reached))
                         early_boss_results.append(early_boss_indicator)
