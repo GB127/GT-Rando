@@ -259,6 +259,11 @@ class GT(ROM):
 
         for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
             offsets.pop(offsets.index(self.get_darkice_index(world, boss_frame)))
+        offsets.pop(offsets.index(self.get_darkice_index(3,11)))
+        offsets.pop(offsets.index(self.get_darkice_index(4,19)))
+        offsets.pop(offsets.index(self.get_darkice_index(4,8)))
+        offsets.pop(offsets.index(self.get_darkice_index(4,6)))
+
         random.shuffle(offsets)
         for no in range(count):
             self[offsets[no]] += 2
