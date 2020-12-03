@@ -150,8 +150,8 @@ class World():
         items_filled_conditions[0] = 1 # element 0 should always be set to 1 in this list
         frames_filled_conditions = [0]*len(self.frames.conditions_types) #means that we already put none of the the bridges and hooks to reach the exits
         frames_filled_conditions[0] = 1 # element 0 should always be set to 1 in this list
-        for big_step in range(50): #max number or loops
-            for small_step in range(10): #how much exploration before we unlock something
+        for big_step in range(40): #max number or loops
+            for small_step in range(random.randint(3, 8)): #how much exploration before we unlock something
                 #exits links
                 unlocked_exits, boss_reached = self.exits.getUnlockedExits(unlocked_exits)
                 if boss_reached and early_boss_indicator == -0.1:

@@ -394,7 +394,7 @@ class GT(ROM):
         exits_rando = options.Rexits
         items_rando = options.Ritems_pos or options.Ritems
         firstframe_rando = options.Rfirst
-        max_iter = 100
+        max_iter = 150
         for world_i, this_world in enumerate(self.all_worlds):
             for i in range(max_iter):
                 for j in range(max_iter):#exits and items randomization
@@ -421,7 +421,7 @@ class GT(ROM):
 
                     feasibility_results = []#shows how many times we do not get stuck if we play randomly
                     early_boss_results = []
-                    for m in range(200):
+                    for m in range(100):
                         unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
                         feasibility_results.append((all(unlocked_exits) and all(unlocked_items) and boss_reached))
                         early_boss_results.append(early_boss_indicator)
@@ -429,9 +429,24 @@ class GT(ROM):
                     #print(sum(feasibility_results)/len(feasibility_results))
                     #print(sum(early_boss_results)/len(early_boss_results))
                     if (sum(feasibility_results)/len(feasibility_results))==1 and (sum(early_boss_results)/len(early_boss_results))>0.85: 
-                        this_world.writeWorldInData()
+                        
+                        if world_i == 4:
+                            true_starting_exit = deepcopy(this_world.starting_exit)
+                            this_world.starting_exit = 36 #room with arrow platform where you can get stuck
+                            for m in range(50):
+                                unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
+                                feasibility_results.append(boss_reached)
+                                early_boss_results.append(early_boss_indicator)
+                            this_world.starting_exit = true_starting_exit
 
-                        print(f"Assigned new exits and items to world {world_i+1}")  # print world number as 1-indexed for readability
-                        break
+                            if (sum(feasibility_results)/len(feasibility_results))==1:
+                                this_world.writeWorldInData()
+                                print(f"Assigned new exits and items to world {world_i+1}")  # print world number as 1-indexed for readability
+                                break
+                            
+                        else:
+                            this_world.writeWorldInData()
+                            print(f"Assigned new exits and items to world {world_i+1}")  # print world number as 1-indexed for readability
+                            break
                 else: 
                     raise RandomizerError(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")  # print world number as 1-indexed for readability
