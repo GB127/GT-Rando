@@ -51,6 +51,14 @@ def getoptions():
     # Password cheat
     parser.add_argument("--worldselect", action="store_true",
     help="Allows to select the world of your choice with a banana...", dest="Wselect")
+
+    # All dark
+    parser.add_argument("--alldark", action="store_true",
+    help="All rooms are dark except for bosses", dest="Adark")
+
+    # All dark
+    parser.add_argument("--allicy", action="store_true",
+    help="All rooms have a slippery floor", dest="Aicy")
     
     options = parser.parse_args()
     analyse_options(options)

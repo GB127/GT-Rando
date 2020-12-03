@@ -268,6 +268,24 @@ class GT(ROM):
         for no in range(count):
             self[offsets[no]] += 2
 
+    def allDark(self):
+        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
+        
+        for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
+            offsets.pop(offsets.index(self.get_darkice_index(world, boss_frame)))
+        
+        for offset in offsets:
+            if self[offset]<2:
+                self[offset]+=2
+
+    def allIcy(self):
+        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
+
+        for offset in offsets:
+            if self[offset]%2==0:
+                self[offset]+=1
+
+
     def activateWorldSelection(self):
         """Put a banana on the box of the world you want to go.
             Cherry for all the rest of the boxes
