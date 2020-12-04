@@ -28,21 +28,6 @@ In short :
         3. EXAMPLE : python3 main.py -eiwd --seed 342
 3. Enjoy!
 
-# Troubleshooting
-###  No module named 'matplotlib'
-* Try running: 
-```
-python -m pip install -U pip
-python -m pip install -U matplotlib
-```
-
-###  No module named 'cv2'
-* Try running: 
-```
-python -m pip install -U pip
-pip install opencv-python
-```
-
 # Community and links
 Github project : https://github.com/GB127/GT-Rando
 
