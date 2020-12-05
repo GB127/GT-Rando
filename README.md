@@ -1,4 +1,4 @@
-# Goof Troop Randomizer : Version 1.2
+# Goof Troop Randomizer : Version 1.3
 Data structure & Project management by Niamek, 
 Randomizer logic and code organization by Charles342
 
@@ -22,10 +22,12 @@ In short :
         1. EXAMPLE : python main.py -h
         2. EXAMPLE : python main.py -eiwd
         3. EXAMPLE : python main.py -eiwd --seed 342
+        4. EXAMPLE : python main.py -eiwd --alldark --seed 342
     2. MAC : python3 main.py  -[FLAGS] --seed [SEED] --worldselect
         1. EXAMPLE : python3 main.py -h
         2. EXAMPLE : python3 main.py -eiwd
         3. EXAMPLE : python3 main.py -eiwd --seed 342
+        4. EXAMPLE : python3 main.py -eiwd --alldark --seed 342
 3. Enjoy!
 
 # Community and links

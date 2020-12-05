@@ -184,23 +184,13 @@ class randomized(debug):
 
 
 if __name__ == "__main__":
-    with open("GT__9439417113047506.smc", "rb") as original:
-#    with open("Vanilla.smc", "rb") as original:
+#    with open("GT__9439417113047506.smc", "rb") as original:
+    with open("Vanilla.smc", "rb") as original:
         startTime = datetime.now()
-        game = randomized(original.read())
-        game.showMap(0)
-
-        # feasibility_results = []
-        # early_boss_results = []
-        # for m in range(200):
-        #     unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = game.all_worlds[2].feasibleWorldVerification()
-        #     feasibility_results.append((all(unlocked_exits) and all(unlocked_items) and boss_reached))
-        #     early_boss_results.append(early_boss_indicator)
+        game = debug(original.read())
+#        game = randomized(original.read())
 
 
-        # print((sum(feasibility_results)/len(feasibility_results)))
-        # print((sum(early_boss_results)/len(early_boss_results)))
-        # #game.show_map(2)
 
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
