@@ -357,7 +357,7 @@ class GT(ROM):
                 add_credits_line(self, string ,center=center, color=color, spacing=0x1)
 
         add_credits_line(self, "Goof Troop randomizer", underlined=True, color=4, spacing=16)
-        add_credits_line(self, "Version 1.2", spacing=1)
+        add_credits_line(self, "Version 1.3", spacing=1)
         add_credits_line(self, f"Seed : {self.seed}", spacing=1)
         add_credits_line(self, "Developers", underlined=True, color=4)
         add_credits_line(self, "Data structure & management", underlined=True, color=3, spacing = 0x4)
@@ -368,6 +368,16 @@ class GT(ROM):
         add_credits_line(self, "PsychoManiac", spacing=2)
         add_credits_line(self, "Zarby89", spacing=2)
 
+    def getter_passwords(self,world=None):
+        """Return the offsets of all passwords
+            Returns:
+                list : offsets of the said world.
+        """
+        if world == None:
+            return list(range(0x1C67F, 0x1C693))
+        return [x for x in range(0x1C67F + 5*(world -1), 0x1C684 + 5*(world-1))]
+
+
     def passwordRandomizer(self):
         """Password randomizer"""
         password = [0x0, 0x1, 0x2, 0x3]
@@ -375,7 +385,7 @@ class GT(ROM):
         check = False
         while check is False:
             # Actual randomization of the password
-            for i in getter_passwords("all"):
+            for i in self.getter_passwords():
                 self[i] = random.choice(password)
 
             # Let's check if two passwords are identical  
