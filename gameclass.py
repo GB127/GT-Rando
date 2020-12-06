@@ -1,5 +1,4 @@
 from world import *
-from getters import getter_passwords
 
 class RandomizerError(BaseException):
     pass
@@ -391,7 +390,7 @@ class GT(ROM):
             # Let's check if two passwords are identical  
             Worlds_passwords = []
             for world in range(1,5):
-                Worlds_passwords.append(list(self.data[offset] for offset in getter_passwords(world)))
+                Worlds_passwords.append(list(self.data[offset] for offset in self.getter_passwords(world)))
             check = all([1 == Worlds_passwords.count(x) for x in Worlds_passwords])
 
     def randomizerWithVerification(self, options):
