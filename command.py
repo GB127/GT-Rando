@@ -52,15 +52,24 @@ def getoptions():
     parser.add_argument("--worldselect", action="store_true",
     help="Allows to select the world of your choice with a banana...", dest="Wselect")
 
+
+
     # All dark
     parser.add_argument("--alldark", action="store_true",
     help="All rooms are dark except for bosses", dest="Adark")
 
-    # All dark
-    parser.add_argument("--alldarkevenbosses", action="store_true",
-    help="All rooms are dark. Boss rooms are totally dark for now ...", dest="AdarkEbosses")
+    parser.add_argument("-X", "--Dsanity", action="store_false",
+    help="All rooms can be dark, even the bosses!", dest="Dsanity")
+        # Dans les randomizer, ya comme des checks qui sont des "checks de sanité"
+        # De sorte que ces checks sont là pour éviter les cas terribles terribles.
+        # Par exemple, dans dragon warrior randomizer, ya un sanity check qui s'assure que
+        # les statistiques augmentent suffisament vite avec les niveaux pour que l'on n'ait pas à
+        # grinder 4 heures pour obtenir enfin assez de stats pour sortir du début genre.
 
-    # All dark
+        # Comme ça affecte le randomization, il faudra en faire un flag.
+
+
+    # All icy
     parser.add_argument("--allicy", action="store_true",
     help="All rooms have a slippery floor", dest="Aicy")
     
