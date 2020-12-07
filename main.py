@@ -58,7 +58,9 @@ if __name__ == "__main__":
                 tempo = int(random.gauss(7,5))
             randogame.darkRandomizer(count=tempo)
         if options.Adark:
-            randogame.allDark()
+            randogame.allDark(0)
+        if options.AdarkEbosses:
+            randogame.allDark(1)
 
         if options.Rfirst or options.Rexits or options.Ritems_pos or options.Ritems:
             try:

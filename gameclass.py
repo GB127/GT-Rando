@@ -168,11 +168,12 @@ class GT(ROM):
         for no in range(count):
             self[offsets[no]] += 2
 
-    def allDark(self):
+    def allDark(self, dark_bosses):
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
         
-        for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
-            offsets.pop(offsets.index(self.get_darkice_index(world, boss_frame)))
+        if not dark_bosses:
+            for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
+                offsets.pop(offsets.index(self.get_darkice_index(world, boss_frame)))
         
         for offset in offsets:
             if self[offset]<2:
@@ -304,16 +305,20 @@ class GT(ROM):
         exits_rando = options.Rexits
         items_rando = options.Ritems_pos or options.Ritems
         firstframe_rando = options.Rfirst
-        max_iter = 150
+        max_iter_big_step = 50000
+        max_iter_small_step = 50
         for world_i, this_world in enumerate(self.all_worlds):
-            for i in range(max_iter):
-                for j in range(max_iter):#exits and items randomization
+            number_of_tries = 0
+            print('Trying to find a world configuration for which you cannot get stuck...')
+            for i in range(max_iter_big_step):
+                for j in range(max_iter_small_step):#exits and items randomization
                     if exits_rando:
-                        for k in range(max_iter):
+                        for k in range(max_iter_small_step):
                             this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
                             if this_world.allFramesConnectedVerification(): break
+                            
                     find = False
-                    for k in range(max_iter):
+                    for k in range(max_iter_small_step):
                         if items_rando:
                             this_world.items.randomize(options.Ritems_pos)
                         if firstframe_rando:
@@ -322,16 +327,19 @@ class GT(ROM):
 
                         #check feasability
                         unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
+                        number_of_tries += 1
                         if (all(unlocked_exits) and all(unlocked_items) and boss_reached): find = True
                         if find: break
                     if find: break
-                    
-                if j<(max_iter-1):
-                    print('Found a new feasible configuration. Calculating feasibility ratio...')
+                    elif number_of_tries>max_iter_big_step:
+                        print(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")
+                        raise RandomizerError(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")
 
+
+                if i<(max_iter_big_step-1):
                     feasibility_results = []#shows how many times we do not get stuck if we play randomly
                     early_boss_results = []
-                    for m in range(100):
+                    for m in range(50):
                         unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
                         feasibility_results.append((all(unlocked_exits) and all(unlocked_items) and boss_reached))
                         early_boss_results.append(early_boss_indicator)
@@ -351,12 +359,13 @@ class GT(ROM):
 
                             if (sum(feasibility_results)/len(feasibility_results))==1:
                                 this_world.writeWorldInData()
-                                print(f"Assigned new exits and items to world {world_i+1}")  # print world number as 1-indexed for readability
+                                print(f"Assigned new exits and items to world {world_i+1} after {number_of_tries} iterations")  # print world number as 1-indexed for readability
                                 break
                             
                         else:
                             this_world.writeWorldInData()
-                            print(f"Assigned new exits and items to world {world_i+1}")  # print world number as 1-indexed for readability
+                            print(f"Assigned new exits and items to world {world_i+1} after {number_of_tries} iterations")  # print world number as 1-indexed for readability
                             break
                 else: 
+                    print(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")
                     raise RandomizerError(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")  # print world number as 1-indexed for readability
