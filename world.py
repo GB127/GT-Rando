@@ -151,7 +151,11 @@ class World():
         frames_filled_conditions = [0]*len(self.frames.conditions_types) #means that we already put none of the the bridges and hooks to reach the exits
         frames_filled_conditions[0] = 1 # element 0 should always be set to 1 in this list
         for big_step in range(40): #max number or loops
-            for small_step in range(random.randint(3, 8)): #how much exploration before we unlock something
+            for small_step in range(50): #how much exploration before we unlock something
+
+                #for faster verification
+                last_unlocked_exits = deepcopy(unlocked_exits)
+
                 #exits links
                 unlocked_exits, boss_reached = self.exits.getUnlockedExits(unlocked_exits)
                 if boss_reached and early_boss_indicator == -0.1:
@@ -160,6 +164,12 @@ class World():
                     early_boss_indicator = self.bossKeyAlreadyUsed(used_items)*early_boss_indicator #Always too early if the boss key was not used
                 #internal frame links
                 unlocked_exits = self.frames.getUnlockedExits(unlocked_exits, frames_filled_conditions)
+
+                #for faster verification
+                if last_unlocked_exits == unlocked_exits:
+                    break
+
+
             #unlocked items
             unlocked_items = self.items.getUnlockedItems(unlocked_exits, items_filled_conditions)
 
@@ -177,7 +187,8 @@ class World():
                     random_i = random_i-len(frames_unlockable_conditions)
                     condition_i = items_unlockable_conditions[random_i]
                     items_filled_conditions, used_items = self.unlockAnItemCondition(condition_i, items_filled_conditions, unlocked_items, used_items)
-
+            else: #for faster verification
+                break
             #verify if the world is completed
             if all(unlocked_exits) and all(unlocked_items) and boss_reached:
                 break
