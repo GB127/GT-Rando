@@ -150,31 +150,81 @@ class GT(ROM):
              0xFF, 0x85, 0xB7, 0x60])
 
 
-    def darkRandomizer(self, count=6):
+    def darkRandomizer(self, count=6, sanity=True):
         """Randomize which rooms are dark up to the count given (Defaults to vanilla value (6)).
             """
         for offset in range(0x1FF35, 0x1FFA7):  # Remove all dark rooms
             self[offset] = self[offset] & 1
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
 
-        for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
-            offsets.pop(offsets.index(self.get_darkice_index(world, boss_frame)))
-        offsets.pop(offsets.index(self.get_darkice_index(3,11)))
-        offsets.pop(offsets.index(self.get_darkice_index(4,19)))
-        offsets.pop(offsets.index(self.get_darkice_index(4,8)))
-        offsets.pop(offsets.index(self.get_darkice_index(4,6)))
+        if sanity:
+            for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
+                offsets.pop(offsets.index(self.get_darkice_index(world, boss_frame)))
+            offsets.pop(offsets.index(self.get_darkice_index(3,11)))
+            offsets.pop(offsets.index(self.get_darkice_index(4,19)))
+            offsets.pop(offsets.index(self.get_darkice_index(4,8)))
+            offsets.pop(offsets.index(self.get_darkice_index(4,6)))
 
         random.shuffle(offsets)
         for no in range(count):
             self[offsets[no]] += 2
 
-    def allDark(self, dark_bosses):
+
+
+    def checksum(self):
+        """Add some infos on the title screen : checksum for validating races seeds.
+            """
+        sprites = [
+            (0x6, 0x2), (0x8, 0x4), (0xA, 0x4), (0xC, 0x4),
+            (0xE, 0x4),(0x28, 0x2),(0x40, 0x6),(0x42, 0x6),
+            (0x44, 0x6), (0x46, 0x6),(0x48, 0x6),(0x4A, 0x4), 
+            (0x4C, 0x6)]
+
+        self.rewrite(0x0131D4, [0x22,0x20,0xFB,0x8F]) # JSL InputEndLoop
+        self.rewrite(0x7FB20, [0xAD, 0x80, 0x00, 0x9, 0x10, 0x8D, 0x80, 0x0])
+
+        current = 0x7FB28
+        for no in range(5):  # Drawing the checksum!
+            selection = random.choice(sprites)
+            self.rewrite(current, [
+                0xA9, 0xE0, # LDA X position!
+                0x8D, 0xA0 + 4*no, 0x1A,  # STA $1AA0 ;Set X to 0x08
+                0xA9, (0x10 + 32*no), # LDA Y position!
+                0x8D, 0xA1 + 4*no, 0x1A,  # STA $1AA1 ;Set Y to 0x10
+                0xA9, selection[0], # LDA Tile!
+                0x8D, 0xA2 + 4*no, 0x1A,  # STA $1AA2 ;Set C (tile) to 0x0C
+                0xA9, selection[1], # LDA palette!
+                0x8D, 0xA3 + 4*no, 0x1A])  # STA $1AA3 ;Set Palette to 0x04
+            current += 20
+
+
+
+
+
+        self.rewrite(current, [
+            0xA9, 0xAA,  # LDA #$AA
+            0x8D, 0xA0, 0x1C,# STA $1CA0 ;Set size for the 4 first sprites to 16x16
+            0x8D, 0xA1, 0x1C,# STA $1CA0 ;Set size for the 4-8 sprites to 16x16
+            0x8D, 0xA2, 0x1C,# STA $1CA0 ;Set size for the 8-12 first sprites to 16x16
+            # Do more copy if I need more!
+            0xC2, 0x20,  # REP #$20 ;Restore Code overwritten by the hook
+            0xE6, 0x14,  # INC $14 ;Restore Code overwritten by the hook
+            0x6B  # RTL
+            ])
+
+
+
+
+
+
+
+    def allDark(self, sanity=True):
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
         
-        if not dark_bosses:
+        if sanity:
             for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
                 offsets.pop(offsets.index(self.get_darkice_index(world, boss_frame)))
-        
+
         for offset in offsets:
             if self[offset]<2:
                 self[offset]+=2
