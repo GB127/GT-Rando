@@ -51,16 +51,14 @@ if __name__ == "__main__":
         if options.Aicy:
             randogame.allIcy()
         if options.Rdark:
-            randogame.darkRandomizer()
+            randogame.darkRandomizer(sanity=options.Dsanity)
         if options.Rverydark:
             tempo = int(random.gauss(12,5))
             while tempo < 7:
                 tempo = int(random.gauss(7,5))
-            randogame.darkRandomizer(count=tempo)
+            randogame.darkRandomizer(count=tempo, sanity=options.Dsanity)
         if options.Adark:
-            randogame.allDark(0)
-        if options.AdarkEbosses:
-            randogame.allDark(1)
+            randogame.allDark(sanity=options.Dsanity)
 
         if options.Rfirst or options.Rexits or options.Ritems_pos or options.Ritems:
             try:
