@@ -1,4 +1,4 @@
-# Goof Troop Randomizer : Version 1.0
+# Goof Troop Randomizer : Version 1.3
 
 Data structure & Project management by Niamek, 
 Randomizer logic and code organization by Charles342
@@ -23,24 +23,13 @@ In short :
         1. EXAMPLE : python main.py -h
         2. EXAMPLE : python main.py -eiwd
         3. EXAMPLE : python main.py -eiwd --seed 342
+        4. EXAMPLE : python main.py -ei --alldark --seed 342
     2. MAC : python3 main.py  -[FLAGS] --seed [SEED] --worldselect
         1. EXAMPLE : python3 main.py -h
         2. EXAMPLE : python3 main.py -eiwd
         3. EXAMPLE : python3 main.py -eiwd --seed 342
+        4. EXAMPLE : python3 main.py -ei --alldark --seed 342
 3. Enjoy!
-
-
-# Troubleshooting
-###  No module named 'matplotlib'
-* Try running:
-python -m pip install -U pip
-python -m pip install -U matplotlib
-
-###  No module named 'cv2'
-* Try running:
-python -m pip install -U pip
-pip install opencv-python
-
 
 # Community and links
 Github project : https://github.com/GB127/GT-Rando

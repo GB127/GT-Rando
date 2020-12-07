@@ -1,5 +1,4 @@
 from world import *
-from getters import getter_passwords
 
 class RandomizerError(BaseException):
     pass
@@ -357,16 +356,26 @@ class GT(ROM):
                 add_credits_line(self, string ,center=center, color=color, spacing=0x1)
 
         add_credits_line(self, "Goof Troop randomizer", underlined=True, color=4, spacing=16)
-        add_credits_line(self, "Version 1.0", spacing=1)
+        add_credits_line(self, "Version 1.3", spacing=1)
         add_credits_line(self, f"Seed : {self.seed}", spacing=1)
-        add_credits_line(self, "Developers", underlined=True, color=5)
-        add_credits_line(self, "Data structure & management", underlined=True, color=5, spacing = 0x4)
+        add_credits_line(self, "Developers", underlined=True, color=4)
+        add_credits_line(self, "Data structure & management", underlined=True, color=3, spacing = 0x4)
         add_credits_line(self, "Guylain Breton - Niamek", spacing=1)
-        add_credits_line(self, "Randomization logic & code", underlined=True, color=5, spacing=0x4)
+        add_credits_line(self, "Randomization logic & code", underlined=True, color=2, spacing=0x4)
         add_credits_line(self, "Charles Matte-Breton", spacing=1)
         add_credits_line(self, "Special thanks", underlined=True, color=3)
         add_credits_line(self, "PsychoManiac", spacing=2)
         add_credits_line(self, "Zarby89", spacing=2)
+
+    def getter_passwords(self,world=None):
+        """Return the offsets of all passwords
+            Returns:
+                list : offsets of the said world.
+        """
+        if world == None:
+            return list(range(0x1C67F, 0x1C693))
+        return [x for x in range(0x1C67F + 5*(world -1), 0x1C684 + 5*(world-1))]
+
 
     def passwordRandomizer(self):
         """Password randomizer"""
@@ -375,13 +384,13 @@ class GT(ROM):
         check = False
         while check is False:
             # Actual randomization of the password
-            for i in getter_passwords("all"):
+            for i in self.getter_passwords():
                 self[i] = random.choice(password)
 
             # Let's check if two passwords are identical  
             Worlds_passwords = []
             for world in range(1,5):
-                Worlds_passwords.append(list(self.data[offset] for offset in getter_passwords(world)))
+                Worlds_passwords.append(list(self.data[offset] for offset in self.getter_passwords(world)))
             check = all([1 == Worlds_passwords.count(x) for x in Worlds_passwords])
 
     def randomizerWithVerification(self, options):

@@ -102,19 +102,6 @@ def getter_exits(data, world_i, Frames=[]):
             """
     return exits_offsets, exits_values, exits_frames  # On retourne les listes
 
-def getter_passwords(world):
-    """Return the offsets of all passwords
-        Args:
-            world (int or str):
-                int : World you want to get.
-                str : "all" if all offset is desired.
-
-        Returns:
-            list : offsets of the said world.
-    """
-    if world == "all":
-        return list(range(0x1C67F, 0x1C693))
-    return [x for x in range(0x1C67F + 5*(world -1), 0x1C684 + 5*(world-1))]
 
 
 
