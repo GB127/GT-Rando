@@ -37,7 +37,7 @@ class Items:
             conditions_types = [0,1,2]
             #type of condition: 0: no condition, 1: hook+bridge, 2: hook, 3:bridge, 4: door grey key external, 5: door boss key, 6:double hook
         elif world_i == 2:
-            associated_exits = [6,8,10,10,10,13,13,22,22,22,26,32,35,37,39,44,44,47,47,48,52]
+            associated_exits = [6,8,10,10,10,13,13,22,22,22,26,32,35,37,39,44,44,47,48,47,52]
             associated_conditions = [0,0,0,0,0,0,0,1,0,0,0,0,0,0,2,0,0,0,0,0,0] #index of associated condition to reach the item
             conditions_types = [0,3,2]
         elif world_i == 3:
