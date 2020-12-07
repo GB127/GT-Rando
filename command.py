@@ -58,7 +58,7 @@ def getoptions():
 
     # All dark
     parser.add_argument("--alldarkevenbosses", action="store_true",
-    help="All rooms are dark. Boss rooms are totally dark for now ...", dest="AdarkEbosses")
+    help="All rooms are dark. Boss rooms are totally broken for now ...", dest="AdarkEbosses")
 
     # All dark
     parser.add_argument("--allicy", action="store_true",
