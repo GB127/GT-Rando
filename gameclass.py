@@ -11,10 +11,6 @@ class ROM:
     # NOTE for self : it's a LoROM
     # https://en.wikibooks.org/wiki/Super_NES_Programming/SNES_memory_map
 
-
-
-
-
     def __init__(self,data):
         """
             First, it checks if it has a header.
@@ -37,6 +33,10 @@ class ROM:
         # I am hoping to make it so that it can use the random module sometimes if this idea is kept.
         for i in range(offset1, offset2 +1, jumps):
             self.data[i] = value
+
+    def rewrite(self, start, iterable_rewrite):
+        for no, byte in enumerate(iterable_rewrite):
+            self.data[start + no] = byte
 
 
     def __getitem__(self,offset):
@@ -100,153 +100,54 @@ class GT(ROM):
 
     def modify_data_ice_dark(self):
         """Change old code to new code to be more flexible."""
-        self[0x28CC] = 0x64
-        self[0x28CD] = 0xCA
-        self[0x28CE] = 0xA6
-        self[0x28CF] = 0xB6
-        self[0x28D0] = 0xA5
-        self[0x28D1] = 0xB7
-        self[0x28D2] = 0x18
-        self[0x28D3] = 0x7F
-        self[0x28D4] = 0x30
-        self[0x28D5] = 0xFF
-        self[0x28D6] = 0x83
-        self[0x28D7] = 0xAA
-        self[0x28D8] = 0xBF
-        self[0x28D9] = 0x30
-        self[0x28DA] = 0xFF
-        self[0x28DB] = 0x83
-        self[0x28DC] = 0x29
-        self[0x28DD] = 0x01
-        self[0x28DE] = 0xF0
-        self[0x28DF] = 0x02
-        self[0x28E0] = 0xE6
-        self[0x28E1] = 0xCA
-        self[0x28E2] = 0x60
-
-        self[0x280E] = 0xBF
-        self[0x280F] = 0x30
-        self[0x2810] = 0xFF
-        self[0x2811] = 0x83
-        self[0x2812] = 0x29
-        self[0x2813] = 0x02
-        self[0x2814] = 0xD0
-        self[0x2815] = 0x2822-0x2815
-
+        self.rewrite(0x28CC,
+            [0x64, 0xCA, 0xA6, 0xB6, 0xA5, 0xB7, 0x18,
+             0x7F, 0x30, 0xFF, 0x83, 0xAA, 0xBF, 0x30,
+             0xFF, 0x83, 0x29, 0x01, 0xF0, 0x02, 0xE6,
+             0xCA, 0x60])
+        self.rewrite(0x280E, 
+            [0xBF, 0x30, 0xFF, 0x83, 0x29, 0x02, 0xD0,
+             0x2822-0x2815])
         self.setmulti(0x2816,0x2820, 0xEA)
 
-        # Data table for Ice and Dark rooms
-        self[0x1FF30] = 0+5 # World 0
-        self[0x1FF31] = 16+5# World 1
-        self[0x1FF32] = 32+5# World 2
-        self[0x1FF33] = 58+5# World 3
-        self[0x1FF34] = 88+5# World 4
-        self.setmulti(0x1FF35, 0x1FFA6, 0x0)
+        # Building the empty table.
+        self.rewrite(0x1FF30, [0+5, 16+5, 32+5, 58+5, 88+5]) # Data offsets for Ice and Dark rooms
+        self.setmulti(0x1FF35, 0x1FFA6, 0x0)  # Data table for Ice and Dark.
 
-        dark_rooms_vanilla = [(2,4),(2,20),
-                            (3,7),(3,20),
-                            (4,15),(4,17)]
-        ice_rooms_vanilla = [(3,5),(3,6)]
-
-        for couple in dark_rooms_vanilla:
+        # Vanilla values replacement
+        for couple in [(2,4),(2,20),(3,7),(3,20),(4,15),(4,17)]:  # Dark rooms vanilla
             self[self.get_darkice_index(couple[0], couple[1])] += 2
-        for couple in ice_rooms_vanilla:
+        for couple in [(3,5),(3,6)]:  # Ice room vanilla
             self[self.get_darkice_index(couple[0], couple[1])] += 1
+
 
     def modify_data_starting_frame(self):
         """Change the code to allow randomization of first frame.
             Unfortunate effect : Removal of intro cs.
             """
+        self.rewrite(0x1DFD,
+            [0xA9, 0x04, 0x85, 0xA0, 0xA5, 0xC3, 0x85, 0xB6, 
+             0x20, 0x81, 0xF3, 0xEA])
 
+        self.rewrite(0x7381, 
+            [0xAA, 0xBD, 0xA7, 0xFF, 0x85, 0xB7, 0xEA, 0xEA,
+             0xA2, 0x8, 0x60])
 
-        self[0x1DFD] = 0xA9
-        self[0x1DFE] = 0x04
-        self[0x1DFF] = 0x85
-        self[0x1E00] = 0xA0
-        self[0x1E01] = 0xA5
-        self[0x1E02] = 0xC3
-        self[0x1E03] = 0x85
-        self[0x1E04] = 0xB6
+        self.setmulti(0x1F95, 0x1F96, 0xEA)
 
-
-        # Jump
-        self[0x1E05] = 0x20
-        self[0x1E06] = 0x81
-        self[0x1E07] = 0xF3
-        self[0x1E08] = 0xEA
-
-
-
-
-
-        # TAX
-        self[0x7381] = 0xAA
-
-        # LDA,X
-        self[0x7382] = 0xBD
-        self[0x7383] = 0xA7  # TO FIX
-        self[0x7384] = 0xFF
-
-        # STA B7
-        self[0x7385] = 0x85
-        self[0x7386] = 0xB7
-
-
-        #LDA #0
-        self[0x7387] = 0xEA#0xA9
-        self[0x7388] = 0xEA#0x00
-
-        # LDX #8
-        self[0x7389] = 0xA2
-        self[0x738A] = 0x8
-
-        #rts
-        self[0x738B] = 0x60
-
-
-        self[0x1F95] = 0xEA
-        self[0x1F96] = 0xEA
-
-
-        #Data
-        self[0x1FFA7] = 0   
-        self[0x1FFA8] = 0
-        self[0x1FFA9] = 0
-        self[0x1FFAA] = 0
-        self[0x1FFAB] = 0
-
-
+        # Building the data table:
+        self.setmulti(0x1FFA7, 0x1FFAB, 0)
 
         # Fix a LDA B7 that should always load 0 and make it a constant instead.
-        self[0x2766] = 0xA9
-        self[0x2767] = 0x0
+        self.rewrite(0x2766, [0xA9, 0x0])
 
 
+        self.rewrite(0x23E2,
+            [0x20, 0x8C, 0xF3, 0xEA])
 
-        self[0X23E2] = 0x20
-        self[0x23E3] = 0x8C
-        self[0x23E4] = 0xF3
-        self[0x23E5] = 0xEA    
-        
-        # 80A3E2 INC B6
-
-
-        self[0x738C] = 0xE6
-        self[0x738D] = 0xB6
-        self[0x738E] = 0xA6
-        self[0x738F] = 0xB6
-
-        # LDA,X
-        self[0x7390] = 0xBD
-        self[0x7391] = 0xA7  # TO FIX
-        self[0x7392] = 0xFF
-
-        # STA B7
-        self[0x7393] = 0x85
-        self[0x7394] = 0xB7
-
-        self[0x7395] = 0x60
-
+        self.rewrite(0x738C,
+            [0xE6, 0xB6, 0xA6, 0xB6,0xBD, 0xA7,
+             0xFF, 0x85, 0xB7, 0x60])
 
 
     def darkRandomizer(self, count=6):
