@@ -267,11 +267,12 @@ class GT(ROM):
         for no in range(count):
             self[offsets[no]] += 2
 
-    def allDark(self):
+    def allDark(self, dark_bosses):
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
         
-        for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
-            offsets.pop(offsets.index(self.get_darkice_index(world, boss_frame)))
+        if not dark_bosses:
+            for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
+                offsets.pop(offsets.index(self.get_darkice_index(world, boss_frame)))
         
         for offset in offsets:
             if self[offset]<2:
