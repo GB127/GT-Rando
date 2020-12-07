@@ -67,5 +67,8 @@ if __name__ == "__main__":
                 with open("error_flags_seed.txt", "a") as report:
                     report.write(f'python main.py -{flags} --seed {options.seed}\n')
                     flags += "_ERROR"
+
+        if (options.Rfirst or options.Rexits or options.Ritem_pos or options.Ritems or options.Rdark or options.Rverydark or options.Ricy or options.Rveryicy):
+            randogame.checksum()
         with open(f"GT_{flags}_{options.seed}.smc", "wb") as newgame:
             newgame.write(randogame.data)
