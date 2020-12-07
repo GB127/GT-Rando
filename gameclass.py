@@ -403,7 +403,7 @@ class GT(ROM):
         exits_rando = options.Rexits
         items_rando = options.Ritems_pos or options.Ritems
         firstframe_rando = options.Rfirst
-        max_iter_big_step = 500000
+        max_iter_big_step = 50000
         max_iter_small_step = 50
         for world_i, this_world in enumerate(self.all_worlds):
             number_of_tries = 0

@@ -4,7 +4,7 @@ class Items:
     def __init__(self, data, world_i):
         all_nFrames = [16, 16, 26, 30, 26] # Nb of frames per world.
         self.nFrames = all_nFrames[world_i]  # Get the current world's number of frames
-
+        self.world_i = world_i
         # getter utilization
         self.offsets, self.values = self.getItemsFromData(data,world_i)
         self.names = self.getNames()
@@ -74,10 +74,19 @@ class Items:
         return names
 
     def randomize(self, only_switch_positions):
+        # minimum number of hookshot, candle, grey key, gold key, shovel, bell and bridge per world
+        required_items = [[0,0,1,1,0,0,1],[4,0,2,1,0,0,1],[2,0,6,1,0,0,2],[1,0,0,0,0,0,0],[7,0,1,1,0,0,0]]
+
         if only_switch_positions: 
             random.shuffle(self.values)
         else: #totally random
             self.values = [random.randint(8,14) for i in self.values]
+            all_required_items_are_in_pool = False
+            while not all_required_items_are_in_pool:
+                self.values = [random.randint(8,14) for i in self.values]
+                if self.values.count(8)>=required_items[self.world_i][0] and self.values.count(10)>=required_items[self.world_i][2] and self.values.count(11)>=required_items[self.world_i][3] and self.values.count(14)>=required_items[self.world_i][6]:
+                    all_required_items_are_in_pool = True
+
         self.names = self.getNames()
 
     def getItemsFromData(self, data, world_i):
