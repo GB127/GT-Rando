@@ -206,7 +206,8 @@ class Exits:
                 destination_types.append('?')
                 source_types.append('?')
             else:
-                raise ExitTypeError('Could not assign a type to this exit')
+                print('Could not assign a type to this exit')
+                #raise ExitTypeError('Could not assign a type to this exit')
 
         return source_types, destination_types #destination types will not be valid if there had already been a randomization
 
@@ -319,9 +320,11 @@ class Exits:
         new_unlocks = [0]*self.nExits
         boss_reached = 0
         for source_i in range(self.nExits):
-            if self.world_i == 3 and source_i == 0 and currently_unlocked[2]==0:
+            if self.world_i == 3 and source_i == 0 and currently_unlocked[2]==0: #first puzzle of the cave world
                 new_unlocks[0] = 1
                 new_unlocks[1] = 1
+            elif self.world_i == 3 and source_i == 45 and currently_unlocked[48]==0: #last puzzle of the cave world
+                new_unlocks[45] = 1
             elif currently_unlocked[source_i]:
                 destination_i = self.destination_exits[source_i]
                 if destination_i == None:
