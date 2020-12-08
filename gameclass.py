@@ -173,7 +173,7 @@ class GT(ROM):
 
 
 
-    def checksum(self, alldark=False, allice=False):
+    def checksum(self, alldark=False, allice=False, ohko=False):
         """Add some infos on the title screen : checksum for validating races seeds.
             """
         sprites = [
@@ -202,6 +202,8 @@ class GT(ROM):
         alloptions = []
         if alldark: alloptions.append((0x4C, 0x6))
         if allice: alloptions.append((0xC, 0x4))
+        if ohko: alloptions.append((0x40, 0x6))
+
 
         for no,option in enumerate(alloptions):
             self.rewrite(current, [
@@ -231,6 +233,9 @@ class GT(ROM):
 
 
 
+    def ohko(self):
+        self.setmulti(0x5D19, 0x5D1A, 0xEA)
+        self.setmulti(0x5D1F, 0x5D20, 0xEA)
 
 
 

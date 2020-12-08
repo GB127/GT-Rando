@@ -2,6 +2,8 @@ from gameclass import GT
 from infos import *  # This is for the tools in infos.
 from datetime import datetime
 from world import *
+import random
+
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
@@ -189,10 +191,12 @@ if __name__ == "__main__":
         startTime = datetime.now()
         game = debug(original.read())
 #        game = randomized(original.read())
-
+        game.setmulti(0x5D19, 0x5D1A, 0xEA)
+        game.setmulti(0x5D1F, 0x5D20, 0xEA)
 
 
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
             print(f"Testing case have been created! {datetime.now()}")
             newgame.write(game.data)
+

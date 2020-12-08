@@ -72,6 +72,9 @@ if __name__ == "__main__":
                     report.write(f'python main.py -{flags} --seed {options.seed}\n')
                     flags += "_ERROR"
 
-        randogame.checksum(options.Adark, options.Aicy)
+        if options.ohko:
+            randogame.ohko()
+
+        randogame.checksum(options.Adark, options.Aicy, options.ohko)
         with open(f"GT_{flags}_{options.seed}.smc", "wb") as newgame:
             newgame.write(randogame.data)
