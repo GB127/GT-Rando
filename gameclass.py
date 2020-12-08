@@ -161,11 +161,11 @@ class GT(ROM):
 
         if sanity:
             for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
-                offsets.pop(offsets.index(self.get_darkice_index(world, boss_frame)))
-            offsets.pop(offsets.index(self.get_darkice_index(3,11)))
-            offsets.pop(offsets.index(self.get_darkice_index(4,19)))
-            offsets.pop(offsets.index(self.get_darkice_index(4,8)))
-            offsets.pop(offsets.index(self.get_darkice_index(4,6)))
+                offsets.remove(self.get_darkice_index(world, boss_frame))
+            offsets.remove(self.get_darkice_index(3,11))
+            offsets.remove(self.get_darkice_index(4,19))
+            offsets.remove(self.get_darkice_index(4,8))
+            offsets.remove(self.get_darkice_index(4,6))
 
         random.shuffle(offsets)
         for no in range(count):
@@ -225,7 +225,11 @@ class GT(ROM):
         
         if sanity:
             for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
-                offsets.pop(offsets.index(self.get_darkice_index(world, boss_frame)))
+                offsets.remove(self.get_darkice_index(world, boss_frame))
+            offsets.remove(self.get_darkice_index(3,11))
+            offsets.remove(self.get_darkice_index(4,19))
+            offsets.remove(self.get_darkice_index(4,8))
+            offsets.remove(self.get_darkice_index(4,6))
 
         for offset in offsets:
             if self[offset]<2:
