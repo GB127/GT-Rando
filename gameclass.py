@@ -436,6 +436,20 @@ class GT(ROM):
                                 this_world.writeWorldInData()
                                 print(f"Assigned new exits and items to world {world_i+1} after {number_of_tries} iterations")  # print world number as 1-indexed for readability
                                 break
+
+                        if world_i == 3:
+                            true_starting_exit = deepcopy(this_world.starting_exit)
+                            this_world.starting_exit = 0 #room with door that requires to do a puzzle
+                            for m in range(50):
+                                unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
+                                feasibility_results.append(boss_reached)
+                                early_boss_results.append(early_boss_indicator)
+                            this_world.starting_exit = true_starting_exit
+
+                            if (sum(feasibility_results)/len(feasibility_results))==1:
+                                this_world.writeWorldInData()
+                                print(f"Assigned new exits and items to world {world_i+1} after {number_of_tries} iterations")  # print world number as 1-indexed for readability
+                                break
                             
                         else:
                             this_world.writeWorldInData()

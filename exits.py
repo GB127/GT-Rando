@@ -321,10 +321,9 @@ class Exits:
         boss_reached = 0
         for source_i in range(self.nExits):
             if self.world_i == 3 and source_i == 0 and currently_unlocked[2]==0: #first puzzle of the cave world
-                new_unlocks[0] = 1
-                new_unlocks[1] = 1
+                new_unlocks[source_i] = currently_unlocked[source_i]
             elif self.world_i == 3 and source_i == 45 and currently_unlocked[48]==0: #last puzzle of the cave world
-                new_unlocks[45] = 1
+                new_unlocks[source_i] = currently_unlocked[source_i]
             elif currently_unlocked[source_i]:
                 destination_i = self.destination_exits[source_i]
                 if destination_i == None:
