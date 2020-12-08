@@ -54,6 +54,13 @@ def getoptions():
     parser.add_argument("-I", "--items", action="store_true",
     help="Completely random items. You might have to shovel your way through the dark rooms ;)", dest="Ritems")
 
+
+
+    # OHKO
+    parser.add_argument("--ohko", action="store_true",
+    help="Enemies now OHKO you", dest="ohko")
+
+
     # All dark
     parser.add_argument("--alldark", action="store_true",
     help="All rooms are dark, use X to add bosses in the mix", dest="Adark")
