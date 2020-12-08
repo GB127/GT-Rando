@@ -59,6 +59,7 @@ def getoptions():
     # OHKO
     parser.add_argument("--ohko", action="store_true",
     help="Enemies now OHKO you", dest="ohko")
+    # NOT COMPLETE YET, DO NOT RELEASE
 
 
     # All dark
