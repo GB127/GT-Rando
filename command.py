@@ -85,9 +85,12 @@ def analyse_options(options):
         raise BaseException("Cannot use d and D at the same time.")
     if all([options.Ricy, options.Rveryicy]):
         raise BaseException("Cannot use w and W at the same time.")
+    if options.Adark and any([options.Rdark, options.Rverydark]):
+        raise BaseException("Cannot use --alldark with d or D.")
     if all([options.Ritems, options.Ritems_pos]):
         raise BaseException("Cannot use i and I at the same time.")
-
+    if not options.Dsanity and not any([options.Rdark, options.Rverydark, options.Adark]):
+        raise BaseException("Cannot use X without d, D or alldark")
 
 if __name__ == "__main__":
     test = getoptions()
