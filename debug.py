@@ -191,8 +191,7 @@ if __name__ == "__main__":
         startTime = datetime.now()
         game = debug(original.read())
 #        game = randomized(original.read())
-        game.setmulti(0x5D19, 0x5D1A, 0xEA)
-        game.setmulti(0x5D1F, 0x5D20, 0xEA)
+
 
 
         with open("debug.smc", "wb") as newgame:
