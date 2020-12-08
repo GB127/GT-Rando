@@ -173,7 +173,7 @@ class GT(ROM):
 
 
 
-    def checksum(self):
+    def checksum(self, alldark=False, allice=False):
         """Add some infos on the title screen : checksum for validating races seeds.
             """
         sprites = [
@@ -199,6 +199,21 @@ class GT(ROM):
                 0x8D, 0xA3 + 4*no, 0x1A])  # STA $1AA3 ;Set Palette to 0x04
             current += 20
 
+        alloptions = []
+        if alldark: alloptions.append((0x4C, 0x6))
+        if allice: alloptions.append((0xC, 0x4))
+
+        for no,option in enumerate(alloptions):
+            self.rewrite(current, [
+                0xA9, 0x5 +16*no, # LDA X position!
+                0x8D, 0xA0 + 20 + 4*no, 0x1A,  # STA $1AA0 ;Set X to 0x08
+                0xA9, 0x5, # LDA Y position!
+                0x8D, 0xA1 +20 + 4*no, 0x1A,  # STA $1AA1 ;Set Y to 0x10
+                0xA9, option[0], # LDA Tile!
+                0x8D, 0xA2 +20 + 4*no, 0x1A,  # STA $1AA2 ;Set C (tile) to 0x0C
+                0xA9, option[1], # LDA palette!
+                0x8D, 0xA3 +20 + 4*no, 0x1A])  # STA $1AA3 ;Set Palette to 0x04
+            current += 20
 
 
 
@@ -213,7 +228,6 @@ class GT(ROM):
             0xE6, 0x14,  # INC $14 ;Restore Code overwritten by the hook
             0x6B  # RTL
             ])
-
 
 
 

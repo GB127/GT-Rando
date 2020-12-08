@@ -32,6 +32,8 @@ def flag_string(options):
     return flags
 
 
+
+
 if __name__ == "__main__":
     options = getoptions()
 
@@ -70,7 +72,6 @@ if __name__ == "__main__":
                     report.write(f'python main.py -{flags} --seed {options.seed}\n')
                     flags += "_ERROR"
 
-        if (options.Rfirst or options.Rexits or options.Ritems_pos or options.Ritems or options.Rdark or options.Rverydark or options.Ricy or options.Rveryicy):
-            randogame.checksum()
+        randogame.checksum(options.Adark, options.Aicy)
         with open(f"GT_{flags}_{options.seed}.smc", "wb") as newgame:
             newgame.write(randogame.data)
