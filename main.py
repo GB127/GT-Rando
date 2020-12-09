@@ -7,15 +7,13 @@ from command import getoptions
 def flag_string(options):
     flags = ""
     if options.Ricy:
-        flags += "w"
+        flags += "s"
     elif options.Rveryicy:
-        flags += "W"
+        flags += "S"
     if options.Rdark:
         flags += "d"
     elif options.Rverydark:
         flags += "D"
-    if not options.Dsanity:
-        flags+= "X"
     if options.Rfirst:
         flags += "f"
     if options.Rexits:
@@ -55,14 +53,14 @@ if __name__ == "__main__":
         if options.Aicy:
             randogame.allIcy()
         if options.Rdark:
-            randogame.darkRandomizer(sanity=options.Dsanity)
+            randogame.darkRandomizer()
         if options.Rverydark:
             tempo = int(random.gauss(12,5))
             while tempo < 7:
                 tempo = int(random.gauss(7,5))
-            randogame.darkRandomizer(count=tempo, sanity=options.Dsanity)
+            randogame.darkRandomizer(count=tempo)
         if options.Adark:
-            randogame.allDark(sanity=options.Dsanity)
+            randogame.allDark()
 
         if options.Rfirst or options.Rexits or options.Ritems_pos or options.Ritems:
             try:
