@@ -198,7 +198,6 @@ class GT(ROM):
             0xA9, 0xAA,  # LDA #$AA
             0x8D, 0xA0, 0x1C,# STA $1CA0 ;Set size for the 4 first sprites to 16x16
             0x8D, 0xA1, 0x1C,# STA $1CA0 ;Set size for the 4-8 sprites to 16x16
-            0x8D, 0xA2, 0x1C,# STA $1CA0 ;Set size for the 8-12 first sprites to 16x16
             # Do more copy if I need more!
             0xC2, 0x20,  # REP #$20 ;Restore Code overwritten by the hook
             0xE6, 0x14,  # INC $14 ;Restore Code overwritten by the hook
