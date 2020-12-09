@@ -194,27 +194,6 @@ class GT(ROM):
                 0x8D, 0xA3 + 4*no, 0x1A])  # STA $1AA3 ;Set Palette to 0x04
             current += 20
 
-        alloptions = []
-        if alldark: alloptions.append((0x4C, 0x6))  # Candle
-        if allice: alloptions.append((0xC, 0x4))  # banana
-        if ohko: alloptions.append((0x40, 0x6))  # Shovel (You're digging your graveyard? ;) )
-
-
-        for no,option in enumerate(alloptions):
-            self.rewrite(current, [
-                0xA9, 0x5 +16*no, # LDA X position!
-                0x8D, 0xA0 + 20 + 4*no, 0x1A,  # STA $1AA0 ;Set X to 0x08
-                0xA9, 0x5, # LDA Y position!
-                0x8D, 0xA1 +20 + 4*no, 0x1A,  # STA $1AA1 ;Set Y to 0x10
-                0xA9, option[0], # LDA Tile!
-                0x8D, 0xA2 +20 + 4*no, 0x1A,  # STA $1AA2 ;Set C (tile) to 0x0C
-                0xA9, option[1], # LDA palette!
-                0x8D, 0xA3 +20 + 4*no, 0x1A])  # STA $1AA3 ;Set Palette to 0x04
-            current += 20
-
-
-
-
         self.rewrite(current, [
             0xA9, 0xAA,  # LDA #$AA
             0x8D, 0xA0, 0x1C,# STA $1CA0 ;Set size for the 4 first sprites to 16x16
