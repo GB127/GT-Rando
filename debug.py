@@ -185,17 +185,23 @@ class randomized(debug):
         self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
 
 
-if __name__ == "__main__":
-#    with open("GT__9439417113047506.smc", "rb") as original:
-    with open("Vanilla.smc", "rb") as original:
-        startTime = datetime.now()
-        game = debug(original.read())
-#        game = randomized(original.read())
+    def __setitem__(self,offset, value):
+        self.data[offset] = value
 
+if __name__ == "__main__":
+    with open("testing.smc", "rb") as original:
+#    with open("Vanilla.smc", "rb") as original:
+        startTime = datetime.now()
+        #game = debug(original.read())
+        game = randomized(original.read())
+        game.activateWorldSelection()
+        game.ohko()
+
+        game.showMap(4)
 
 
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
-            print(f"Testing case have been created! {datetime.now()}")
+            #print(f"Testing case have been created! {datetime.now()}")
             newgame.write(game.data)
 

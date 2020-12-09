@@ -1,4 +1,4 @@
-# Goof Troop Randomizer : Version 1.3.1
+# Goof Troop Randomizer : Version 1.4
 
 Data structure & Project management by Niamek, 
 Randomizer logic and code organization by Charles342

@@ -3,7 +3,7 @@ import random
 
 def getoptions():
 
-    parser = argparse.ArgumentParser(description="Goof Troop Randomizer, Version 1.3.1", epilog="Written by Guylain Breton & Charles Matte-Breton")
+    parser = argparse.ArgumentParser(description="Goof Troop Randomizer, Version 1.4", epilog="Written by Guylain Breton & Charles Matte-Breton")
 
 
     # Dark rooms
@@ -13,25 +13,15 @@ def getoptions():
     parser.add_argument("-D", "--Vdark", action="store_true",
     help="Randomize which rooms are dark, random & higher count than vanilla", dest="Rverydark")
 
-    parser.add_argument("-X", "--Dsanity", action="store_false",
-    help="All rooms can be dark, even the bosses!", dest="Dsanity")
-        # À effacer lorsque lu.
-        # Dans les randomizer, ya comme des checks qui sont des "checks de sanité"
-        # De sorte que ces checks sont là pour éviter les cas terribles terribles.
-        # Par exemple, dans dragon warrior randomizer, ya un sanity check qui s'assure que
-        # les statistiques augmentent suffisament vite avec les niveaux pour que l'on n'ait pas à
-        # grinder 4 heures pour obtenir enfin assez de stats pour sortir du début genre.
-        # Comme ça affecte le randomization, il faudra en faire un flag. Si t'as une meilleure idée de
-            # flag, n'hésite pas à remplacer le X! (à ne pas oublier de changer dans main.py aussi)
 
 
     # Icy rooms
-        # Logic : W for winter, winter = snow and ice, thus icy rooms!
-        # Logic : big W => May be higher than 2, thus capital letter
-    parser.add_argument("-w", "--icy", action="store_true",
+        # Logic : S for slippery
+        # Logic : big S => May be higher than 2, thus capital letter
+    parser.add_argument("-s", "--icy", action="store_true",
     help="Randomize which rooms are icy, same amount of icy rooms as vanilla (2)", dest="Ricy")
 
-    parser.add_argument("-W", "--Vicy", action="store_true",
+    parser.add_argument("-S", "--Vicy", action="store_true",
     help="Randomize which rooms are icy,random & higher count than vanilla", dest="Rveryicy")
 
 
@@ -54,17 +44,13 @@ def getoptions():
     parser.add_argument("-I", "--items", action="store_true",
     help="Completely random items. You might have to shovel your way through the dark rooms ;)", dest="Ritems")
 
-
-
     # OHKO
     parser.add_argument("--ohko", action="store_true",
     help="Enemies now OHKO you", dest="ohko")
-    # NOT COMPLETE YET, DO NOT RELEASE
-
 
     # All dark
     parser.add_argument("--alldark", action="store_true",
-    help="All rooms are dark, use X to add bosses in the mix", dest="Adark")
+    help="All rooms are dark, except bosses for now", dest="Adark")
 
     # All icy
     parser.add_argument("--allicy", action="store_true",
@@ -74,16 +60,9 @@ def getoptions():
     parser.add_argument("--worldselect", action="store_true",
     help="Allows to select the world of your choice with a banana...", dest="Wselect")
 
-
-
     # Seed
     parser.add_argument("--seed", action="store", help="Seed for the randomization",
                         dest="seed", default=str(random.random())[2:], metavar="", type=str)
-
-
-
-
-
 
 
     
@@ -96,15 +75,17 @@ def analyse_options(options):
     if any([not options.Rexits_matchdir,not options.Rexits_pair]) and (options.Rexits is False):
         raise BaseException("Unmatching exits direction (u) and unpairing the exits (U) must be used with the exits randomizer (e)")
     if all([options.Rdark, options.Rverydark]):
-        raise BaseException("Cannot use d and D at the same time.")
+        raise BaseException("Cannot use  and S at the same time.")
     if all([options.Ricy, options.Rveryicy]):
         raise BaseException("Cannot use w and W at the same time.")
     if options.Adark and any([options.Rdark, options.Rverydark]):
         raise BaseException("Cannot use --alldark with d or D.")
     if all([options.Ritems, options.Ritems_pos]):
         raise BaseException("Cannot use i and I at the same time.")
-    if not options.Dsanity and not any([options.Rdark, options.Rverydark, options.Adark]):
-        raise BaseException("Cannot use X without d, D or alldark")
+    if options.Aicy and any([options.Ricy, options.Rveryicy]):
+        raise BaseException("Cannot use --allicy with s or D.")
+
+
 
 if __name__ == "__main__":
     test = getoptions()

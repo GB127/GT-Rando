@@ -66,12 +66,8 @@ class GT(ROM):
 
     def removeExitFromData(self, world_i, frame_i, index):
         """Remove a specific exit from a said world-frame. 
-
-        Args:
-            world_i (int): Which world
-            frame ([type]): which frame
-            index ([type]): which exit
-        """
+                index (int): which exit
+           """
         offsets, values = [], []
         base = self[0x01F303 + world_i]
         adjust = 0x1F303 + base + 2*frame_i
@@ -96,7 +92,7 @@ class GT(ROM):
         else:  # On décale les valeurs.
             for i in range(index, vanilla_count-1):
                 for no, offset in enumerate(offsets[i]):
-                    self[offset] = values[i+1][no] # Should work
+                    self[offset] = values[i+1][no]
         self[count_offset] -=1
 
 
@@ -152,20 +148,19 @@ class GT(ROM):
              0xFF, 0x85, 0xB7, 0x60])
 
 
-    def darkRandomizer(self, count=6, sanity=True):
+    def darkRandomizer(self, count=6):
         """Randomize which rooms are dark up to the count given (Defaults to vanilla value (6)).
             """
         for offset in range(0x1FF35, 0x1FFA7):  # Remove all dark rooms
             self[offset] = self[offset] & 1
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
 
-        if sanity:
-            for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
-                offsets.remove(self.get_darkice_index(world, boss_frame))
-            offsets.remove(self.get_darkice_index(3,11))
-            offsets.remove(self.get_darkice_index(4,19))
-            offsets.remove(self.get_darkice_index(4,8))
-            offsets.remove(self.get_darkice_index(4,6))
+        for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
+            offsets.remove(self.get_darkice_index(world, boss_frame))
+        offsets.remove(self.get_darkice_index(3,11))  # Cave bell room
+        # offsets.remove(self.get_darkice_index(4,19))
+        offsets.remove(self.get_darkice_index(4,8))  # That one platform room hulk got
+        # offsets.remove(self.get_darkice_index(4,6))
 
         random.shuffle(offsets)
         for no in range(count):
@@ -200,9 +195,9 @@ class GT(ROM):
             current += 20
 
         alloptions = []
-        if alldark: alloptions.append((0x4C, 0x6))
-        if allice: alloptions.append((0xC, 0x4))
-        if ohko: alloptions.append((0x40, 0x6))
+        if alldark: alloptions.append((0x4C, 0x6))  # Candle
+        if allice: alloptions.append((0xC, 0x4))  # banana
+        if ohko: alloptions.append((0x40, 0x6))  # Shovel (You're digging your graveyard? ;) )
 
 
         for no,option in enumerate(alloptions):
@@ -234,21 +229,22 @@ class GT(ROM):
 
 
     def ohko(self):
+        # for touching enemies or thrown projectiles
         self.setmulti(0x5D19, 0x5D1A, 0xEA)
         self.setmulti(0x5D1F, 0x5D20, 0xEA)
-
+        # This works for kicked stones
+        self.rewrite(0x54E8, [0x9E, 0x1D, 0x01,0x9E, 0x3F, 0x01,0x80, 0x2])
+        # For bombs
+        self.rewrite(0x5793, [0x9E, 0x1D, 0x01, 0x9E, 0x3F, 0x01, 0x80, 0x1])
+        # For flames
+        self.rewrite(0x5D45,[0x64, 0x1D,0x64, 0x3F,0x80, 0xD6])
 
 
     def allDark(self, sanity=True):
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
         
-        if sanity:
-            for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
-                offsets.remove(self.get_darkice_index(world, boss_frame))
-            offsets.remove(self.get_darkice_index(3,11))
-            offsets.remove(self.get_darkice_index(4,19))
-            offsets.remove(self.get_darkice_index(4,8))
-            offsets.remove(self.get_darkice_index(4,6))
+        for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
+            offsets.remove(self.get_darkice_index(world, boss_frame))
 
         for offset in offsets:
             if self[offset]<2:
@@ -290,8 +286,7 @@ class GT(ROM):
         return offsets[world_i] + frame_i + 0x1FF35
 
     def add_credits(self):
-        """This function will add the credits of the contributors of this project
-            in the credits of the game. It defines a function internally, then uses it for each lines.
+        """This function will add the credits of the contributors of this project.
             """
 
         def add_credits_line(self, text,*, center=True, color=0, underlined=False, spacing=0xD):
@@ -333,7 +328,7 @@ class GT(ROM):
                 add_credits_line(self, string ,center=center, color=color, spacing=0x1)
 
         add_credits_line(self, "Goof Troop randomizer", underlined=True, color=4, spacing=16)
-        add_credits_line(self, "Version 1.3.1", spacing=1)
+        add_credits_line(self, "Version 1.4", spacing=1)
         add_credits_line(self, f"Seed : {self.seed}", spacing=1)
         add_credits_line(self, "Developers", underlined=True, color=4)
         add_credits_line(self, "Data structure & management", underlined=True, color=3, spacing = 0x4)
