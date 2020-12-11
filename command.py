@@ -3,7 +3,7 @@ import random
 
 def getoptions():
 
-    parser = argparse.ArgumentParser(description="Goof Troop Randomizer, Version 1.4", epilog="Written by Guylain Breton & Charles Matte-Breton")
+    parser = argparse.ArgumentParser(description="Goof Troop Randomizer, Version 1.4.1", epilog="Written by Guylain Breton & Charles Matte-Breton")
 
 
     # Dark rooms
