@@ -17,7 +17,7 @@ class ROM:
             Then it copies the relevant data.
             Then it checks if it's the correct game.
                 If not, it will raise an AssertionError
-        """
+            """
         if len(data) % 1024 == 512:
             self.data = bytearray(data[512:])
         elif len(data) % 1024 == 0:
@@ -28,9 +28,6 @@ class ROM:
             assert i == self.header[n]
 
     def setmulti(self, offset1, offset2, value, jumps=1):
-        # The idea of this method is for cases where you need to change the value
-        # of a bunch of address that are linked together periodically.
-        # I am hoping to make it so that it can use the random module sometimes if this idea is kept.
         for i in range(offset1, offset2 +1, jumps):
             self.data[i] = value
 
@@ -70,15 +67,8 @@ class GT(ROM):
            """
         offsets, values = [], []
         base = self[0x01F303 + world_i]
-        adjust = 0x1F303 + base + 2*frame_i
 
-        #Lecture du Gros Byte. On doit lire le byte présent et le byte suivant et les combiner ensemble.
-            # GROS BYTE : 0xHHpp
-        temp1 = self[0x1F303 + base + 2*frame_i]  # Cecu est l'endroit où es tle count, du moins les deux premiers bytes on a les deux premiers chiffres! (pp)
-        temp2 = self[0x1F303 + base + 2*frame_i + 1]  # Les deux high bytes (HH)
-        temp3 = temp2 * 16 * 16 + temp1
-
-        count_offset = 0x10000 + temp3
+        count_offset = 0x10000 + self[0x1F303 + base + 2*frame_i + 1] * 16 * 16 + self[0x1F303 + base + 2*frame_i]
         vanilla_count = self[count_offset]
 
         # Preparation for removal
@@ -164,7 +154,7 @@ class GT(ROM):
 
         random.shuffle(offsets)
         for no in range(count):
-            self[offsets[no]] += 2
+            self[offsets[no]] |= 2
 
 
 
@@ -229,16 +219,12 @@ class GT(ROM):
         for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
             offsets.remove(self.get_darkice_index(world, boss_frame))
 
-        for offset in offsets:
-            if self[offset]<2:
-                self[offset]+=2
+        for offset in offsets: self[offset] |= 2
 
     def allIcy(self):
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
 
-        for offset in offsets:
-            if self[offset]%2==0:
-                self[offset]+=1
+        for offset in offsets: self[offset] |= 1
 
 
     def activateWorldSelection(self):
@@ -260,7 +246,7 @@ class GT(ROM):
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
         random.shuffle(offsets)
         for no in range(count):
-            self[offsets[no]] += 1
+            self[offsets[no]] |= 1
 
     def get_darkice_index(self, world_i,frame_i):
         """Formula to get the indice.
@@ -324,13 +310,10 @@ class GT(ROM):
 
     def getter_passwords(self,world=None):
         """Return the offsets of all passwords
-            Returns:
-                list : offsets of the said world.
-        """
+            """
         if world == None:
             return list(range(0x1C67F, 0x1C693))
         return [x for x in range(0x1C67F + 5*(world -1), 0x1C684 + 5*(world-1))]
-
 
     def passwordRandomizer(self):
         """Password randomizer"""
