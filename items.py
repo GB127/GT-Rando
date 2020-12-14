@@ -28,7 +28,7 @@ class Items:
 
     def getAssociatedExits(self, world_i):
         if world_i == 0:
-            associated_exits = [2,5,7,10,12,19,24,28,30,31]  # Note for GB : The logic progresses from exits to exits. Not frames to frames.
+            associated_exits = [2,5,7,10,12,19,24,28,30,31]
             associated_conditions = [0,0,0,0,0,0,0,0,0,0]
             conditions_types = [0]
         elif world_i == 1:
@@ -64,12 +64,9 @@ class Items:
         return unlocked_items
 
     def getNames(self):
-        # GB : Petite suggestion de code.
-        # all_names = ["Hookshot","Candle","Grey Key","Gold Key","Shovel","Bell","Bridge"]
         all_names = {0x8 : "Hookshot", 0x9 : "Candle", 0xA : "Grey Key",0xB : "Gold Key", 0xC :"Shovel", 0xD : "Bell", 0xE : "Bridge"}
         names = []
         for value in self.values:
-            # names.append(all_names[value-8])
             names.append(all_names[value])
         return names
 
