@@ -85,7 +85,7 @@ class World():
         while True:
             try:
                 self.starting_frame = random.choice(frames)
-                
+
                 all_exits = list(enumerate(self.exits.destination_frames))
                 locked_exits = self.doors.locked_exits
                 locked_exits.sort(reverse=True)
@@ -132,11 +132,18 @@ class World():
         return [self.data[offset_x_goofy], self.data[offset_y_goofy], self.data[offset_x_max], self.data[offset_y_max]]
 
     def getInitialFrameCoordinatesOffsetsFromData(self):
-        world_offset = self.world_i * 2 * 2
-        offset_x_goofy = 0x1867B + world_offset
-        offset_y_goofy = 0x1867B + world_offset + 1
-        offset_x_max = 0x1867B + world_offset + 2
-        offset_y_max = 0x1867B + world_offset + 3
+        
+        # Finalement j'ai du faire une modification, ça prend l'info à un seul endroit
+        # maintenant, et j'ai hardcodé le fait que les joueurs startent à la même position
+        # peu importe.
+
+        # FIXME : Remove some now useless code : we no longer need offset_xy_max
+
+        world_offset = self.world_i * 2
+        offset_x_goofy = 0x1FFAC + world_offset
+        offset_y_goofy = 0x1FFAC + world_offset + 1
+        offset_x_max = 0x1FFAC + world_offset
+        offset_y_max = 0x1FFAC + world_offset + 1
 
         return [offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max]
 

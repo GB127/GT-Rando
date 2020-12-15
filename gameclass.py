@@ -86,6 +86,20 @@ class GT(ROM):
         self[count_offset] -=1
 
 
+
+    def fix_dark_boss(self):
+        self.rewrite(0xB152, [0x22, 0x98, 0xF3,0x80, 0xEA, 0xEA, 0xEA])
+
+        self.rewrite(0x7398, [
+            0xA9, 0x08,
+            0x8D, 0xFE, 0x0,
+            0xA9, 0x04,
+            0x8D, 0x02, 0x0A,
+            0x9C, 0xAC, 0x00,
+                    0x6B])
+
+
+
     def modify_data_ice_dark(self):
         """Change old code to new code to be more flexible."""
         self.rewrite(0x28CC,
@@ -111,29 +125,45 @@ class GT(ROM):
 
     def modify_data_starting_frame(self):
         """Change the code to allow randomization of first frame.
-            Unfortunate effect : Removal of intro cs.
             """
-        self.rewrite(0x1DFD,
-            [0xA9, 0x04, 0x85, 0xA0, 0xA5, 0xC3, 0x85, 0xB6, 
-             0x20, 0x81, 0xF3, 0xEA])
+        self.rewrite(0x1F95, [0x20, 0x81, 0xF3, 0xEA])
 
         self.rewrite(0x7381, 
-            [0xAA, 0xBD, 0xA7, 0xFF, 0x85, 0xB7, 0xEA, 0xEA,
-             0xA2, 0x8, 0x60])
-
-        self.setmulti(0x1F95, 0x1F96, 0xEA)
+            [0xA6, 0xB6, 0xBD, 0xA7, 0xFF, 0x85, 0xB7, 
+            0x8A, 0x0A, 0xAA,  # ASL B7 for access to table
+            0xBD, 0xAC, 0xFF,  # LDA X
+            0x8D, 0x4C, 0x01,  # X P1?
+            0x8D, 0x8C, 0x01,  # X P2?
+            0xBD, 0xAD, 0xFF,  # LDA X
+            0x8D, 0x4D, 0x01,  # X P1?
+            0x8D, 0x8D, 0x01,  # X P2?
+            0x64, 0xA8, 0x60])
 
         # Building the data table:
         self.setmulti(0x1FFA7, 0x1FFAB, 0)
 
-        # Fix a LDA B7 that should always load 0 and make it a constant instead.
-        self.rewrite(0x2766, [0xA9, 0x0])
+
+        self.setmulti(0x1FFAC,0x1FFAC + 9, 0)  # FIXME
+            # X0, Y0, X1 , Y1 , X2, Y2, X3, Y3, X4, Y4
 
 
+
+
+
+
+
+
+
+
+
+
+
+        # Jump for when we beat a boss
         self.rewrite(0x23E2,
-            [0x20, 0x8C, 0xF3, 0xEA])
+            [0x20, 0xA0, 0xF3, 0xEA])
 
-        self.rewrite(0x738C,
+        # When we beat a boss
+        self.rewrite(0x73A0,  # FIXME : Decaler correctement
             [0xE6, 0xB6, 0xA6, 0xB6,0xBD, 0xA7,
              0xFF, 0x85, 0xB7, 0x60])
 
@@ -200,6 +230,7 @@ class GT(ROM):
         # for touching enemies or thrown projectiles
         self.setmulti(0x5D19, 0x5D1A, 0xEA)
         self.setmulti(0x5D1F, 0x5D20, 0xEA)
+
         # This works for kicked stones
         self.rewrite(0x54E8, [0x9E, 0x1D, 0x01,0x9E, 0x3F, 0x01,0x80, 0x2])
         # For bombs
@@ -216,8 +247,8 @@ class GT(ROM):
     def allDark(self, sanity=True):
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
         
-        for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
-            offsets.remove(self.get_darkice_index(world, boss_frame))
+        #for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
+        #    offsets.remove(self.get_darkice_index(world, boss_frame))
 
         for offset in offsets: self[offset] |= 2
 
