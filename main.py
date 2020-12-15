@@ -63,6 +63,7 @@ if __name__ == "__main__":
             randogame.allDark()
 
         if options.Rfirst or options.Rexits or options.Ritems_pos or options.Ritems:
+            if options.Rfirst: randogame.modify_data_starting_frame()  # Changement du code pour permettre une randomization du first frame. Side effect : Pu d'introduction.
             try:
                 randogame.randomizerWithVerification(options)
             except RandomizerError:

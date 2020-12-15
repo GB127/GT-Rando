@@ -45,7 +45,6 @@ class GT(ROM):
     def __init__(self,data, seed):
         super().__init__(data)  # Header removal
         self.modify_data_ice_dark()  # Changement du code en prévision du randomizer pour pouvoir changer le nombre.
-        self.modify_data_starting_frame()  # Changement du code pour permettre une randomization du first frame. Side effect : Pu d'introduction.
         self.removeExitFromData(3,1,0)  # Enlever exit inutilisé
         self.removeExitFromData(1,15,0) # Enlever exit inutilisé
         self.removeExitFromData(1,13,1) # Enlever exit inutilisé
