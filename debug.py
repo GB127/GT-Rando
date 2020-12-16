@@ -197,16 +197,16 @@ class randomized(debug):
 def getoptions_debug():
     # Fonction qui aidera pour faire rouler les randomizers rapidement.
 
-    options = analyse_options()
+    options = getoptions()
 
     # Voici ce que l'On doit modifier à la main pour obtenir ce que l'On veut!
 
-    options.Rfirst = True
-    options.Rexits = True
-    options.Rexits_matchdir = True
-    options.Rexits_pair = True
-    options.Ritems_pos = True
-    options.Ritems = True
+    options.Rfirst = False
+    options.Rexits = True  #e
+    options.Rexits_matchdir = False  #u
+    options.Rexits_pair = False  #U
+    options.Ritems_pos = True  #i
+    options.Ritems = False  #I
 
 
     return options
@@ -227,6 +227,11 @@ if __name__ == "__main__":
         game = debug(original.read())
         # game = randomized(original.read())
         game.activateWorldSelection()
+
+        game.showMap(4)
+
+
+
         
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
