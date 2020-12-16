@@ -179,6 +179,7 @@ def set_seed(seed=None):
     print(seed)
     random.seed(seed)
 
+
 class randomized(debug):
     def __init__(self, data):
         self.data = bytearray(data)
@@ -188,17 +189,44 @@ class randomized(debug):
     def __setitem__(self,offset, value):
         self.data[offset] = value
 
+
+
+
+
 if __name__ == "__main__":
-    with open("testing.smc", "rb") as original:
+    with open("Vanilla.smc", "rb") as original:
 #    with open("Vanilla.smc", "rb") as original:
         startTime = datetime.now()
-        #game = debug(original.read())
-        game = randomized(original.read())
+        game = debug(original.read())
+        # game = randomized(original.read())
         game.activateWorldSelection()
-        game.ohko()
+        game.early_bosses()
+        game.quick_bosses()
 
-        game.showMap(4)
 
+
+
+
+        def credits_frames_randomizer(self):
+            def credits_cs_offsets(which):
+                assert 0 <= which <= 13, f'which must be in range 0-13'
+                return 0x0186CD + which * 0xC, 0x0186CD + which * 0xC + 1
+
+            # Add a jump for lifes hacks during credits
+            self.rewrite(0x257D, [0x22, 0xB0, 0xFF, 0x8F])
+            # Add live hacks during credits
+            self.rewrite(0x7FFB0,[
+                0xA9, 0xFF, # LDA #FF
+                0x8D, 0x57, 0x01, # STA P1
+                0x8D, 0xD7, 0x01, # STA P2
+                0xA9, 0x02, # LDA #02
+                0xA6, 0xB2, # LDX B2
+                0x6B] # RTL
+                )
+
+            for cs in range(14):
+                self[credits_cs_offsets(cs)[0]] = random.randint(0,4)
+                self[credits_cs_offsets(cs)[1]] = random.randint(0,[15, 15, 25, 29, 25][game[credits_cs_offsets(cs)[0]]])
 
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
