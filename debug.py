@@ -3,7 +3,7 @@ from infos import *  # This is for the tools in infos.
 from datetime import datetime
 from world import *
 import random
-
+import argparse
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
@@ -188,6 +188,56 @@ class randomized(debug):
 
     def __setitem__(self,offset, value):
         self.data[offset] = value
+
+
+
+
+
+
+def getoptions_debug():
+    parser = argparse.ArgumentParser(description="Goof Troop arg debugger")
+    parser.add_argument("-d", action="store_true", dest="Rdark")
+    parser.add_argument("-D", action="store_true", dest="Rverydark")
+    parser.add_argument("-s", action="store_true", dest="Ricy")
+    parser.add_argument("-S", action="store_true", dest="Rveryicy")
+    parser.add_argument("-f", action="store_true", dest="Rfirst")
+    parser.add_argument("-e", action="store_true", dest="Rexits")
+    parser.add_argument("-u", action="store_false",dest="Rexits_matchdir")
+    parser.add_argument("-U", action="store_false", dest="Rexits_pair")
+    parser.add_argument("-i", action="store_true", dest="Ritems_pos")
+    parser.add_argument("-I", action="store_true", dest="Ritems")
+    parser.add_argument("--ohko", action="store_true", dest="ohko")
+    parser.add_argument("--alldark", action="store_true", dest="Adark")
+    parser.add_argument("--allicy", action="store_true", dest="Aicy")
+    parser.add_argument("--seed", action="store", dest="seed", default=str(random.random())[2:], metavar="", type=str)
+
+    options = parser.parse_args()
+
+
+    # Voici ce que l'On doit modifier à la main pour obtenir ce que l'On veut!
+
+    # À décommenter si on veut tester un seed particulier.
+    # options.seed = "1"
+    options.Rdark = True
+    options.Rverydark = True
+    options.Ricy = True
+    options.Rveryicy = True
+    options.Rfirst = True
+    options.Rexits = True
+    options.Rexits_matchdir = True
+    options.Rexits_pair = True
+    options.Ritems_pos = True
+    options.Ritems = True
+    options.ohko = True
+    options.Adark = True
+    options.Aicy = True
+
+    return options
+
+
+
+
+
 
 
 
