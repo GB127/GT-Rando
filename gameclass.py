@@ -408,7 +408,7 @@ class GT(ROM):
                     for m in range(50):
                         unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
                         feasibility_results.append((all(unlocked_exits) and all(unlocked_items) and boss_reached))
-                        if not pair_exits: early_boss_indicator = 1
+                        if not pair_exits: early_boss_indicator = 1 #the check to make sure that a level is not too quick to finish is removed when exits are not paired
                         early_boss_results.append(early_boss_indicator)
                     
                     #print(sum(feasibility_results)/len(feasibility_results))
