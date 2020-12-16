@@ -74,6 +74,7 @@ if __name__ == "__main__":
         if options.ohko:
             randogame.ohko()
 
+        randogame.credits_frames_randomizer()
         randogame.checksum(options.Adark, options.Aicy, options.ohko)
         with open(f"GT_{flags}_{options.seed}.smc", "wb") as newgame:
             newgame.write(randogame.data)
