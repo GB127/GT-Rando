@@ -56,6 +56,16 @@ def getoptions():
     parser.add_argument("--allicy", action="store_true",
     help="All rooms have a slippery floor", dest="Aicy")
 
+    # No dark
+    parser.add_argument("--nodark", action="store_true",
+    help="No rooms are dark", dest="nodark")
+
+    # All icy
+    parser.add_argument("--allicy", action="store_true",
+    help="No rooms have a slippery floor", dest="noicy")
+
+
+
     # Password cheat
     parser.add_argument("--worldselect", action="store_true",
     help="Allows to select the world of your choice with a banana...", dest="Wselect")

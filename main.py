@@ -52,6 +52,8 @@ if __name__ == "__main__":
             randogame.iceRandomizer(count=tempo)
         if options.Aicy:
             randogame.allIcy()
+        if options.noicy:
+            randogame.no_icy()
         if options.Rdark:
             randogame.darkRandomizer()
         if options.Rverydark:
@@ -61,6 +63,8 @@ if __name__ == "__main__":
             randogame.darkRandomizer(count=tempo)
         if options.Adark:
             randogame.allDark()
+        if options.nodark:
+            randogame.no_dark()
 
         if options.Rfirst or options.Rexits or options.Ritems_pos or options.Ritems:
             if options.Rfirst: randogame.modify_data_starting_frame()  # Changement du code pour permettre une randomization du first frame. Side effect : Pu d'introduction.

@@ -167,6 +167,16 @@ class GT(ROM):
              0xFF, 0x85, 0xB7, 0x60])
 
 
+    def no_dark(self):
+        for offset in range(0x1FF35, 0x1FFA7):  # Remove all dark rooms
+            self[offset] = self[offset] & 1
+
+    def no_icy(self):
+        for offset in range(0x1FF35, 0x1FFA7):  # Remove all ice rooms
+            self[offset] = self[offset] & 2
+
+
+
     def darkRandomizer(self, count=6):
         """Randomize which rooms are dark up to the count given (Defaults to vanilla value (6)).
             """
@@ -262,7 +272,7 @@ class GT(ROM):
 
         for cs in range(14):
             self[credits_cs_offsets(cs)[0]] = random.randint(0,4)
-            self[credits_cs_offsets(cs)[1]] = random.randint(0,[15, 15, 25, 29, 25][game[credits_cs_offsets(cs)[0]]])
+            self[credits_cs_offsets(cs)[1]] = random.randint(0,[15, 15, 25, 29, 25][self[credits_cs_offsets(cs)[0]]])
 
 
 
