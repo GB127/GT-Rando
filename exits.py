@@ -184,10 +184,10 @@ class Exits:
     def getTypes(self):
         source_types = []
         destination_types = []
-        N_list = [4, 18, 20, 146, 148]
-        S_list = [68, 82, 84, 196, 210]
+        N_list = [4, 18, 20, 132, 146, 148]
+        S_list = [68, 82, 84, 196, 210, 212]
         W_list = [98, 100, 226, 228]
-        E_list = [34, 35, 36, 50, 162, 164]
+        E_list = [34, 35, 36, 50, 162, 163, 164, 178]
         stairs_list = [15, 143]
         for i in range(self.nExits):
             if self.source_raw_types[i] in N_list:
