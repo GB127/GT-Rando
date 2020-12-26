@@ -44,14 +44,14 @@ class ROM:
 class GT(ROM):
     def __init__(self,data, seed):
         super().__init__(data)  # Header removal
-        self.modify_data_ice_dark()  # Changement du code en prévision du randomizer pour pouvoir changer le nombre.
+        self.modify_data_ice_dark_alert()  # Changement du code en prévision du randomizer pour pouvoir changer le nombre.
         self.removeExitFromData(3,1,0)  # Enlever exit inutilisé
         self.removeExitFromData(1,15,0) # Enlever exit inutilisé
         self.removeExitFromData(1,13,1) # Enlever exit inutilisé
         self.seed = seed
         self.add_credits()  # Ajout credits
 
-        self.rewrite(0x72A9, 0x72D5, 0xEA)
+        self.setmulti(0x72A9, 0x72D5, 0xEA)  # Free space from piracy check
 
 
         self.setmulti(0x0131DF, 0x131E0, 0xEA)  # Disable the counter so you never see demo
@@ -94,17 +94,27 @@ class GT(ROM):
         self.setmulti(0x27F2, 0x27F4, 0xEA)
         self.setmulti(0x27FF, 0x2801, 0xEA)
 
-    def modify_data_ice_dark(self):
+    def modify_data_ice_dark_alert(self):
         """Change old code to new code to be more flexible."""
         self.rewrite(0x28CC,
             [0x64, 0xCA, 0xA6, 0xB6, 0xA5, 0xB7, 0x18,
              0x7F, 0x30, 0xFF, 0x83, 0xAA, 0xBF, 0x30,
              0xFF, 0x83, 0x29, 0x01, 0xF0, 0x02, 0xE6,
              0xCA, 0x60])
-        self.rewrite(0x280E, 
+        """
+        self.rewrite(0x280E,
             [0xBF, 0x30, 0xFF, 0x83, 0x29, 0x02, 0xD0,
              0x2822-0x2815])
-        self.setmulti(0x2816,0x2820, 0xEA)
+        self.rewrite(0x2816,
+                [0xBF, 0x30, 0xFF, 0x83, 0x29, 0x04, 0xF0, 0x2820-0x281D, 0x8D, 0x4F, 0x1A])
+        """
+        self.rewrite(0x280E,
+                [0xBF, 0x30, 0xFF, 0x83, 0x29, 0x04, 0xF0, 0x2818-0x2815, 0x8D, 0x4F, 0x1A])
+        self.rewrite(0x2819,
+            [0xBF, 0x30, 0xFF, 0x83, 0x29, 0x02, 0xD0,
+             0x2822-0x2820])
+
+
 
         # Building the empty table.
         self.rewrite(0x1FF30, [0+5, 16+5, 32+5, 58+5, 88+5]) # Data offsets for Ice and Dark rooms
@@ -176,7 +186,7 @@ class GT(ROM):
         """Randomize which rooms are dark up to the count given (Defaults to vanilla value (6)).
             """
         for offset in range(0x1FF35, 0x1FFA7):  # Remove all dark rooms
-            self[offset] = self[offset] & 1
+            self[offset] = self[offset] & 5
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
 
         for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
@@ -190,6 +200,22 @@ class GT(ROM):
         for no in range(count):
             self[offsets[no]] |= 2
 
+    def alert_Randomizer(self, count=10):
+        """Randomize which rooms are alert up to the count given.
+            """
+        for offset in range(0x1FF35, 0x1FFA7):  # Remove all alert rooms
+            self[offset] = self[offset] & 3
+        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
+
+        for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
+            offsets.remove(self.get_darkice_index(world, boss_frame))
+        random.shuffle(offsets)
+        for no in range(count):
+            self[offsets[no]] |= 4
+
+    def allAlert(self):
+        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
+        for offset in offsets: self[offset] |= 4
 
 
     def checksum(self, alldark=False, allice=False, ohko=False):
@@ -300,7 +326,7 @@ class GT(ROM):
         """Randomize which rooms are icy up to the count given (Defaults to vanilla value (2)).
             """
         for offset in range(0x1FF35, 0x1FFA7):  # Remove all ice rooms
-            self[offset] = self[offset] & 2
+            self[offset] = self[offset] & 6
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
         random.shuffle(offsets)
         for no in range(count):

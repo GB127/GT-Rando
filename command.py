@@ -6,6 +6,18 @@ def getoptions():
     parser = argparse.ArgumentParser(description="Goof Troop Randomizer, Version 1.5", epilog="Written by Guylain Breton & Charles Matte-Breton")
 
 
+    # Alert rooms
+        # Logic : big A => May be higher than X, thus capital letter
+    parser.add_argument("-a", "--alert", action="store_true",
+    help="Randomize which rooms enemies auto-chase you", dest="Ralert")
+    parser.add_argument("-A", "--Valert", action="store_true",
+    help="Randomize which rooms enemies auto-chase you, random & higher count than vanilla", dest="Rveryalert")
+    parser.add_argument("--allalert", action="store_true",
+    help="Enemies will always chase you in all rooms", dest="Aalert")
+
+
+
+
     # Dark rooms
         # Logic : big D => May be higher than 6, thus capital letter
     parser.add_argument("-d", "--dark", action="store_true",

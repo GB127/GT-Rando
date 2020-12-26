@@ -26,6 +26,10 @@ def flag_string(options):
         flags += "i"
     if options.Ritems:
         flags += "I"
+    if options.Ralert:
+        flags += "a"
+    if options.Rveryalert:
+        flags += "A"
 
     return flags
 
@@ -65,6 +69,21 @@ if __name__ == "__main__":
             randogame.allDark()
         if options.nodark:
             randogame.no_dark()
+
+
+        if options.Ralert:
+            randogame.alert_Randomizer()
+        if options.Rveryalert:
+            #tempo = int(random.gauss(12,5))
+            tempo = 90
+            while tempo < 7:
+                tempo = int(random.gauss(7,5))
+            randogame.alert_Randomizer(count=tempo)
+
+
+        if options.Aalert:
+            randogame.allAlert()
+
 
         if not options.Rexits_matchdir:
             randogame.fix_misdirection()
