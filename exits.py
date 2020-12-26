@@ -325,19 +325,19 @@ class Exits:
             elif self.world_i == 3 and source_i == 45 and currently_unlocked[48]==0: #last puzzle of the cave world
                 new_unlocks[source_i] = currently_unlocked[source_i]
             ### one ways temporary fix ###
-            elif self.world_i == 1 and source_i == 15 and currently_unlocked[16]==0: #last puzzle of the cave world
+            elif self.world_i == 1 and source_i == 15 and currently_unlocked[16]==0: 
                 new_unlocks[source_i] = currently_unlocked[source_i]
-            elif self.world_i == 1 and source_i == 25 and currently_unlocked[26]==0: #last puzzle of the cave world
+            elif self.world_i == 1 and source_i == 25 and currently_unlocked[26]==0: 
                 new_unlocks[source_i] = currently_unlocked[source_i]
-            elif self.world_i == 2 and source_i == 7 and currently_unlocked[8]==0: #last puzzle of the cave world
+            elif self.world_i == 2 and source_i == 7 and currently_unlocked[8]==0: 
                 new_unlocks[source_i] = currently_unlocked[source_i]
-            elif self.world_i == 2 and source_i == 27 and currently_unlocked[26]==0: #last puzzle of the cave world
+            elif self.world_i == 2 and source_i == 27 and currently_unlocked[26]==0: 
                 new_unlocks[source_i] = currently_unlocked[source_i]
-            elif self.world_i == 2 and source_i == 30 and currently_unlocked[29]==0: #last puzzle of the cave world
+            elif self.world_i == 2 and source_i == 30 and currently_unlocked[29]==0: 
                 new_unlocks[source_i] = currently_unlocked[source_i]
-            elif self.world_i == 2 and source_i == 43 and currently_unlocked[44]==0: #last puzzle of the cave world
+            elif self.world_i == 2 and source_i == 43 and currently_unlocked[44]==0: 
                 new_unlocks[source_i] = currently_unlocked[source_i]
-            elif self.world_i == 2 and source_i == 47 and currently_unlocked[48]==0: #last puzzle of the cave world
+            elif self.world_i == 2 and source_i == 47 and currently_unlocked[48]==0: 
                 new_unlocks[source_i] = currently_unlocked[source_i]
             ### end of temporary fix ###
             elif currently_unlocked[source_i]:
