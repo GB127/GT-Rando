@@ -51,6 +51,9 @@ class GT(ROM):
         self.seed = seed
         self.add_credits()  # Ajout credits
 
+        self.rewrite(0x72A9, 0x72D5, 0xEA)
+
+
         self.setmulti(0x0131DF, 0x131E0, 0xEA)  # Disable the counter so you never see demo
             # I did this because if we happen to have a dark room in demo, the screens will be glitchy
 

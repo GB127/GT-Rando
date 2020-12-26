@@ -52,7 +52,12 @@ class debug(GT):
         self.freespace += [offset for offset in range(0x7FED0, 0x7FF00)]
         self.freespace += [offset for offset in range(0x7FFB0, 0x7FFFF)]
 
+
+        self.freespace += [offset for offset in range(0x72A9, 0x72D6)]
         self.used = []
+
+
+
 
     def quick_bosses(self):
         #self[0xB4AB] = 0x1  # For now, only kill one to clear the boss for world 0.
@@ -86,7 +91,7 @@ class debug(GT):
             """
         new_values = [0x6] * random.randint(0,32)  # Need to find the lowest acceptable value
         while len(new_values) != 32:
-            new_values.append(random.choice([0x2, 0x4]))
+            new_values.append(random.choice([0x2, 0x4]))  # I don't mind this one being 50/50 since it won't affect the gameplay
         random.shuffle(new_values)
         self.rewrite(0x1A1C8, new_values)
 
@@ -118,10 +123,10 @@ class debug(GT):
         spike = 0x1A
         nothing = 0xFF
         thrown_items = []
-        for _ in range(random.randint(0,32)):
-            thrown_items.append(random.choice([nothing, spike])) # FIXME : I want something more random so it's not always 50/50
+        for _ in range(random.randint(0,32)):  # TODO : Need to find the highest acceptable value.
+            thrown_items.append(random.choice([nothing, spike])) # FIXME : I want something more random so it's not "always" 50/50
 
-        # Do something for bombs
+        # TODO: Do something for bombs
 
         random_item = random.choice(throwable_items + ["all"])
         while len(thrown_items) != 32:
@@ -131,7 +136,8 @@ class debug(GT):
                 thrown_items.append(random_item)
         random.shuffle(thrown_items)
         self.rewrite(0x1A228, thrown_items)
-
+        print(new_values)
+        print(thrown_items)
 
 
 
@@ -281,6 +287,39 @@ def getoptions_debug():
 
 
 
+
+    """
+    JSR AntiPiracy      ;808024 ;Prevent SRAM to be used, if SRAM size != 0 loop forever
+    ;80F2A9 / 0072A9
+    AntiPiracy:
+    {
+    LDA #$70            ;80F2A9     
+    PHA                 ;80F2AB     
+    PLB                 ;80F2AC     ;Pull bank (#$70)
+    REP #$10            ;80F2AD     ;XY is now 16bit
+    LDX #$7F00          ;80F2AF     ;707F00
+    .loopZero
+    LDA #$00            ;80F2B2
+    .loop    
+    STA $0000,X         ;80F2B4     ;$707F00
+    CMP $0000,X         ;80F2B7     
+    BNE .return         ;80F2BA      
+    CLC                 ;80F2BC     
+    ADC #$11            ;80F2BD     ;ADD #$11
+    BNE .loop           ;80F2BF     
+    REP #$21            ;80F2C1     A in 16bit, set Carry
+    TXA                 ;80F2C3     
+    ADC #$FF00          ;80F2C4     ADD #$FF00
+    TAX                 ;80F2C7     
+    SEP #$20            ;80F2C8     A in 8bit
+    BPL .loopZero       ;80F2CA     
+    LDA #$80            ;80F2CC     
+    STA $2100           ;80F2CE     Set Force Blank
+    BRA $80F2D1         ;80F2D1   
+    .return             
+    SEP #$30            ;80F2D3     
+    RTS                 ;80F2D5     
+    }"""
 
 
 
