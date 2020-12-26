@@ -69,6 +69,73 @@ class debug(GT):
         self[0x1f6f7 + 4] = 180
         self[0x1F877] = 25
 
+
+    def boss_randomizer(self):
+        # World 0's boss.
+
+        # NPC decision maker
+        """ NPC decision maker
+            dw $B266 ;02 ;Pop Out and Back In Routine without Items
+            dw $B29A ;04 ;Pop Out and Back In Routine fake item
+            dw $B2ED ;06 ;Pop Out and Back In Routine throwing random item
+
+            Vanilla values:
+                3x2  (9.375%)  without items
+                6x4  (18.75%)  fake item
+                23x6 (71.875%)  throw
+            """
+        new_values = [0x6] * random.randint(0,32)  # Need to find the lowest acceptable value
+        while len(new_values) != 32:
+            new_values.append(random.choice([0x2, 0x4]))
+        random.shuffle(new_values)
+        self.rewrite(0x1A1C8, new_values)
+
+        # Thrown item table.
+        """ Thrown item table.
+            00 barel
+            02 pot 
+            04 egg 
+            06 sign
+            08 plant
+            0A bomb
+            0C log
+            0E fence 
+            10 ice 
+            12 shell 
+            14 plates
+            16 rock
+            18 nut
+            1A spike
+            FF = nothing
+            
+            10x0  (31.25%)  Barrel
+            6xA  (18.75%)  Bomb
+            8x1A  (25.0%)  Spike
+            8xFF  (25.0%)  No item thrown
+            """
+        throwable_items = [0,0x2,0x4,0x6,0x8,0xC, 0xE, 0x10, 0x12, 0x14, 0x16, 0x18]
+        bomb =  0xA
+        spike = 0x1A
+        nothing = 0xFF
+        thrown_items = []
+        for _ in range(random.randint(0,32)):
+            thrown_items.append(random.choice([nothing, spike])) # FIXME : I want something more random so it's not always 50/50
+
+        # Do something for bombs
+
+        random_item = random.choice(throwable_items + ["all"])
+        while len(thrown_items) != 32:
+            if random_item == "all":
+                thrown_items.append(random.choice(throwable_items))
+            else:
+                thrown_items.append(random_item)
+        random.shuffle(thrown_items)
+        self.rewrite(0x1A228, thrown_items)
+
+
+
+
+
     def showMap(self, world_i, show_exits=True, show_items=True):
         this_world = self.all_worlds[world_i]
         
@@ -222,19 +289,23 @@ def getoptions_debug():
 
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as original:
-#    with open("Vanilla.smc", "rb") as original:
+    #with open("Vanilla.smc", "rb") as original:
         startTime = datetime.now()
         game = debug(original.read())
         # game = randomized(original.read())
         game.activateWorldSelection()
-
-        game.showMap(4)
-
+        game.early_bosses()
 
 
-        
+        game.boss_randomizer()        
+
+
+
+
+
+
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
-            #print(f"Testing case have been created! {datetime.now()}")
+            print(f"Testing case have been created! {datetime.now()}")
             newgame.write(game.data)
 
