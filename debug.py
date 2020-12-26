@@ -76,68 +76,89 @@ class debug(GT):
 
 
     def boss_randomizer(self):
-        # World 0's boss.
+        def boss0_throws(self):
+            # X:
+            # High
+            for offset in [0x018FA8, 0x018FAC, 0x018FB0, 0x018F9C, 0x018FA4, 0x018FA0]:
+                self[offset] = random.choice([0xFD, 0xFE, 0xFF, 0x0, 0x1, 0x2, 0x3])
 
-        # NPC decision maker
-        """ NPC decision maker
-            dw $B266 ;02 ;Pop Out and Back In Routine without Items
-            dw $B29A ;04 ;Pop Out and Back In Routine fake item
-            dw $B2ED ;06 ;Pop Out and Back In Routine throwing random item
+            for offset in [0x018FA7, 0x018FAB, 0x018FAF, 0x018F9B, 0x018F9F, 0x018FA3]:
+                self[offset] = random.randint(0x0, 0xFF)
 
-            Vanilla values:
-                3x2  (9.375%)  without items
-                6x4  (18.75%)  fake item
-                23x6 (71.875%)  throw
-            """
-        new_values = [0x6] * random.randint(0,32)  # Need to find the lowest acceptable value
-        while len(new_values) != 32:
-            new_values.append(random.choice([0x2, 0x4]))  # I don't mind this one being 50/50 since it won't affect the gameplay
-        random.shuffle(new_values)
-        self.rewrite(0x1A1C8, new_values)
+            #ZZZZZ
+            game[0x0042FA] = 0x0  # Fast throw
+            game[0x004312] = 0x0  # High throw
 
-        # Thrown item table.
-        """ Thrown item table.
-            00 barel
-            02 pot 
-            04 egg 
-            06 sign
-            08 plant
-            0A bomb
-            0C log
-            0E fence 
-            10 ice 
-            12 shell 
-            14 plates
-            16 rock
-            18 nut
-            1A spike
-            FF = nothing
-            
-            10x0  (31.25%)  Barrel
-            6xA  (18.75%)  Bomb
-            8x1A  (25.0%)  Spike
-            8xFF  (25.0%)  No item thrown
-            """
-        throwable_items = [0,0x2,0x4,0x6,0x8,0xC, 0xE, 0x10, 0x12, 0x14, 0x16, 0x18]
-        bomb =  0xA
-        spike = 0x1A
-        nothing = 0xFF
-        thrown_items = []
-        for _ in range(random.randint(0,32)):  # TODO : Need to find the highest acceptable value.
-            thrown_items.append(random.choice([nothing, spike])) # FIXME : I want something more random so it's not "always" 50/50
+        def boss0_behaviour_items(self):
+            # NPC decision maker
+            """ NPC decision maker
+                dw $B266 ;02 ;Pop Out and Back In Routine without Items
+                dw $B29A ;04 ;Pop Out and Back In Routine fake item
+                dw $B2ED ;06 ;Pop Out and Back In Routine throwing random item
 
-        # TODO: Do something for bombs
+                Vanilla values:
+                    3x2  (9.375%)  without items
+                    6x4  (18.75%)  fake item
+                    23x6 (71.875%)  throw
+                """
+            new_values = [0x6] * random.randint(0,32)  # Need to find the lowest acceptable value
+            while len(new_values) != 32:
+                new_values.append(random.choice([0x2, 0x4]))  # I don't mind this one being 50/50 since it won't affect the gameplay
+            random.shuffle(new_values)
+            self.rewrite(0x1A1C8, new_values)
 
-        random_item = random.choice(throwable_items + ["all"])
-        while len(thrown_items) != 32:
-            if random_item == "all":
-                thrown_items.append(random.choice(throwable_items))
-            else:
-                thrown_items.append(random_item)
-        random.shuffle(thrown_items)
-        self.rewrite(0x1A228, thrown_items)
-        print(new_values)
-        print(thrown_items)
+
+
+
+
+
+
+
+
+
+            # Thrown item table.
+            """ Thrown item table.
+                00 barel
+                02 pot 
+                04 egg 
+                06 sign
+                08 plant
+                0A bomb
+                0C log
+                0E fence 
+                10 ice 
+                12 shell 
+                14 plates
+                16 rock
+                18 nut
+                1A spike
+                FF = nothing
+                
+                10x0  (31.25%)  Barrel
+                6xA  (18.75%)  Bomb
+                8x1A  (25.0%)  Spike
+                8xFF  (25.0%)  No item thrown
+                """
+            throwable_items = [0,0x2,0x4,0x6,0x8,0xC, 0xE, 0x10, 0x12, 0x14, 0x16, 0x18]
+            bomb =  0xA
+            spike = 0x1A
+            nothing = 0xFF
+            thrown_items = []
+            for _ in range(random.randint(0,32)):  # TODO : Need to find the highest acceptable value.
+                thrown_items.append(random.choice([nothing, spike])) # FIXME : I want something more random so it's not "always" 50/50
+
+            # TODO: Do something for bombs
+
+            random_item = random.choice(throwable_items + ["all"])
+            while len(thrown_items) != 32:
+                if random_item == "all":
+                    thrown_items.append(random.choice(throwable_items))
+                else:
+                    thrown_items.append(random_item)
+            random.shuffle(thrown_items)
+            self.rewrite(0x1A228, thrown_items)
+            print(new_values)
+            print(thrown_items)
 
 
 
@@ -328,15 +349,69 @@ def getoptions_debug():
 
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as original:
-    #with open("Vanilla.smc", "rb") as original:
         startTime = datetime.now()
         game = debug(original.read())
         # game = randomized(original.read())
         game.activateWorldSelection()
         game.early_bosses()
 
+        # NOTE FOR SELF:
+            # B15 .. B17 = Y of thrown item
+            # B10 .. B13 = X of thrown item
 
-        game.boss_randomizer()        
+
+
+
+            # B2A...? = Z of thrown item.
+            # B3A : Gravity of thrown item  Done.
+
+        print(hex(game[0x018FA7]))
+        print(hex(game[0x018FA8]))
+
+        print(hex(game[0x018FAB]))
+        print(hex(game[0x018FAC]))
+
+        print(hex(game[0x018FAF]))
+        print(hex(game[0x018FB0]))
+
+
+
+        print(hex(game[0x018F9B]))
+        print(hex(game[0x018F9C]))
+
+        print(hex(game[0x018F9F]))
+        print(hex(game[0x018FA0]))
+
+        print(hex(game[0x018FA4]))
+        print(hex(game[0x018FA5]))
+
+        test = 0x0
+        # Subpixel precision
+        test2 = 0x4
+        # If test = 0x1 : vers la droite
+        # if test = 0xFF : vers la gauche
+        # if test = 0 : vertical pas mal
+
+        # 3 : Borderline
+
+        game[0x018FA7] = test
+        game[0x018FA8] = test2
+
+        game[0x018FAB] = test
+        game[0x018FAC] = test2
+
+        game[0x018FAF] = test
+        game[0x018FB0]  = test2
+
+        game[0x018F9B] = test
+        game[0x018F9C]  = test2
+
+        game[0x018F9F] = test
+        game[0x018FA0]  = test2
+
+        game[0x018FA3] = test
+        game[0x018FA4]  = test2
+
 
 
 
