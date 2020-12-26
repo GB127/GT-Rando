@@ -47,7 +47,7 @@ def getoptions():
     parser.add_argument("-u", "--unmatchdir", action="store_false",
     help="Do not match the direction for the exits and their destination", dest="Rexits_matchdir")
     parser.add_argument("-U", "--unpair", action="store_false",
-    help="Do not pair exits. Be careful not to get stuck!", dest="Rexits_pair")
+    help="Do not pair exits. Warning : risk of softlocks!", dest="Rexits_pair")
     
 
     # Items
