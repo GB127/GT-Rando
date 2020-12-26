@@ -99,6 +99,10 @@ class GT(ROM):
 
 
 
+    def fix_misdirection(self):
+        self.setmulti(0x27F2, 0x27F4, 0xEA)
+        self.setmulti(0x27FF, 0x2801, 0xEA)
+
     def modify_data_ice_dark(self):
         """Change old code to new code to be more flexible."""
         self.rewrite(0x28CC,
