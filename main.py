@@ -26,10 +26,10 @@ def flag_string(options):
         flags += "i"
     if options.Ritems:
         flags += "I"
-    if options.Ralert:
-        flags += "a"
-    if options.Rveryalert:
-        flags += "A"
+    #if options.Ralert:
+    #    flags += "a"
+    #if options.Rveryalert:
+    #    flags += "A"
 
     return flags
 
