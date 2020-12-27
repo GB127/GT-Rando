@@ -157,8 +157,8 @@ class World():
         items_filled_conditions[0] = 1 # element 0 should always be set to 1 in this list
         frames_filled_conditions = [0]*len(self.frames.conditions_types) #means that we already put none of the the bridges and hooks to reach the exits
         frames_filled_conditions[0] = 1 # element 0 should always be set to 1 in this list
-        for big_step in range(40): #max number or loops
-            for small_step in range(50): #how much exploration before we unlock something
+        for big_step in range(50): #max number or loops
+            for small_step in range(100): #how much exploration before we unlock something
 
                 #for faster verification
                 last_unlocked_exits = deepcopy(unlocked_exits)
@@ -184,6 +184,11 @@ class World():
             #what can we unlock right now?
             frames_reachable_conditions, items_reachable_conditions = self.getReachableConditions(unlocked_exits, frames_filled_conditions, items_filled_conditions)
             frames_unlockable_conditions, items_unlockable_conditions = self.getUnlockableConditions(frames_reachable_conditions, items_reachable_conditions, unlocked_items, used_items)
+            
+            #Check for softlocks
+            if self.softlockIsPossible(frames_reachable_conditions, items_reachable_conditions, unlocked_items):
+                break
+            
             #randomly chose which condition to unlock
             if len(frames_unlockable_conditions)+len(items_unlockable_conditions)>0:
                 random_i = random.randint(0, len(frames_unlockable_conditions)+len(items_unlockable_conditions)-1)
@@ -202,6 +207,20 @@ class World():
 
         return unlocked_exits, unlocked_items, boss_reached, early_boss_indicator
 
+    def softlockIsPossible(self, frames_reachable_conditions, items_reachable_conditions, unlocked_items):
+        
+        available_items = [x for x, y in zip(self.items.values, unlocked_items) if y == 1]
+
+        if 1 in frames_reachable_conditions+items_reachable_conditions: #1:hook+bridge 
+            if (available_items.count(8)==1) and (not 14 in available_items) and (2 in frames_reachable_conditions+items_reachable_conditions):
+                return True
+        if 6 in frames_reachable_conditions+items_reachable_conditions: #6:double hook
+            if (available_items.count(8)==1) and (2 in frames_reachable_conditions+items_reachable_conditions):
+                return True
+        if 8 in frames_reachable_conditions+items_reachable_conditions: #8:hook+key
+            if (available_items.count(8)==1) and (not 10 in available_items) and (2 in frames_reachable_conditions+items_reachable_conditions):
+                return True
+        return False
 
     def feasibleWorldVerification_debug(self):
         print('----- NEW RUN -----')
@@ -215,7 +234,7 @@ class World():
         frames_filled_conditions = [0]*len(self.frames.conditions_types) #means that we already put none of the the bridges and hooks to reach the exits
         frames_filled_conditions[0] = 1 # element 0 should always be set to 1 in this list
         for big_step in range(50): #max number or loops
-            for small_step in range(random.randint(3, 8)): #how much exploration before we unlock something
+            for small_step in range(100): #how much exploration before we unlock something
                 #exits links
 
                 previous = deepcopy(unlocked_exits)
@@ -250,8 +269,12 @@ class World():
             #what can we unlock right now?
             frames_reachable_conditions, items_reachable_conditions = self.getReachableConditions(unlocked_exits, frames_filled_conditions, items_filled_conditions)
             frames_unlockable_conditions, items_unlockable_conditions = self.getUnlockableConditions(frames_reachable_conditions, items_reachable_conditions, unlocked_items, used_items)
+            
+            #Check for softlocks
+            if self.softlockIsPossible(frames_reachable_conditions, items_reachable_conditions, unlocked_items):
+                break
+            
             #randomly chose which condition to unlock
-
             previous = deepcopy(used_items)
             if len(frames_unlockable_conditions)+len(items_unlockable_conditions)>0:
                 random_i = random.randint(0, len(frames_unlockable_conditions)+len(items_unlockable_conditions)-1)
