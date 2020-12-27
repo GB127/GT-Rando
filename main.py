@@ -70,7 +70,7 @@ if __name__ == "__main__":
         if options.nodark:
             randogame.no_dark()
 
-
+        """
         if options.Ralert:
             randogame.alert_Randomizer()
         if options.Rveryalert:
@@ -83,7 +83,7 @@ if __name__ == "__main__":
 
         if options.Aalert:
             randogame.allAlert()
-
+        """
 
         if not options.Rexits_matchdir:
             randogame.fix_misdirection()
