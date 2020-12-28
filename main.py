@@ -33,16 +33,11 @@ def flag_string(options):
 
     return flags
 
-
-
-
-if __name__ == "__main__":
-    options = getoptions()
-
+def generateFile(options, filename):
     random.seed(options.seed)
     flags = flag_string(options)
 
-    with open("Vanilla.smc", "rb") as original:  # We will have to change this to not force an exact filename.
+    with open(filename, "rb") as original:  
         randogame = GT(original.read(), options.seed)
         randogame.passwordRandomizer()
         if options.Wselect:
@@ -104,3 +99,9 @@ if __name__ == "__main__":
         randogame.checksum(options.Adark, options.Aicy, options.ohko)
         with open(f"GT_{flags}_{options.seed}.smc", "wb") as newgame:
             newgame.write(randogame.data)
+
+
+if __name__ == "__main__":
+    options = getoptions()
+    filename = "Vanilla.smc"
+    generateFile(options, filename)
