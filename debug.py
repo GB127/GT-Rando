@@ -335,6 +335,30 @@ class debug(GT):
             self[offset] = 0
             self.freespace += [offset]
 
+    def remove_stars(self,world_i, frame_i):
+        # remove all star blocks from world-frame in question.
+        values_else, stars_count = [], 0
+        world_pointer = self[0x014538 + world_i]
+        level_pointer = self[0x14538 + 1 + world_pointer + 2*frame_i] * (16 * 16) + self[0x14538 + world_pointer + 2*frame_i]
+        offset = 0x8000 + level_pointer
+        count = self[offset]
+        for item in range(count):
+            if self[offset +1 + item*3] == 0x1A:
+                stars_count += 1
+            else:
+                values_else += [self[offset +1 + item*3], self[offset +2 + item*3], self[offset +3 + item*3]]
+        new_values = [count +1] + values_else
+        old_values = list(self[offset +1 + (3*count):0x15452])
+        self.rewrite(offset, new_values + old_values)
+
+        # Fixing the next pointers:
+        for offset in range(0x01453D + 2*[0, 16, 32, 58, 88][world_i] + 2*(frame_i+1), 0x014621, 2):
+            try:
+                self[offset] -= stars_count * 0x3
+            except ValueError:
+                self[offset] -= stars_count * 0x3 - 255
+                self[offset+1] -= 0x1
+
 
     def add_star(self, world_i, frame_i, coordinates):
         assert len(coordinates) == 2, "Coordinates must have two values for now"
@@ -349,7 +373,7 @@ class debug(GT):
             else:
                 values_else += [self[offset +1 + item*3], self[offset +2 + item*3], self[offset +3 + item*3]]
         new_values = [count +1] + values_else + values_stars
-        old_values = list(self[offset +1:0x15452])
+        old_values = list(self[offset +1 + (3*count):0x15452])
         self.rewrite(offset, new_values + old_values)
 
         # Fixing the next pointers:
@@ -447,8 +471,8 @@ if __name__ == "__main__":
         game.activateWorldSelection()
         game.do_all_modify()
 
-        game.add_star(0,0,(48,0x2))
-
+        game.add_star(0,3,(54,3))
+        game.remove_stars(0,2)
 
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
