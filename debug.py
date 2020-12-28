@@ -31,6 +31,12 @@ class debug(GT):
         super().__init__(data, seed="Debug")
 
 
+    def do_all_modify(self):
+        # Code that will do all stuffs that uses freespace except add credits since it's already in the init.
+        self.modify_data_ice_dark_alert()
+        self.modify_data_starting_frame()
+        self.checksum()
+        self.credits_frames_randomizer()
 
     def list_freespace(self):
         self.freespace = [offset for offset in range(0x7374, 0x7FB0)]
@@ -56,7 +62,7 @@ class debug(GT):
 
         self.freespace += [offset for offset in range(0x72A9, 0x72D6)]
         self.used = []
-
+        
 
 
 
@@ -86,7 +92,7 @@ class debug(GT):
                 while check is False:
                     X = random.randint([0x1, 0x0, -0x5][direction],[0x5, 0x0, -0x1][direction])
                     Y = random.randint(0x1, 0x8)
-                    if abs(X/Y) > 5/8: continue
+                    if abs(X/Y) > 5/8: continue 
                     self[offset] = 0 if any([X == 0x5, X == -0x5]) else random.randint(0,0xFF)
                     # High byte
                     self[offset+1] = X if X >= 0 else 256 + X
@@ -309,8 +315,6 @@ class debug(GT):
         self[0x18E33] -= value
 
 
-
-
     def __setitem__(self,offset, value):
         if offset in self.freespace:
             self.used.append(offset)
@@ -325,14 +329,43 @@ class debug(GT):
         self[0x14377] = 0xEA
         self[0x14378] = 0xEA
 
+    def modify_data_stars(self):
+        super().modify_data_stars()
+        for offset in range(0x14621,0x14D32):
+            self[offset] = 0
+            self.freespace += [offset]
+
+
+    def add_star(self, world_i, frame_i, coordinates):
+        assert len(coordinates) == 2, "Coordinates must have two values for now"
+        values_else, values_stars = [], [0x1A, coordinates[0], coordinates[1]]
+        world_pointer = self[0x014538 + world_i]
+        level_pointer = self[0x14538 + 1 + world_pointer + 2*frame_i] * (16 * 16) + self[0x14538 + world_pointer + 2*frame_i]
+        offset = 0x8000 + level_pointer
+        count = self[offset]
+        for item in range(count):
+            if self[offset +1 + item*3] == 0x1A:
+                values_stars += [self[offset +1 + item*3], self[offset +2 + item*3], self[offset +3 + item*3]]
+            else:
+                values_else += [self[offset +1 + item*3], self[offset +2 + item*3], self[offset +3 + item*3]]
+        new_values = [count +1] + values_else + values_stars
+        old_values = list(self[offset +1:0x15452])
+        self.rewrite(offset, new_values + old_values)
+
+        # Fixing the next pointers:
+        for offset in range(0x01453D + 2*[0, 16, 32, 58, 88][world_i] + 2*(frame_i+1), 0x014621, 2):
+            try:
+                self[offset] += 0x3
+            except ValueError:
+                self[offset] += 0x2 - 255
+                self[offset+1] += 0x1
+
+
+
+
+
+
 info = infos()
-
-def set_seed(seed=None):
-    if seed is None: test = str(random.random())[3:6]  # Au hasard. Restreint le nombre de chiffres
-    print(seed)
-    random.seed(seed)
-
-
 class randomized(debug):
     def __init__(self, data):
         self.data = bytearray(data)
@@ -344,7 +377,7 @@ class randomized(debug):
 
 
 
-
+    
 
 
 def getoptions_debug():
@@ -412,9 +445,9 @@ if __name__ == "__main__":
         game = debug(original.read())
         # game = randomized(original.read())
         game.activateWorldSelection()
-        game.early_bosses()
+        game.do_all_modify()
 
-        game.boss_randomizer()
+        game.add_star(0,0,(48,0x2))
 
 
         with open("debug.smc", "wb") as newgame:
