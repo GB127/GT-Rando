@@ -88,7 +88,7 @@ class debug(GT):
                     if abs(X/Y) > 5/8: continue
                     self[offset] = 0 if any([X == 0x5, X == -0x5]) else random.randint(0,0xFF)
                     # High byte
-                    self[offset+1] = X if X > 0 else 256 + X
+                    self[offset+1] = X if X >= 0 else 256 + X
                     self[offset + 2] = 0 if Y == 0x8 else random.randint(0x0, 0xFF)
                     self[offset + 3] = Y
                     check = True
