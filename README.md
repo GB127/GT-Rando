@@ -1,6 +1,10 @@
 # Goof Troop Randomizer : Version 2.0
 Data structure & Project management by Niamek, 
 Randomizer logic and code organization by Charles342
+# Community and links
+Github project : https://github.com/GB127/GT-Rando
+
+Goof Troop's Discord server : https://discord.gg/4MJT3Y5tgk
 
 # Features:
 ## Dark rooms (d,D, alldark, nodark)
@@ -15,7 +19,7 @@ There are 2 icy rooms in the original game. The amount of dark rooms is changed 
 - S : Randomize which rooms are icy. There can be a number higher than 2, following a normalized distribution (mean : 12,standard deviation : 5))
 - allicy : All rooms will be dark. For now, the bosses won't be a dark room.
 - noicy : No dark rooms.
-## First room
+## First room (f)
 Randomize which room you initially start a world with one of the exits of the world. Rooms with more exits will have more chance of being the starter.
 
 ## Items (i,I)
@@ -35,7 +39,3 @@ Randomize which room you initially start a world with one of the exits of the wo
 - World 5 Cherry, Cherry, Cherry, Cherry, Banana
 ### One Hit Knock Out (ohko)
 All source of damages will one hit knock out now. Hearts no longer protects you from losing a life.
-# Community and links
-Github project : https://github.com/GB127/GT-Rando
-
-Goof Troop's Discord server : https://discord.gg/4MJT3Y5tgk
