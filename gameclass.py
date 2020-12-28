@@ -45,6 +45,7 @@ class GT(ROM):
     def __init__(self,data, seed):
         super().__init__(data)  # Header removal
         self.modify_data_ice_dark_alert()  # Changement du code en prévision du randomizer pour pouvoir changer le nombre.
+        self.modify_data_stars()
         self.removeExitFromData(3,1,0)  # Enlever exit inutilisé
         self.removeExitFromData(1,15,0) # Enlever exit inutilisé
         self.removeExitFromData(1,13,1) # Enlever exit inutilisé
@@ -87,6 +88,41 @@ class GT(ROM):
                     self[offset] = values[i+1][no]
         self[count_offset] -=1
 
+
+    def modify_data_stars(self):
+        # Moving the entire table
+        values = []
+        for offset in range(0x14621,0x14D32):
+            values.append(self[offset])
+            #self[offset] = 0
+            self.freespace += [offset]
+        self.rewrite(0x14D41, values)
+        
+        # Fixing the pointers:
+        for offset in range(0x01453D, 0x014621, 2):
+            try:
+                self[offset] += 0x20
+                self[offset+1] += 0x7
+            except ValueError:
+                self[offset] += 0x20 - 255
+                self[offset+1] += 0x8
+
+        # Moving the kickable stars to the end to ease modifications.
+        for world_i in range(5):
+            for frame_i in range([16, 16, 26, 30, 26][world_i]):
+            # frame_i in range([4, 0, 0, 0, 0][world_i]):
+                values_else, values_stars = [], []
+                world_pointer = self[0x014538 + world_i]
+                level_pointer = self[0x14538 + 1 + world_pointer + 2*frame_i] * (16 * 16) + self[0x14538 + world_pointer + 2*frame_i]
+                offset = 0x8000 + level_pointer
+                count = self[offset]
+                if count !=0:
+                    for item in range(count):
+                        if self[offset +1 + item*3] == 0x1A:
+                            values_stars += [self[offset +1 + item*3], self[offset +2 + item*3], self[offset +3 + item*3]]
+                        else:
+                            values_else += [self[offset +1 + item*3], self[offset +2 + item*3], self[offset +3 + item*3]]
+                    self.rewrite(offset, [count] + values_else + values_stars)
 
 
 
