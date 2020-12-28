@@ -84,9 +84,9 @@ class debug(GT):
                 check = False
                 while check is False:
                     X = random.randint(-0x5, 0x5)
-                    X = 0
+                    # X = 0
                     Y = random.randint(0x1, 0x8)
-                    Y = 1
+                    # X = 1
                     if X == 0:
                         self[offset] = 0 if X == 0x4 else random.randint(0,0xFF)
                         # High byte
@@ -106,33 +106,21 @@ class debug(GT):
                         check = True
 
 
-            """            
-            # X
-            for offset in [0x018FA7, 0x018FAB, 0x018FAF, 0x018F9B, 0x018F9F, 0x018FA3]:
-                # Low byte
-                self[offset] = 0  #FIXME : remove when done
-                # High byte
-                self[offset+1] = 0x0
-            """
             # Gravity:
             # Plus on descend en valeur, plus la gravité est forte
 
             # Highthrow
             # Initial throw
+                # Valeurs à réviser
                 # Minimum acceptable pour la vitesse minimale: F5
                 # Maximum acceptable pour la vitesse minimale: F9
                 # Minimum acceptable pour la vitesse maximale : 0
                 # Maximum acceptable pour la vitesse maximale : 0xC0
             speedvalues = sorted([game[0x018FAA], game[0x018FAE], game[0x018FB2]])
-            print(speedvalues)
-
-            #FIXME : 0xC0, F5, F9 and 0 will have to be reviewed again just to be sure.
-            # the logic is sound, but the value might be wrong.
 
             # Highest value possible plot
             a1 = (0xC0 - 0xF9)/(8 - 1)
             b1 = 0xC0 - a1 * 8
-            # y = a1x + b1
             # lowest value possible plot
             a2 = (0x0 - 0xF5)/(8 - 1)
             b2 = 0x00 - a2 * 8
@@ -145,7 +133,8 @@ class debug(GT):
             try:
                 game[0x00430D] = random.randint(low, high)
             except ValueError: 
-                # L'ordre des extrêmes de ma fonction donne une contradiction. Optons pour l'extrème qui donne plus de possibilités...
+                # L'ordre des extrêmes donne une contradiction. 
+                # Optons pour l'extrème qui donne plus de possibilités...
                 game[0x430D] = random.randint(lowest, low)
             #game[0x00430E] = 0xFF
                 # Ne pas changer, car ça sera trop fort sinon.
