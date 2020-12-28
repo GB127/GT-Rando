@@ -180,12 +180,13 @@ class debug(GT):
                     6x4  (18.75%)  fake item
                     23x6 (71.875%)  throw
                 """
-            new_values = [0x6] * random.randint(0,32)  # Need to find the lowest acceptable value
+            new_values = [0x6] * random.randint(0,32)
             while len(new_values) != 32:
                 new_values.append(random.choice([0x2, 0x4]))  # I don't mind this one being 50/50 since it won't affect the gameplay
             random.shuffle(new_values)
             self.rewrite(0x1A1C8, new_values)
 
+            
             # Thrown item table.
             """ Thrown item table.
                 00 barel
@@ -226,11 +227,11 @@ class debug(GT):
                 else:
                     thrown_items.append(random_item)
             random.shuffle(thrown_items)
-            self.rewrite(0x1A228, thrown_items)
+            #self.rewrite(0x1A228, thrown_items)
             print(new_values)
             print(thrown_items)
         boss0_throws(self)
-
+        #boss0_behaviour_items(self)
 
     def showMap(self, world_i, show_exits=True, show_items=True):
         this_world = self.all_worlds[world_i]
