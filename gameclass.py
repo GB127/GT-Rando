@@ -300,8 +300,8 @@ class GT(ROM):
     def allDark(self, sanity=True):
         offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
         
-        #for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
-        #    offsets.remove(self.get_darkice_index(world, boss_frame))
+        for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
+            offsets.remove(self.get_darkice_index(world, boss_frame))
 
         for offset in offsets: self[offset] |= 2
 
@@ -381,7 +381,7 @@ class GT(ROM):
                 add_credits_line(self, string ,center=center, color=color, spacing=0x1)
 
         add_credits_line(self, "Goof Troop randomizer", underlined=True, color=4, spacing=16)
-        add_credits_line(self, "Version 1.5", spacing=1)
+        add_credits_line(self, "Version 2.0", spacing=1)
         add_credits_line(self, f"Seed : {self.seed}", spacing=1)
         add_credits_line(self, "Developers", underlined=True, color=4)
         add_credits_line(self, "Data structure & management", underlined=True, color=3, spacing = 0x4)
@@ -436,7 +436,7 @@ class GT(ROM):
                         for k in range(max_iter_small_step):
                             this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
                             if this_world.allFramesConnectedVerification(): break
-                            
+
                     find = False
                     for k in range(max_iter_small_step):
                         if items_rando:
