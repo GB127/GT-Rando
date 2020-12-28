@@ -80,10 +80,11 @@ class debug(GT):
         def boss0_throws(self):
 
             # Fast throw: les trois premiers ou les trois derniers. high throw c'est l'autre
-            for offset in [0x018FA7, 0x018FAB, 0x018FAF, 0x018F9B, 0x018F9F, 0x018FA3]:
+            for no, offset in enumerate([0x018FA7, 0x018FAB, 0x018FAF, 0x018F9B, 0x018F9F, 0x018FA3]):
+                direction = no%3
                 check = False
                 while check is False:
-                    X = random.randint(-0x5, 0x5)
+                    X = random.randint([0x1, 0x0, -0x5][direction],[0x5, 0x0, -0x1][direction])
                     Y = random.randint(0x1, 0x8)
                     if abs(X/Y) > 5/8: continue
                     self[offset] = 0 if any([X == 0x5, X == -0x5]) else random.randint(0,0xFF)
