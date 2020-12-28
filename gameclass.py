@@ -94,19 +94,17 @@ class GT(ROM):
         values = []
         for offset in range(0x14621,0x14D32):
             values.append(self[offset])
-            #self[offset] = 0
-            self.freespace += [offset]
         self.rewrite(0x14D41, values)
-        
+
         # Fixing the pointers:
         for offset in range(0x01453D, 0x014621, 2):
             try:
                 self[offset] += 0x20
                 self[offset+1] += 0x7
             except ValueError:
-                self[offset] += 0x20 - 255
+                self[offset] += 0x20 - 256
                 self[offset+1] += 0x8
-
+    
         # Moving the kickable stars to the end to ease modifications.
         for world_i in range(5):
             for frame_i in range([16, 16, 26, 30, 26][world_i]):
