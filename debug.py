@@ -4,6 +4,7 @@ from datetime import datetime
 from world import *
 import random
 from command import *
+from math import atan
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
@@ -77,17 +78,106 @@ class debug(GT):
 
     def boss_randomizer(self):
         def boss0_throws(self):
-            # X:
-            # High
-            for offset in [0x018FA8, 0x018FAC, 0x018FB0, 0x018F9C, 0x018FA4, 0x018FA0]:
-                self[offset] = random.choice([0xFD, 0xFE, 0xFF, 0x0, 0x1, 0x2, 0x3])
 
+            # Fast throw: les trois premiers ou les trois derniers. high throw c'est l'autre
             for offset in [0x018FA7, 0x018FAB, 0x018FAF, 0x018F9B, 0x018F9F, 0x018FA3]:
-                self[offset] = random.randint(0x0, 0xFF)
+                check = False
+                while check is False:
+                    X = random.randint(-0x5, 0x5)
+                    X = 0
+                    Y = random.randint(0x1, 0x8)
+                    Y = 1
+                    if X == 0:
+                        self[offset] = 0 if X == 0x4 else random.randint(0,0xFF)
+                        # High byte
+                        self[offset+1] = X
+
+                        self[offset + 2] = 0 if Y == 0x8 else random.randint(0x0, 0xFF)
+                        self[offset + 3] = Y
+                        check = True
+
+                    elif (atan(8/-5) <= atan(Y/X) and atan(Y/X) <= atan(8/5)):
+                        self[offset] = 0 if any([X == 0x5, X == -0x5]) else random.randint(0,0xFF)
+                        # High byte
+                        self[offset+1] = X if X > 0 else 256 + X
+
+                        self[offset + 2] = 0 if Y == 0x8 else random.randint(0x0, 0xFF)
+                        self[offset + 3] = Y
+                        check = True
+
+
+            """            
+            # X
+            for offset in [0x018FA7, 0x018FAB, 0x018FAF, 0x018F9B, 0x018F9F, 0x018FA3]:
+                # Low byte
+                self[offset] = 0  #FIXME : remove when done
+                # High byte
+                self[offset+1] = 0x0
+            """
+            # Gravity:
+            # Plus on descend en valeur, plus la gravité est forte
+
+            # Highthrow
+            # Initial throw
+                # Minimum acceptable pour la vitesse minimale: F5
+                # Maximum acceptable pour la vitesse minimale: F9
+                # Minimum acceptable pour la vitesse maximale : 0
+                # Maximum acceptable pour la vitesse maximale : 0xC0
+            speedvalues = sorted([game[0x018FAA], game[0x018FAE], game[0x018FB2]])
+            print(speedvalues)
+
+            #FIXME : 0xC0, F5, F9 and 0 will have to be reviewed again just to be sure.
+            # the logic is sound, but the value might be wrong.
+
+            # Highest value possible plot
+            a1 = (0xC0 - 0xF9)/(8 - 1)
+            b1 = 0xC0 - a1 * 8
+            # y = a1x + b1
+            # lowest value possible plot
+            a2 = (0x0 - 0xF5)/(8 - 1)
+            b2 = 0x00 - a2 * 8
+
+            low = int(a2 * speedvalues[0] + b2)
+            high = int(a1 * speedvalues[-1] + b1)
+            lowest = int(a2 * speedvalues[-1] + b2)
+            print(lowest, low, high)
+            # Initial
+            try:
+                game[0x00430D] = random.randint(low, high)
+            except ValueError: 
+                # L'ordre des extrêmes de ma fonction donne une contradiction. Optons pour l'extrème qui donne plus de possibilités...
+                game[0x430D] = random.randint(lowest, low)
+            #game[0x00430E] = 0xFF
+                # Ne pas changer, car ça sera trop fort sinon.
+
+
+            # After the peak
+            game[0x004312] = 0x0
+                # 0 = Almost instantly drop down to the floor.
+                # I will change that in the following days.
+            #game[0x004313] = 0xFF
+                # Ne pas change,r car ça sera trop fort sinon.
+
+
+
+
+
+
+            for offset in [0x018F9B, 0x018F9F, 0x018FA3]:  # Fast throw
+                pass
 
             #ZZZZZ
-            game[0x0042FA] = 0x0  # Fast throw
-            game[0x004312] = 0x0  # High throw
+
+
+            # Fast throw
+            # Initial
+            #game[0x0042F5] = test
+            #game[0x0042F6] = test2
+            # After
+            #game[0x0042FA] = test3  # Fast throw
+            #game[0x0042FB] = test4  # Fast throw
+
+
 
         def boss0_behaviour_items(self):
             # NPC decision maker
@@ -106,15 +196,6 @@ class debug(GT):
                 new_values.append(random.choice([0x2, 0x4]))  # I don't mind this one being 50/50 since it won't affect the gameplay
             random.shuffle(new_values)
             self.rewrite(0x1A1C8, new_values)
-
-
-
-
-
-
-
-
-
 
             # Thrown item table.
             """ Thrown item table.
@@ -159,8 +240,7 @@ class debug(GT):
             self.rewrite(0x1A228, thrown_items)
             print(new_values)
             print(thrown_items)
-
-
+        boss0_throws(self)
 
 
     def showMap(self, world_i, show_exits=True, show_items=True):
@@ -355,67 +435,7 @@ if __name__ == "__main__":
         game.activateWorldSelection()
         game.early_bosses()
 
-        # NOTE FOR SELF:
-            # B15 .. B17 = Y of thrown item
-            # B10 .. B13 = X of thrown item
-
-
-
-
-            # B2A...? = Z of thrown item.
-            # B3A : Gravity of thrown item  Done.
-
-        print(hex(game[0x018FA7]))
-        print(hex(game[0x018FA8]))
-
-        print(hex(game[0x018FAB]))
-        print(hex(game[0x018FAC]))
-
-        print(hex(game[0x018FAF]))
-        print(hex(game[0x018FB0]))
-
-
-
-        print(hex(game[0x018F9B]))
-        print(hex(game[0x018F9C]))
-
-        print(hex(game[0x018F9F]))
-        print(hex(game[0x018FA0]))
-
-        print(hex(game[0x018FA4]))
-        print(hex(game[0x018FA5]))
-
-        test = 0x0
-        # Subpixel precision
-        test2 = 0x4
-        # If test = 0x1 : vers la droite
-        # if test = 0xFF : vers la gauche
-        # if test = 0 : vertical pas mal
-
-        # 3 : Borderline
-
-        game[0x018FA7] = test
-        game[0x018FA8] = test2
-
-        game[0x018FAB] = test
-        game[0x018FAC] = test2
-
-        game[0x018FAF] = test
-        game[0x018FB0]  = test2
-
-        game[0x018F9B] = test
-        game[0x018F9C]  = test2
-
-        game[0x018F9F] = test
-        game[0x018FA0]  = test2
-
-        game[0x018FA3] = test
-        game[0x018FA4]  = test2
-
-
-
-
-
+        game.boss_randomizer()
 
 
         with open("debug.smc", "wb") as newgame:
