@@ -47,7 +47,7 @@ def generateFile(options, filename):
         if options.Rveryicy:
             tempo = int(random.gauss(12,5))
             while tempo < 7:
-                tempo = int(random.gauss(7,5))
+                tempo = int(random.gauss(12,5))
             randogame.iceRandomizer(count=tempo)
         if options.Aicy:
             randogame.allIcy()
