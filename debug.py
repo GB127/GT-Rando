@@ -4,7 +4,6 @@ from datetime import datetime
 from world import *
 import random
 from command import *
-from math import atan
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
@@ -335,57 +334,6 @@ class debug(GT):
             self[offset] = 0
             self.freespace += [offset]
 
-    def remove_stars(self,world_i, frame_i):
-        # remove all star blocks from world-frame in question.
-        values_else, stars_count = [], 0
-        world_pointer = self[0x014538 + world_i]
-        level_pointer = self[0x14538 + 1 + world_pointer + 2*frame_i] * (16 * 16) + self[0x14538 + world_pointer + 2*frame_i]
-        offset = 0x8000 + level_pointer
-        count = self[offset]
-        for item in range(count):
-            if self[offset +1 + item*3] == 0x1A:
-                stars_count += 1
-            else:
-                values_else += [self[offset +1 + item*3], self[offset +2 + item*3], self[offset +3 + item*3]]
-        new_values = [count -(1 * stars_count)] + values_else
-        old_values = list(self[offset +1 + (3*count):0x15454])
-        self.rewrite(offset, new_values + old_values)
-
-        # Fixing the next pointers:
-        for offset in range(0x01453D + 2*[0, 16, 32, 58, 88][world_i] + 2*(frame_i+1), 0x014621, 2):
-            try:
-                self[offset] -= stars_count * 0x3
-            except ValueError:
-                self[offset] = self[offset] - stars_count * 0x3 + 256
-                self[offset+1] -= 0x1
-
-
-    def add_stars(self, world_i, frame_i, coordinates):
-        values_stars = []
-        for coordinate in coordinates:
-            values_stars += [0x1A, coordinate&0xFF, (coordinate&0xFF00) // 16 // 16]
-        values_else= []
-        world_pointer = self[0x014538 + world_i]
-        level_pointer = self[0x14538 + 1 + world_pointer + 2*frame_i] * (16 * 16) + self[0x14538 + world_pointer + 2*frame_i]
-        offset = 0x8000 + level_pointer
-        count = self[offset]
-        for item in range(count):
-            if self[offset +1 + item*3] == 0x1A:
-                values_stars += [self[offset +1 + item*3], self[offset +2 + item*3], self[offset +3 + item*3]]
-            else:
-                values_else += [self[offset +1 + item*3], self[offset +2 + item*3], self[offset +3 + item*3]]
-        new_values = [count +len(coordinates)] + values_else + values_stars
-        old_values = list(self[offset +1 + (3*count):0x15452])
-        self.rewrite(offset, new_values + old_values)
-
-        # Fixing the next pointers:
-        for offset in range(0x01453D + 2*[0, 16, 32, 58, 88][world_i] + 2*(frame_i+1), 0x014621, 2):
-            try:
-                self[offset] += 0x3 * len(coordinates)
-            except ValueError:
-                self[offset] += 0x3 * len(coordinates) - 256
-                self[offset+1] += 0x1
-
 
 
 
@@ -471,10 +419,49 @@ if __name__ == "__main__":
         game = debug(original.read())
         # game = randomized(original.read())
         game.activateWorldSelection()
+
+
+        game.setExit(0,0,7)
         game.do_all_modify()
 
-        game.remove_stars(0,2)
-        #game.add_stars(0,2,(220,236))
+               ###################### |
+        #0x100 #0                   # | + 0x80
+        #0x180 # 4                  # v
+        #0x200 #  ...    60    70   #
+        #0x280 #                    #   # Moitié : Environ 0x300
+        #0x300 #         E0    F0   #
+        # ...  #                    #
+               #                    #
+               ######################
+        #        -----> + 0x4
+                    # Moitié : 60
+                    # Dernier cinquième : 70
+
+        # Up/down : 
+            # half block : - 0x040
+            # Full block : 0x080
+        # Left/right :
+            # full block : 0x004
+
+
+        # Difficulty 1
+        # Level 0-15 : Something need to be done for the pots
+        # 0-2 : Same as US
+        # 0-3: [0x28C,0x3AC, 0x430, 0x434, 0x4B4]
+
+        # 0-6:[0x220, 0x40C,  0x430]
+
+        # 0-11:[0x398, 0x334, 0x414,  0x428])
+        # 0-5 : 0x498
+        # 0-13 : same as usa
+        # 0-14:  same as usa
+
+        test = [0x28C, 0x2B0, 0x40C,  0x430]
+        game.remove_stars(0,5)
+        game.add_stars(0,5, [0x498])
+
+
+
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
             print(f"Testing case have been created! {datetime.now()}")
