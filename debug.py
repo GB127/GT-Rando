@@ -416,6 +416,8 @@ def getoptions_debug():
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as original:
         startTime = datetime.now()
+        print("generating...")
+
         game = debug(original.read())
         # game = randomized(original.read())
         game.activateWorldSelection()
@@ -455,12 +457,25 @@ if __name__ == "__main__":
         # 0-5 : 0x498
         # 0-13 : same as usa
         # 0-14:  same as usa
+        # 1-0: [0x318, 0x324]
+        #1-2: [0x40C, 0x4A8, 0x424, 0x420]
+        # 1-7 : []
+        # 1-6 : Ya une différence et n'a pas de bloc étoilé
+        # 1-9 : [0x21C, 0x22C] (Ya des pierres bombales...)
+        # 1-13 : []
+        # 2-19 : Some pierre bombales
+        # 3-4 : L apierre étoilée est au bon endroit. Mais pas les pierres bombales.
+        # 3-9 : Pierre bombées
+        
+
+
+
+        #game.showMap(3)
+
 
         test = [0x28C, 0x2B0, 0x40C,  0x430]
-        game.remove_stars(0,5)
-        game.add_stars(0,5, [0x498])
-
-
+        game.remove_stars(3,1)
+        game.add_stars(3,1, [0x328, 0x418, 0x41C, 0x420])
 
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
