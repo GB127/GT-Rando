@@ -99,6 +99,7 @@ def generateFile(options, filename):
         randogame.checksum(options.Adark, options.Aicy, options.ohko)
         with open(f"GT_{flags}_{options.seed}.smc", "wb") as newgame:
             newgame.write(randogame.data)
+            print(f"Generated file GT_{flags}_{options.seed}.smc!")
 
 
 if __name__ == "__main__":
