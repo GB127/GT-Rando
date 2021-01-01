@@ -182,7 +182,13 @@ class GT_GUI(QWidget):
         #Generate
         self.btn2 = QPushButton("Generate randomized file", self)
         self.btn2.clicked.connect(self.generateFileButton)
-        self.btn2.move(120,285)
+        self.btn2.move(228,285)
+        self.labelGenerate1 = QLabel("Generating file... could take a few minutes", self)
+        self.labelGenerate1.move(10, 290)
+        self.labelGenerate1.hide()
+        self.labelGenerate2 = QLabel("Done!", self)
+        self.labelGenerate2.move(10, 290)
+        self.labelGenerate2.hide()
             
     def generateFileButton(self):
         filename = self.filenameBox.text()
@@ -208,7 +214,11 @@ class GT_GUI(QWidget):
         options.Aicy = self.checkIcy4.isChecked()
         options.Wselect = self.checkCheat.isChecked()
         options.ohko = self.checkOHKO.isChecked()
+        self.labelGenerate2.hide()
+        self.labelGenerate1.show()
         generateFile(options, filename)
+        self.labelGenerate1.hide()
+        self.labelGenerate2.show()
 
     def getfile(self):
         fname = QFileDialog.getOpenFileName(self, 'Open file', 'c:\\')
