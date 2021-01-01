@@ -1,8 +1,10 @@
 import sys
 from PyQt5.QtWidgets import *
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtCore
 from main import generateFile
 import random
+
+QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
 class GT_GUI(QWidget):
     def __init__(self, parent = None):
@@ -10,6 +12,7 @@ class GT_GUI(QWidget):
         self.setGeometry(100, 100, 405, 322) 
         self.setWindowTitle("Goof Troop Randomizer V2.0")
         self.setFont(QtGui.QFont("Calibri", 10))
+        
         
         #Source file
         self.btn1 = QPushButton("Select source file", self)
