@@ -4,8 +4,6 @@ from PyQt5 import QtGui, QtCore
 from main import generateFile
 import random
 
-QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
-
 class GT_GUI(QWidget):
     def __init__(self, parent = None):
         super(GT_GUI, self).__init__(parent)
@@ -191,7 +189,7 @@ class GT_GUI(QWidget):
         self.btn2.move(248,290)
         self.labelGenerate1 = QLabel("Generating file... could take a few minutes", self)
         self.labelGenerate1.move(13, 295)
-        #self.labelGenerate1.hide()
+        self.labelGenerate1.hide()
         self.labelGenerate2 = QLabel("Done!", self)
         self.labelGenerate2.move(13, 295)
         self.labelGenerate2.hide()
