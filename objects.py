@@ -4,13 +4,31 @@ class objects:
 
 
 
-        self.world_pointers = list(self.data[0x014538:0x014538+5])
+        self.world_pointers = list(self.data[0x014538:0x014538+5])  # Will never be modified... Could be removed...
         self.level_pointers = []
         for frame_offset in range(0x1453D,0x14620,2):
             self.level_pointers.append(self.data[frame_offset+1] * (16 * 16) + self.data[frame_offset])
             # Reminder for self : For the rewrite, we'll need to decompose.
 
         self.table = list(self.data[0x14D41:0x15452])
+
+    def get_world_frame(self, world_i, frame_i):
+        world_nframes = [0, 16, 32, 58, 88]
+        level_pointer = self.level_pointers[world_nframes[world_i] + frame_i] - 0xCD41
+        count = self.table[level_pointer]
+        objects = []
+        for objec in range(count):
+            ID = (self.table[level_pointer+1 + 3*objec])
+            objects.append([ID, self.transform_byt_co(self.table[level_pointer+2 + 3*objec], self.table[level_pointer+1 + 3*objec])])
+        print(objects)
+
+    def transform_byt_co(self, hi_byte, low_byte):
+        big_value = hi_byte * 16 * 16 + low_byte
+        # These values will have ot be adjusted
+        y = big_value // 0x80
+        x = big_value % 16
+        return x, y
+
 
     def remove_stars(self,world_i, frame_i):
         # remove all star blocks from world-frame in question.
