@@ -1,20 +1,23 @@
 import sys
 from PyQt5.QtWidgets import *
+from PyQt5 import QtGui
 from main import generateFile
 import random
 
 class GT_GUI(QWidget):
     def __init__(self, parent = None):
         super(GT_GUI, self).__init__(parent)
-        self.setGeometry(100, 100, 370, 315) 
+        self.setGeometry(100, 100, 405, 322) 
         self.setWindowTitle("Goof Troop Randomizer V2.0")
+        self.setFont(QtGui.QFont("Calibri", 10))
         
+        #Source file
         self.btn1 = QPushButton("Select source file", self)
         self.btn1.clicked.connect(self.getfile)
-        self.btn1.move(10,10)
+        self.btn1.move(13,10)
         self.filenameBox = QLineEdit(self)
-        self.filenameBox.move(105,12)
-        self.filenameBox.setFixedWidth(250)
+        self.filenameBox.move(118,11)
+        self.filenameBox.setFixedWidth(274)
 
         #Exits
         self.labelExits = QLabel("EXITS", self)
@@ -40,7 +43,7 @@ class GT_GUI(QWidget):
         #Items
         self.labelItems = QLabel("ITEMS",self)
         self.labelItems.move(15, 111)
-        self.checkItems1 = QCheckBox("Only randomize item order",self)
+        self.checkItems1 = QCheckBox("Shuffle items",self)
         self.checkItems1.move(18, 128)
         self.checkItems2 = QCheckBox("Totally random items",self)
         self.checkItems2.move(18, 145)
@@ -176,18 +179,18 @@ class GT_GUI(QWidget):
         self.labelSeed = QLabel("SEED :",self)
         self.labelSeed.move(15, 260)
         self.seedBox = QLineEdit(self)
-        self.seedBox.move(50,257)
-        self.seedBox.setFixedWidth(306)
+        self.seedBox.move(50,259)
+        self.seedBox.setFixedWidth(325)
 
         #Generate
         self.btn2 = QPushButton("Generate randomized file", self)
         self.btn2.clicked.connect(self.generateFileButton)
-        self.btn2.move(228,285)
+        self.btn2.move(248,290)
         self.labelGenerate1 = QLabel("Generating file... could take a few minutes", self)
-        self.labelGenerate1.move(10, 290)
-        self.labelGenerate1.hide()
+        self.labelGenerate1.move(13, 295)
+        #self.labelGenerate1.hide()
         self.labelGenerate2 = QLabel("Done!", self)
-        self.labelGenerate2.move(10, 290)
+        self.labelGenerate2.move(13, 295)
         self.labelGenerate2.hide()
             
     def generateFileButton(self):
