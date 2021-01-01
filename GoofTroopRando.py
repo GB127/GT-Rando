@@ -216,6 +216,7 @@ class GT_GUI(QWidget):
         options.ohko = self.checkOHKO.isChecked()
         self.labelGenerate2.hide()
         self.labelGenerate1.show()
+        self.repaint()
         generateFile(options, filename)
         self.labelGenerate1.hide()
         self.labelGenerate2.show()
