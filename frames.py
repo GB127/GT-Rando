@@ -30,7 +30,7 @@ class Frames:
                 elif isolated_exit in self.exit_to_exits[exit_i]:
                     self.exit_to_exits[exit_i].remove(isolated_exit)
 
-        one_ways = [[],[(16,15),(26,25)],[(28,31),(8,7),(26,27),(29,30),(44,43),(48,47)],[(33,32),(35,34),(46,45)],[(10,9),(20,19),(19,20),(18,19),(19,18),(23,24),(24,23),(26,27),(28,26),(26,28),(27,28),(28,27),(37,36),(41,42),(45,46)]]# start, destination
+        one_ways = [[],[(16,15),(26,25)],[(28,31),(8,7),(26,27),(29,30),(44,43),(48,47)],[(33,32),(35,34),(46,45)],[(10,9),(20,19),(19,20),(18,19),(19,18),(23,24),(24,23),(28,26),(27,28),(28,27),(37,36),(41,42),(45,46)]]# start, destination
         for one_way in one_ways[world_i]:
             self.exit_to_exits[one_way[0]].append(one_way[1])
 
@@ -48,7 +48,7 @@ class Frames:
             conditions = [(2,[45,46])] 
             #45 and 46 are treated as one ways towards eachother previously in order to exclude 47 here
         elif world_i == 4:
-            conditions = [(2,[3,4]),(2,[18,19]),(2,[19,20]),(2,[23,24]),(5,[41,42]),(6,[43,44]),(8,[26,28])]
+            conditions = [(2,[3,4]),(2,[18,19]),(2,[19,20]),(2,[23,24]),(5,[41,42]),(6,[43,44]),(8,[28,26])]
             #23 and 24 are treated as one ways towards eachother previously in order to exclude 25 here
             #26 and 28 are treated as one ways towards eachother previously in order to exclude 27 here
         
