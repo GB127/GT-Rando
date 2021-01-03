@@ -502,6 +502,8 @@ class GT(ROM):
                     if (sum(feasibility_results)/len(feasibility_results))==1 and (sum(early_boss_results)/len(early_boss_results))>0.85: 
                         
                         if world_i == 4:
+                            feasibility_results = []#shows how many times we do not get stuck if we play randomly
+                            early_boss_results = []
                             true_starting_exit = deepcopy(this_world.starting_exit)
                             this_world.starting_exit = 36 #room with arrow platform where you can get stuck
                             for m in range(50):
@@ -509,13 +511,14 @@ class GT(ROM):
                                 feasibility_results.append(boss_reached)
                                 early_boss_results.append(early_boss_indicator)
                             this_world.starting_exit = true_starting_exit
-
                             if (sum(feasibility_results)/len(feasibility_results))==1:
                                 this_world.writeWorldInData()
                                 print(f"Assigned new exits and items to world {world_i+1} after {number_of_tries} iterations")  # print world number as 1-indexed for readability
                                 break
 
-                        if world_i == 3:
+                        elif world_i == 3:
+                            feasibility_results = []#shows how many times we do not get stuck if we play randomly
+                            early_boss_results = []
                             true_starting_exit = deepcopy(this_world.starting_exit)
                             this_world.starting_exit = 0 #room with door that requires to do a puzzle
                             for m in range(50):
