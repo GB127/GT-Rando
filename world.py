@@ -176,7 +176,7 @@ class World():
                 if last_unlocked_exits == unlocked_exits:
                     break
 
-
+            previous = deepcopy(used_items)
             #unlocked items
             unlocked_items = self.items.getUnlockedItems(unlocked_exits, items_filled_conditions)
 
@@ -199,7 +199,8 @@ class World():
                     random_i = random_i-len(frames_unlockable_conditions)
                     condition_i = items_unlockable_conditions[random_i]
                     items_filled_conditions, used_items = self.unlockAnItemCondition(condition_i, items_filled_conditions, unlocked_items, used_items)
-            else: #for faster verification
+
+            if previous == used_items: #for faster verification
                 break
             #verify if the world is completed
             if all(unlocked_exits) and all(unlocked_items) and boss_reached:
