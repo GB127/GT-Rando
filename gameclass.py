@@ -62,6 +62,13 @@ class GT(ROM):
         # Création des différents world pour permettre leur randomization isolé.
         self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
 
+    def arrow_platform_bidirect(self):
+        self.rewrite(0xDD62, [0x22, 0x33,0xFF,0x81])
+        self.rewrite(0xFF33, [0xAD, 0x11, 0x1, 0xC9, 0xC0, 0xB0, 
+                                0x5, 0xA9, 0x02, 0x85, 0x02, 0x6B,
+                                0xA9, 0xA8, 0x8D, 0x61, 0x02, 0xA9,
+                                0x48, 0x8D, 0x64, 0x02, 0xA9, 0x02,
+                                0x85, 0x02, 0x6B])
 
 
     def removeExitFromData(self, world_i, frame_i, index):
