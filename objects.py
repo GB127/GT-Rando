@@ -14,6 +14,7 @@ class objects:
 
 
     def save(self):
+        # Works, nothing to change here except optimization if you have any...
         tempo_newdata = []
         for pointer in self.level_pointers:
             hi = (pointer & 0xFF00) // 16 // 16
@@ -41,8 +42,17 @@ class objects:
         x = big_value % 16
         return x, y
 
+    def transform_co_byt(self, x, y):
+        # These values will have ot be adjusted as they are wrong, but it's a start.
+        transfo_y = y * 0x80
+        big_value = transfo_y + x
+        return big_value
+
+
+
 
     def clear_frame(self, world_i, frame_i):
+        # Works, nothing to change here.
         world_nframes = [0, 16, 32, 58, 88]
         level_pointer = self.level_pointers[world_nframes[world_i] + frame_i] - 0xCD41
         count = self.table[level_pointer]

@@ -425,6 +425,12 @@ if __name__ == "__main__":
         game.do_all_modify()
         game.no_dark()
 
+        test = objects(game.data)
+
+        # These should give the same thing. Not sur eot understand why I am not getting the same value....
+        print(test.transform_byt_co(0x23,0x43))
+        print(hex(test.transform_co_byt(3,70)))
+
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
             print(f"Testing case have been created! {datetime.now()}")
