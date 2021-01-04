@@ -4,7 +4,7 @@ from datetime import datetime
 from world import *
 import random
 from command import *
-
+from objects import objects
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 import cv2
@@ -35,6 +35,7 @@ class debug(GT):
         self.modify_data_ice_dark_alert()
         self.modify_data_starting_frame()
         self.checksum()
+        self.arrow_platform_bidirect()
         self.credits_frames_randomizer()
 
     def list_freespace(self):
@@ -421,64 +422,10 @@ if __name__ == "__main__":
         game = debug(original.read())
         # game = randomized(original.read())
         game.activateWorldSelection()
-
-
-        game.setExit(0,0,7)
         game.do_all_modify()
-
-               ###################### |
-        #0x100 #0                   # | + 0x80
-        #0x180 # 4                  # v
-        #0x200 #  ...    60    70   #
-        #0x280 #                    #   # Moitié : Environ 0x300
-        #0x300 #         E0    F0   #
-        # ...  #                    #
-               #                    #
-               ######################
-        #        -----> + 0x4
-                    # Moitié : 60
-                    # Dernier cinquième : 70
-
-        # Up/down : 
-            # half block : - 0x040
-            # Full block : 0x080
-        # Left/right :
-            # full block : 0x004
-
-
-        # Difficulty 1
-        # Level 0-15 : Something need to be done for the pots
-        # 0-2 : Same as US
-        # 0-3: [0x28C,0x3AC, 0x430, 0x434, 0x4B4]
-
-        # 0-6:[0x220, 0x40C,  0x430]
-
-        # 0-11:[0x398, 0x334, 0x414,  0x428])
-        # 0-5 : 0x498
-        # 0-13 : same as usa
-        # 0-14:  same as usa
-        # 1-0: [0x318, 0x324]
-        #1-2: [0x40C, 0x4A8, 0x424, 0x420]
-        # 1-7 : []
-        # 1-6 : Ya une différence et n'a pas de bloc étoilé
-        # 1-9 : [0x21C, 0x22C] (Ya des pierres bombales...)
-        # 1-13 : []
-        # 2-19 : Some pierre bombales
-        # 3-4 : L apierre étoilée est au bon endroit. Mais pas les pierres bombales.
-        # 3-9 : Pierre bombées
-        
-
-
-
-        #game.showMap(3)
-
-
-        test = [0x28C, 0x2B0, 0x40C,  0x430]
-        game.remove_stars(3,1)
-        game.add_stars(3,1, [0x328, 0x418, 0x41C, 0x420])
+        game.no_dark()
 
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
             print(f"Testing case have been created! {datetime.now()}")
             newgame.write(game.data)
-
