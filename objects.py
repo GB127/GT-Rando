@@ -12,6 +12,18 @@ class objects:
 
         self.table = list(self.data[0x14D41:0x15452])
 
+
+    def save(self):
+        tempo_newdata = []
+        for pointer in self.level_pointers:
+            hi = (pointer & 0xFF00) // 16 // 16
+            low = pointer & 0x00FF
+            tempo_newdata += [low, hi]
+        for no, new_data in enumerate(tempo_newdata):
+            self.data[0x1453D + no] = new_data
+        for no, new_data in enumerate(self.table):
+            self.data[0x14D41 + no] = new_data
+
     def get_world_frame(self, world_i, frame_i):
         world_nframes = [0, 16, 32, 58, 88]
         level_pointer = self.level_pointers[world_nframes[world_i] + frame_i] - 0xCD41
@@ -38,9 +50,8 @@ class objects:
         for _ in range(count * 3):
             self.table.pop(level_pointer+1)
 
-        #TODO: fix pointers 
-
-
+        #Pointers fix
+        self.level_pointers[level_pointer+1:] = [x - 3*count for x in self.level_pointers[level_pointer+1:]]
 
     def add_stars(self, world_i, frame_i, coordinates):
         values_stars = []
@@ -67,8 +78,3 @@ class objects:
             except ValueError:
                 self[offset] += 0x3 * len(coordinates) - 256
                 self[offset+1] += 0x1
-
-
-
-
-
