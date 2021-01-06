@@ -1,3 +1,6 @@
+import random
+from copy import deepcopy
+
 class objects:
     grabable = [x for x in range(0, 0x1A, 2)]
     kickable = [x for x in range(0x1A, 0x22, 2)]
@@ -33,6 +36,18 @@ class objects:
             # Reminder for self : For the rewrite, we'll need to decompose.
 
         self.table = list(self.data[0x14D41:0x15452])
+
+
+    def randomize_grabables(self):
+        grabable_rando = deepcopy(objects.grabable)
+        random.shuffle(grabable_rando)
+        for frame in self.level_pointers:
+            count = self.table[frame - 0xCD41]
+            for x in range(count):
+                current_index = frame - 0xCD41 + 1 + 3*x
+                if self.table[current_index] in objects.grabable:
+                    self.table[current_index] = grabable_rando[objects.grabable.index(self.table[current_index])]
+    
 
 
 
