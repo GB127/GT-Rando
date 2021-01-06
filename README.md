@@ -31,6 +31,8 @@ Randomize which room you initially start a world with one of the exits of the wo
 - u : Do not match the direction for the exits and their destination. In other words : a north exit can lead to a west exit instead of an always south exit.
 - U : Do not pair exits. WARNING : There is probably a risk (low risk) of generating an incompletable seed with this flag.
 
+NOTE : Be sure to note that the mirror in the castle level can be broken to reveal an exit.
+
 ## Other stuffs
 ### Password cheat : Enable the world selection. If not enabled, the passwords are random.
 - World 2 : Cherry, Banana, Cherry, Cherry, Cherry
