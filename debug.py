@@ -35,7 +35,6 @@ class debug(GT):
         self.modify_data_ice_dark_alert()
         self.modify_data_starting_frame()
         self.checksum()
-        self.arrow_platform_bidirect()
         self.credits_frames_randomizer()
 
     def list_freespace(self):
@@ -335,11 +334,6 @@ class debug(GT):
             self[offset] = 0
             self.freespace += [offset]
 
-
-
-
-
-
 info = infos()
 class randomized(debug):
     def __init__(self, data):
@@ -349,10 +343,6 @@ class randomized(debug):
 
     def __setitem__(self,offset, value):
         self.data[offset] = value
-
-
-
-    
 
 
 def getoptions_debug():
@@ -425,11 +415,8 @@ if __name__ == "__main__":
         game.do_all_modify()
         game.no_dark()
 
-        test = objects(game.data)
 
-        # These should give the same thing. Not sur eot understand why I am not getting the same value....
-        print(test.transform_byt_co(0x23,0x43))
-        print(hex(test.transform_co_byt(3,70)))
+        #test = objects(game.data)
 
         with open("debug.smc", "wb") as newgame:
             # print("Time taken to edit files : ", datetime.now() - startTime)
