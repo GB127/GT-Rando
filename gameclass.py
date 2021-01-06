@@ -111,24 +111,6 @@ class GT(ROM):
             except ValueError:
                 self[offset] += 0x20 - 256
                 self[offset+1] += 0x8
-    
-        # Moving the kickable stars to the end to ease modifications.
-        for world_i in range(5):
-            for frame_i in range([16, 16, 26, 30, 26][world_i]):
-            # frame_i in range([4, 0, 0, 0, 0][world_i]):
-                values_else, values_stars = [], []
-                world_pointer = self[0x014538 + world_i]
-                level_pointer = self[0x14538 + 1 + world_pointer + 2*frame_i] * (16 * 16) + self[0x14538 + world_pointer + 2*frame_i]
-                offset = 0x8000 + level_pointer
-                count = self[offset]
-                if count !=0:
-                    for item in range(count):
-                        if self[offset +1 + item*3] == 0x1A:
-                            values_stars += [self[offset +1 + item*3], self[offset +2 + item*3], self[offset +3 + item*3]]
-                        else:
-                            values_else += [self[offset +1 + item*3], self[offset +2 + item*3], self[offset +3 + item*3]]
-                    self.rewrite(offset, [count] + values_else + values_stars)
-
 
     def fix_misdirection(self):
         self.setmulti(0x27F2, 0x27F4, 0xEA)
