@@ -86,7 +86,7 @@ def generateFile(options, filename):
         if not options.Rexits_matchdir:
             randogame.fix_misdirection()
 
-        startTime = datetime.now()
+        #startTime = datetime.now()
         if options.Rfirst or options.Rexits or options.Ritems_pos or options.Ritems:
             if options.Rfirst: randogame.modify_data_starting_frame()  # Changement du code pour permettre une randomization du first frame.
             try:
