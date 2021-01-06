@@ -33,7 +33,6 @@ class objects:
         self.level_pointers = []
         for frame_offset in range(0x1453D,0x14620,2):
             self.level_pointers.append(self.data[frame_offset+1] * (16 * 16) + self.data[frame_offset])
-            # Reminder for self : For the rewrite, we'll need to decompose.
 
         self.table = list(self.data[0x14D41:0x15452])
 
@@ -115,7 +114,6 @@ class objects:
             self.data[0x14D41 + no] = new_data
 
     def get_world_frame (self, world_i, frame_i):
-        # Not sure we'll need this, we'll see.
         world_nframes = [0, 16, 32, 58, 88]
         level_pointer = self.level_pointers[world_nframes[world_i] + frame_i] - 0xCD41
         count = self.table[level_pointer]
@@ -158,6 +156,12 @@ class objects:
 
 
     def add_objects(self, world_i, frame_i, object_ids, objects_co):
+        assert len(object_ids) == len(objects_co), "Each ID must have it coordinates"
+        for one in object_ids:
+            assert one in objects.ID.keys(), f"Can't use the id {one}"
+        for one in objects_co:
+            assert isinstance(one, tuple) and len(one) == 2, "Coordinates must be of (x,y)"
+
         world_nframes = [0, 16, 32, 58, 88]
         level_pointer = self.level_pointers[world_nframes[world_i] + frame_i] - 0xCD41
         self.table[level_pointer] += len(object_ids)
