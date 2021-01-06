@@ -24,6 +24,25 @@ class objects:
         0x20 : "Red bombable stone"
         }        #NOTE : Didn't try higher than 0x50
 
+         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     def __init__(self, data):
         self.data = data
 
@@ -47,7 +66,7 @@ class objects:
                 if self.table[current_index] in objects.grabable:
                     self.table[current_index] = grabable_rando[objects.grabable.index(self.table[current_index])]
     
-
+        self.write_data()
 
 
     def print_world(self, world_i, frame_i):
@@ -101,7 +120,7 @@ class objects:
 
 
 
-    def save(self):
+    def write_data(self):
         # Works, nothing to change here except optimization if you have any...
         tempo_newdata = []
         for pointer in self.level_pointers:

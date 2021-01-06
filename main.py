@@ -45,6 +45,7 @@ def generateFile(options, filename):
         randogame.passwordRandomizer()
         if options.Wselect:
             randogame.activateWorldSelection()
+
         if options.Ricy:
             randogame.iceRandomizer()
         if options.Rveryicy:
@@ -56,6 +57,7 @@ def generateFile(options, filename):
             randogame.allIcy()
         if options.noicy:
             randogame.no_icy()
+
         if options.Rdark:
             randogame.darkRandomizer()
         if options.Rverydark:
@@ -68,25 +70,12 @@ def generateFile(options, filename):
         if options.nodark:
             randogame.no_dark()
 
-        """
-        if options.Ralert:
-            randogame.alert_Randomizer()
-        if options.Rveryalert:
-            #tempo = int(random.gauss(12,5))
-            tempo = 90
-            while tempo < 7:
-                tempo = int(random.gauss(7,5))
-            randogame.alert_Randomizer(count=tempo)
-
-
-        if options.Aalert:
-            randogame.allAlert()
-        """
-
+        # Fix for 2P mode.
         if not options.Rexits_matchdir:
             randogame.fix_misdirection()
 
         #startTime = datetime.now()
+        # Actual randomizer
         if options.Rfirst or options.Rexits or options.Ritems_pos or options.Ritems:
             if options.Rfirst: randogame.modify_data_starting_frame()  # Changement du code pour permettre une randomization du first frame.
             try:
@@ -95,14 +84,15 @@ def generateFile(options, filename):
                 with open("error_flags_seed.txt", "a") as report:
                     report.write(f'python main.py -{flags} --seed {options.seed}\n')
                     flags += "_ERROR"
-        
         #print("Time taken to edit files : ", datetime.now() - startTime)
 
         if options.ohko:
             randogame.ohko()
 
-
+        
+        # Flavor randomizers : Doesn't change the gameplay at all, but are cool stuffs notheless!
         randogame.credits_frames_randomizer()
+        randogame.randomize_grabables()
         randogame.checksum(options.Adark, options.Aicy, options.ohko)
 
 

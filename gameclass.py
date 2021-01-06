@@ -1,4 +1,5 @@
 from world import *
+from objects import objects
 
 class RandomizerError(BaseException):
     pass
@@ -62,6 +63,11 @@ class GT(ROM):
 
         # Création des différents world pour permettre leur randomization isolé.
         self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
+        self.all_objects = objects(self.data)
+
+
+    def randomize_grabables(self):
+        self.all_objects.randomize_grabables()
 
     def arrow_platform_bidirect(self):
         self.rewrite(0xDD62, [0x22, 0x33,0xFF,0x81])
@@ -113,6 +119,7 @@ class GT(ROM):
                 self[offset+1] += 0x8
 
     def fix_misdirection(self):
+        # For 2P mode if directions aren't paired.
         self.setmulti(0x27F2, 0x27F4, 0xEA)
         self.setmulti(0x27FF, 0x2801, 0xEA)
 
@@ -123,6 +130,7 @@ class GT(ROM):
              0x7F, 0x30, 0xFF, 0x83, 0xAA, 0xBF, 0x30,
              0xFF, 0x83, 0x29, 0x01, 0xF0, 0x02, 0xE6,
              0xCA, 0x60])
+        # I believe this was before the alert mode. I want to revert this.
         """
         self.rewrite(0x280E,
             [0xBF, 0x30, 0xFF, 0x83, 0x29, 0x02, 0xD0,
@@ -168,21 +176,8 @@ class GT(ROM):
         # Building the data table:
         self.setmulti(0x1FFA7, 0x1FFAB, 0)
 
-
-        self.setmulti(0x1FFAC,0x1FFAC + 9, 0)  # FIXME
+        self.setmulti(0x1FFAC,0x1FFAC + 9, 0)
             # X0, Y0, X1 , Y1 , X2, Y2, X3, Y3, X4, Y4
-
-
-
-
-
-
-
-
-
-
-
-
 
         # Jump for when we beat a boss
         self.rewrite(0x23E2,
@@ -223,6 +218,7 @@ class GT(ROM):
             self[offsets[no]] |= 2
 
     def alert_Randomizer(self, count=10):
+        # Not used currently.
         """Randomize which rooms are alert up to the count given.
             """
         for offset in range(0x1FF35, 0x1FFA7):  # Remove all alert rooms
