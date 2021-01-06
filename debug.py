@@ -1,5 +1,4 @@
 from gameclass import GT
-from infos import *  # This is for the tools in infos.
 from datetime import datetime
 from world import *
 import random
@@ -333,8 +332,6 @@ class debug(GT):
         for offset in range(0x14621,0x14D32):
             self[offset] = 0
             self.freespace += [offset]
-
-info = infos()
 class randomized(debug):
     def __init__(self, data):
         self.data = bytearray(data)
@@ -355,7 +352,7 @@ def getoptions_debug():
     options.Rfirst = False
     options.Rexits = True  #e
     options.Rexits_matchdir = False  #u
-    options.Rexits_pair = False  #U
+    options.Rexits_pair = True  #U
     options.Ritems_pos = True  #i
     options.Ritems = False  #I
 
@@ -416,9 +413,13 @@ if __name__ == "__main__":
         game.no_dark()
 
 
-        #test = objects(game.data)
+        test = objects(game.data)
+
+        test.randomize_grabables()
+        test.add_objects(0,0,[3], [(3,5)])
+        test.save()
 
         with open("debug.smc", "wb") as newgame:
-            # print("Time taken to edit files : ", datetime.now() - startTime)
+            print("Time taken to edit files : ", datetime.now() - startTime)
             print(f"Testing case have been created! {datetime.now()}")
             newgame.write(game.data)
