@@ -46,7 +46,7 @@ class GT(ROM):
     def __init__(self,data, seed):
         super().__init__(data)  # Header removal
         self.modify_data_ice_dark_alert()  # Changement du code en prévision du randomizer pour pouvoir changer le nombre.
-        self.modify_data_stars()
+        self.modify_objects_data()
         self.removeExitFromData(3,1,0)  # Enlever exit inutilisé
         self.removeExitFromData(1,15,0) # Enlever exit inutilisé
         self.removeExitFromData(1,13,1) # Enlever exit inutilisé
@@ -102,7 +102,7 @@ class GT(ROM):
                     self[offset] = values[i+1][no]
         self[count_offset] -=1
 
-    def modify_data_stars(self):
+    def modify_objects_data(self):
         # Moving the entire table
         values = []
         for offset in range(0x14621,0x14D32):
