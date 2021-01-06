@@ -49,6 +49,7 @@ class GT(ROM):
         self.removeExitFromData(3,1,0)  # Enlever exit inutilisé
         self.removeExitFromData(1,15,0) # Enlever exit inutilisé
         self.removeExitFromData(1,13,1) # Enlever exit inutilisé
+        self.arrow_platform_bidirect()
         self.seed = seed
         self.add_credits()  # Ajout credits
 
@@ -465,7 +466,7 @@ class GT(ROM):
         items_rando = options.Ritems_pos or options.Ritems
         firstframe_rando = options.Rfirst
         max_iter_big_step = 50000
-        max_iter_small_step = 100
+        max_iter_small_step = 60
         for world_i, this_world in enumerate(self.all_worlds):
             number_of_tries = 0
             print('Trying to find a world configuration for which you cannot get stuck...')
@@ -507,23 +508,8 @@ class GT(ROM):
                     #print(sum(feasibility_results)/len(feasibility_results))
                     #print(sum(early_boss_results)/len(early_boss_results))
                     if (sum(feasibility_results)/len(feasibility_results))==1 and (sum(early_boss_results)/len(early_boss_results))>0.85: 
-                        
-                        if world_i == 4:
-                            feasibility_results = []#shows how many times we do not get stuck if we play randomly
-                            early_boss_results = []
-                            true_starting_exit = deepcopy(this_world.starting_exit)
-                            this_world.starting_exit = 36 #room with arrow platform where you can get stuck
-                            for m in range(50):
-                                unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
-                                feasibility_results.append(boss_reached)
-                                early_boss_results.append(early_boss_indicator)
-                            this_world.starting_exit = true_starting_exit
-                            if (sum(feasibility_results)/len(feasibility_results))==1:
-                                this_world.writeWorldInData()
-                                print(f"Assigned new exits and items to world {world_i+1} after {number_of_tries} iterations")  # print world number as 1-indexed for readability
-                                break
 
-                        elif world_i == 3:
+                        if world_i == 3:
                             feasibility_results = []#shows how many times we do not get stuck if we play randomly
                             early_boss_results = []
                             true_starting_exit = deepcopy(this_world.starting_exit)
@@ -539,6 +525,21 @@ class GT(ROM):
                                 print(f"Assigned new exits and items to world {world_i+1} after {number_of_tries} iterations")  # print world number as 1-indexed for readability
                                 break
                             
+                        # elif world_i == 4:
+                        #     feasibility_results = []#shows how many times we do not get stuck if we play randomly
+                        #     early_boss_results = []
+                        #     true_starting_exit = deepcopy(this_world.starting_exit)
+                        #     this_world.starting_exit = 36 #room with arrow platform where you can get stuck
+                        #     for m in range(50):
+                        #         unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
+                        #         feasibility_results.append(boss_reached)
+                        #         early_boss_results.append(early_boss_indicator)
+                        #     this_world.starting_exit = true_starting_exit
+                        #     if (sum(feasibility_results)/len(feasibility_results))==1:
+                        #         this_world.writeWorldInData()
+                        #         print(f"Assigned new exits and items to world {world_i+1} after {number_of_tries} iterations")  # print world number as 1-indexed for readability
+                        #         break
+
                         else:
                             this_world.writeWorldInData()
                             print(f"Assigned new exits and items to world {world_i+1} after {number_of_tries} iterations")  # print world number as 1-indexed for readability
