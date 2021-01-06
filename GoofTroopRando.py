@@ -4,23 +4,6 @@ from PyQt5 import QtGui, QtCore
 from main import generateFile
 import random
 
-
-
-import ctypes
-
-# Query DPI Awareness (Windows 10 and 8)
-awareness = ctypes.c_int()
-errorCode = ctypes.windll.shcore.GetProcessDpiAwareness(0, ctypes.byref(awareness))
-print(awareness.value)
-
-# Set DPI Awareness  (Windows 10 and 8)
-errorCode = ctypes.windll.shcore.SetProcessDpiAwareness(2)
-# the argument is the awareness level, which can be 0, 1 or 2:
-# for 1-to-1 pixel control I seem to need it to be non-zero (I'm using level 2)
-
-# Set DPI Awareness  (Windows 7 and Vista)
-success = ctypes.windll.user32.SetProcessDPIAware()
-
 class GT_GUI(QWidget):
     def __init__(self, parent = None):
         super(GT_GUI, self).__init__(parent)

@@ -465,14 +465,14 @@ class GT(ROM):
         items_rando = options.Ritems_pos or options.Ritems
         firstframe_rando = options.Rfirst
         max_iter_big_step = 50000
-        max_iter_small_step = 50
+        max_iter_small_step = 100
         for world_i, this_world in enumerate(self.all_worlds):
             number_of_tries = 0
             print('Trying to find a world configuration for which you cannot get stuck...')
             for i in range(max_iter_big_step):
-                for j in range(max_iter_small_step):#exits and items randomization
+                for j in range(max_iter_big_step):#exits and items randomization
                     if exits_rando:
-                        for k in range(max_iter_small_step):
+                        for k in range(max_iter_big_step):
                             this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
                             if this_world.allFramesConnectedVerification(): break
 
@@ -495,7 +495,7 @@ class GT(ROM):
                         raise RandomizerError(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")
 
 
-                if i<(max_iter_big_step-1):
+                if i<(max_iter_big_step-1) and find:
                     feasibility_results = []#shows how many times we do not get stuck if we play randomly
                     early_boss_results = []
                     for m in range(50):
@@ -546,3 +546,4 @@ class GT(ROM):
                 else: 
                     print(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")
                     raise RandomizerError(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")  # print world number as 1-indexed for readability
+
