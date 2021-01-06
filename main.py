@@ -3,6 +3,9 @@ import argparse
 import random
 from command import getoptions
 
+from datetime import datetime
+
+
 
 def flag_string(options):
     flags = ""
@@ -83,6 +86,7 @@ def generateFile(options, filename):
         if not options.Rexits_matchdir:
             randogame.fix_misdirection()
 
+        startTime = datetime.now()
         if options.Rfirst or options.Rexits or options.Ritems_pos or options.Ritems:
             if options.Rfirst: randogame.modify_data_starting_frame()  # Changement du code pour permettre une randomization du first frame.
             try:
@@ -91,12 +95,17 @@ def generateFile(options, filename):
                 with open("error_flags_seed.txt", "a") as report:
                     report.write(f'python main.py -{flags} --seed {options.seed}\n')
                     flags += "_ERROR"
+        
+        print("Time taken to edit files : ", datetime.now() - startTime)
 
         if options.ohko:
             randogame.ohko()
 
+
         randogame.credits_frames_randomizer()
         randogame.checksum(options.Adark, options.Aicy, options.ohko)
+
+
         with open(f"GT_{flags}_{options.seed}.smc", "wb") as newgame:
             newgame.write(randogame.data)
             print(f"Generated file GT_{flags}_{options.seed}.smc!")
