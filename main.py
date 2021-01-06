@@ -3,7 +3,7 @@ import argparse
 import random
 from command import getoptions
 
-from datetime import datetime
+#from datetime import datetime
 
 
 
@@ -96,7 +96,7 @@ def generateFile(options, filename):
                     report.write(f'python main.py -{flags} --seed {options.seed}\n')
                     flags += "_ERROR"
         
-        print("Time taken to edit files : ", datetime.now() - startTime)
+        #print("Time taken to edit files : ", datetime.now() - startTime)
 
         if options.ohko:
             randogame.ohko()
