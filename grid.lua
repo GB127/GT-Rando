@@ -19,7 +19,7 @@ while (true) do
     end
     for i=1,16 do
         for j=0,16 do
-            gui.drawText(16 * i,1 + 16 *j, i, 0xFFad576e)
+            gui.drawText(16 * i,1 + 16 *j, i, 0xFF000000)
         end
     end
     gui.drawBox(0,0, 32,16, 0xFFFFFFFF, 0xFFFFFFFF)
