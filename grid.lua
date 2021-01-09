@@ -7,11 +7,11 @@ while (true) do
     end
 
     for i=0,16 do  -- Column of the left
-        gui.pixelText(5,  5 + 16 * i, i)  -- This is for the left column
+        gui.drawText(0,  2 + 16 * i, i, 0xFF16c6de)  -- This is for the left column
     end
     for i=1,16 do
         for j=0,16 do
-            gui.pixelText(1 + 16 * i,1 + 16 *j, i)
+            gui.drawText(16 * i,1 + 16 *j, i, 0xFFad576e)
 
         end
         
