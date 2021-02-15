@@ -92,13 +92,13 @@ def generateFile(options, filename):
         
         # Flavor randomizers : Doesn't change the gameplay at all, but are cool stuffs notheless!
         randogame.credits_frames_randomizer()
-        randogame.randomize_grabables()
+        #randogame.randomize_grabables()
         randogame.checksum(options.Adark, options.Aicy, options.ohko)
 
 
-        with open(f"GT_{flags}_{options.seed}.smc", "wb") as newgame:
+        with open(f"GT2_2_{flags}_{options.seed}.smc", "wb") as newgame:
             newgame.write(randogame.data)
-            print(f"Generated file GT_{flags}_{options.seed}.smc!")
+            print(f"Generated file GT2_2_{flags}_{options.seed}.smc!")
 
 
 if __name__ == "__main__":

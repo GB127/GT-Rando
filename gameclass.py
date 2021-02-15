@@ -1,5 +1,5 @@
 from world import *
-from objects import objects
+#from objects import objects
 
 class RandomizerError(BaseException):
     pass
@@ -63,11 +63,11 @@ class GT(ROM):
 
         # Création des différents world pour permettre leur randomization isolé.
         self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
-        self.all_objects = objects(self.data)
+        #self.all_objects = objects(self.data)
 
 
-    def randomize_grabables(self):
-        self.all_objects.randomize_grabables()
+    #def randomize_grabables(self):
+    #    self.all_objects.randomize_grabables()
 
     def arrow_platform_bidirect(self):
         self.rewrite(0xDD62, [0x22, 0x33,0xFF,0x81])
@@ -444,7 +444,7 @@ class GT(ROM):
         items_rando = options.Ritems_pos or options.Ritems
         firstframe_rando = options.Rfirst
         max_iter_big_step = 50000
-        max_iter_small_step = 60
+        max_iter_small_step = 50
         for world_i, this_world in enumerate(self.all_worlds):
             number_of_tries = 0
             print('Trying to find a world configuration for which you cannot get stuck...')
@@ -479,12 +479,12 @@ class GT(ROM):
                     early_boss_results = []
                     for m in range(50):
                         unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
-                        feasibility_results.append((all(unlocked_exits) and all(unlocked_items) and boss_reached))
+                        feasibility_results.append(boss_reached)
                         if not pair_exits: early_boss_indicator = 1 #the check to make sure that a level is not too quick to finish is removed when exits are not paired
                         early_boss_results.append(early_boss_indicator)
                     
-                    #print(sum(feasibility_results)/len(feasibility_results))
-                    #print(sum(early_boss_results)/len(early_boss_results))
+                    print(sum(feasibility_results)/len(feasibility_results))
+                    print(sum(early_boss_results)/len(early_boss_results))
                     if (sum(feasibility_results)/len(feasibility_results))==1 and (sum(early_boss_results)/len(early_boss_results))>0.85: 
 
                         if world_i == 3:
