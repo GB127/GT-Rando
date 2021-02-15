@@ -483,8 +483,8 @@ class GT(ROM):
                         if not pair_exits: early_boss_indicator = 1 #the check to make sure that a level is not too quick to finish is removed when exits are not paired
                         early_boss_results.append(early_boss_indicator)
                     
-                    print(sum(feasibility_results)/len(feasibility_results))
-                    print(sum(early_boss_results)/len(early_boss_results))
+                    #print(sum(feasibility_results)/len(feasibility_results))
+                    #print(sum(early_boss_results)/len(early_boss_results))
                     if (sum(feasibility_results)/len(feasibility_results))==1 and (sum(early_boss_results)/len(early_boss_results))>0.85: 
 
                         if world_i == 3:
