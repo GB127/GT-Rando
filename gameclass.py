@@ -1,5 +1,5 @@
 from world import *
-#from objects import objects
+from objects import objects
 
 class RandomizerError(BaseException):
     pass
@@ -63,11 +63,11 @@ class GT(ROM):
 
         # Création des différents world pour permettre leur randomization isolé.
         self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
-        #self.all_objects = objects(self.data)
+        self.all_objects = objects(self.data)
 
 
-    #def randomize_grabables(self):
-    #    self.all_objects.randomize_grabables()
+    def randomize_grabables(self):
+        self.all_objects.randomize_grabables()
 
     def arrow_platform_bidirect(self):
         self.rewrite(0xDD62, [0x22, 0x33,0xFF,0x81])

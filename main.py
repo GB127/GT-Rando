@@ -92,7 +92,7 @@ def generateFile(options, filename):
         
         # Flavor randomizers : Doesn't change the gameplay at all, but are cool stuffs notheless!
         randogame.credits_frames_randomizer()
-        #randogame.randomize_grabables()
+        randogame.randomize_grabables()
         randogame.checksum(options.Adark, options.Aicy, options.ohko)
 
 
