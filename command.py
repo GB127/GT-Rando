@@ -3,7 +3,7 @@ import random
 
 def getoptions():
 
-    parser = argparse.ArgumentParser(description="Goof Troop Randomizer, Version 2.0", epilog="Written by Guylain Breton & Charles Matte-Breton")
+    parser = argparse.ArgumentParser(description="Goof Troop Randomizer, Version 2.3", epilog="Written by Guylain Breton & Charles Matte-Breton")
 
     """
     # Alert rooms
