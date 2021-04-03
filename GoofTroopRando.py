@@ -8,7 +8,7 @@ class GT_GUI(QWidget):
     def __init__(self, parent = None):
         super(GT_GUI, self).__init__(parent)
         self.setGeometry(100, 100, 405, 322) 
-        self.setWindowTitle("Goof Troop Randomizer V2.0")
+        self.setWindowTitle("Goof Troop Randomizer V2.3")
         self.setFont(QtGui.QFont("Calibri", 10))
         
         
