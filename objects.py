@@ -37,7 +37,7 @@ class objects:
                 (   [0x1A, 0x1A, 0x1A, 0x1A, 0x1A],
                     [(3,5),(11,7),(12,8),(13,8),(13,9)]),  # 0-3
                 (   [0x0, 0x0, 0x0, 0x2, 0x2, 0x8, 0x8, 0x8,0x8],
-                    [(1.5,5),(2.5, 5),(2.5, 4),(13,11),(14,10),(6.5, 5),(7.4,5),(6.5,9),(7.5,9)]),  # 0-4
+                    [(1.5,5),(2.5, 5),(2.5, 4),(13,11),(14,10),(6.5, 5),(7.5,5),(6.5,9),(7.5,9)]),  # 0-4
                 (   [0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x1A, 0x18],
                     [(3,3),(4,3),(5,3),(6,3),(7,3), (10,4),(12,4), (6,10),( 6,11),(6, 12),(9,9),(9,10),(9,11),(6,9),(1,9)]),  # 0-5
                 (   [0x8, 0x8, 0x8, 0x1A, 0x1A, 0x1A],
@@ -167,7 +167,7 @@ class objects:
                         (7,8), (7,9), (7,10), (7,11),
                         (8,8), (8,9), (8,10), (8,11),
                         ]),  # 3-8
-                (   [0x1E, 0x1E, 0x1E, 0x1E, 0x20],
+                (   [0x1E, 0x1E, 0x1E, 0x20],
                     [(1, 6), (1, 8), (1, 10), (3, 5)]),  # 3-9
                 (   [0x1A for _ in range(7)],
                     [(2, 10), (4, 4), (7, 5), (6, 10), (10, 9), (12, 12), (13, 4)]),  #3-10
@@ -178,7 +178,9 @@ class objects:
                     [(1,2), (1,3), (2,3), (4,3), (4,2),
                     (1, 12), (2, 12),
                     (9,8), (10, 8),
-                    (14,2), (14,3)]),  # 3-13
+                    (14,2), (14,3),
+                    (9,8), (10, 8)  # middle duo
+                    ]),  # 3-13
                 (   [0x0, 0x1A, 0x1A, 0x1A, 0x1E, 0x1E, 0x1C, 0x1C],
                     [(7, 8),
                     (4, 3), (5, 4), (10, 8),
@@ -193,11 +195,15 @@ class objects:
                     (3, 7), (13, 6),
                     (3, 8), (5, 10), (8, 10), (10, 8)
                     ]),  # 3-16
-                (   [0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1C, 0x20],
-                    [(1, 7), (2, 9), (1, 11), (2, 12),
-                    (8, 12),
-                    (14, 9), (14, 10), (14, 11), (14, 12),
-                    (9.5, 5), (8, 11)]),  # 3-17
+                (   [0x0, 0x0, 0x0, 0x0, 
+                        0x0, 
+                        0x0, 0x0, 0x0, 0x0
+                        , 0x1C, 0x20],
+                    [(1, 7), (2, 9), (1, 11), (2, 12),  # Zig Zag barrel
+                    (8, 12),  # lone barrel bottom
+                    (14, 9), (14, 10), (14, 11), (14, 12),  # Four bottom right barrel
+                    (9.5, 5), (8, 11)  # Both Bombable blocks
+                    ]),  # 3-17
                 ([],[]),  # 3-18
                 ([],[]),  # 3-19
                 (   [0x1A, 0x1A, 0x1A, 0x1A, 0x1A],
@@ -270,7 +276,8 @@ class objects:
                     [(1, 2), (1, 3), (1, 4), (1, 5),
                     (1, 9), (1, 10), (1, 11), (1, 12),
                     (11, 2), (11, 3),
-                    (7, 11), (7, 12)]),  # 4-8
+                    (7, 11), (7, 12),
+                    (6, 11), (6, 12)]),  # 4-8
                 ([0x0 for _ in range(6)],
                 [(12, 2), (13, 2), (14, 2),
                 (12, 3), (13, 3), (14, 3)]),  # 4-9
@@ -290,7 +297,7 @@ class objects:
                     (13, 8), (2, 8)]),# 4-14
                 
                 
-                ([0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0],
+                ([0x0 for _ in range(13)],
                     [
                         (9, 12), 
                         (5, 6),(7, 6),
@@ -299,7 +306,7 @@ class objects:
                         (8, 9),
                         (11, 12), (13, 10),
                         (8, 4),
-                        (13, 3), (12, 3), (11, 3),
+                        (13, 3), (12, 3), (11, 3)
                         ]),  # 4-15
                 (   [0x0, 0x0, 0x0],
                     [(6, 9), (7, 9), (8, 9)]),  # 4-16
@@ -352,7 +359,7 @@ class objects:
                     ]),  # 0-3  ok
 
                 (   [0x0, 0x0, 0x0, 0x2, 0x2, 0x8, 0x8, 0x8,0x8],
-                    [(1.5,5),(2.5, 5),(2.5, 4),(13,11),(14,10),(6.5, 5),(7.4,5),(6.5,9),(7.5,9)]),  # 0-4  ok
+                    [(1.5,5),(2.5, 5),(2.5, 4),(13,11),(14,10),(6.5, 5),(7.5,5),(6.5,9),(7.5,9)]),  # 0-4  ok
 
                 (   [0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x1A, 0x1A, 0x18],
                     [   (3,3),(4,3),(5,3),(6,3),(7,3), 
@@ -524,7 +531,7 @@ class objects:
                         (9,5), (10,5), 
                         (13,5), (14,5)]),  # 3-3
                 (   [0x1A, 0x1E, 0x1E, 0x1C ],
-                    [(8.5, 7), (3,4), (4, 8) (12,8)]),  # 3-4  ok
+                    [(8.5, 7), (3,4), (4, 8), (12,8)]),  # 3-4  ok
                 ([],[]),  # 3-5
                 (   [0x0 for _ in range(6)],
                     [(3,8), (6.5, 5.5), (6.5, 7), (8.5, 5.5), (8.5, 7), (12,6)]),  #3-6
@@ -545,23 +552,25 @@ class objects:
                         [(2, 10), (2, 4),  # The two on the left
                             (6, 10), (7, 5), (10, 9),  # The three in the middle
                             (13, 4), (12, 12)  # The two on the right
-                        ])  # 3-10 ok
+                        ]),  # 3-10 ok
 
 
                 (   [0x1A, 0x1A],
                     [(5, 11), (12, 11)]),  # 3-11  ok
                 ([],[]),  # 3-12
                 (   [0x0 for _ in range(13)],
-                    [(1,2), (1,3), (2,3), (4,3), (4,2),
-                    (1, 12), (2, 12),
-                    (9,8), (10, 8),
-                    (14,2), (14,3)]),  # 3-13
+                    [(1,2), (1,3), (2,3), (4,3), (4,2),  # Thrower's barrel
+                    (1, 12), (2, 12),  # Our barrels on top
+                    (9,8), (10, 8),  # middle duo
+                    (14,2), (14,3),  # Top right's barrel
+                    (1, 13), (2, 13)
+                    ]),  # 3-13
 
                 (   [0x1A, 0x1A, 0x1A, 0x0, 0x1C, 0x1C, 0x1C, 0x0E, 0x1E], 
                     [(13,9), (3, 10), (5,5),
                         (7, 8),
                         (1, 8), (11, 5), (6, 4),
-                        (2, 9), (6, 8)])  # 3-14 ok
+                        (2, 9), (6, 8)]),  # 3-14 ok
 
 
                 ([],[]),  # 3-15
@@ -576,7 +585,7 @@ class objects:
                     ]),  # 3-16 ok
 
 
-                (   [0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1C, 0x20],
+                (   [0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1C],
                     [(1, 7), (2, 9), (1, 11), (2, 12),
                     (8, 12),
                     (14, 9), (14, 10), (14, 11), (14, 12),
@@ -664,11 +673,14 @@ class objects:
                     (11, 2), (14, 2),
                     (1, 12), (4, 12),
                     (11, 12), (14, 12)]),  # 4-7
-                ([0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1A, 0x1A],
-                    [(1, 2), (1, 3), (1, 4), (1, 5),
-                    (1, 9), (1, 10), (1, 11), (1, 12),
-                    (11, 2), (11, 3),
-                    (7, 11), (7, 12)]),  # 4-8
+                ([0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 
+                    0x1A, 0x1A],
+                    [(1, 2), (1, 3), (1, 4), (1, 5),  # Top left quadruo
+                    (1, 9), (1, 10), (1, 11), (1, 12),  #  Bottom left quadro
+                    (11, 2), (11, 3),  # Top right barrel
+                    (7, 11), (7, 12),  # Bottom barrels
+                    (6, 11), (6, 12)
+                    ]),  # 4-8
                 ([0x0 for _ in range(6)],
                 [(12, 2), (13, 2), (14, 2),
                 (12, 3), (13, 3), (14, 3)]),  # 4-9
@@ -678,7 +690,7 @@ class objects:
                     (13, 11), (14, 11)]),  # 4-11
                 (   [0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A],
                     [(7, 4), (10, 4), # The two on the top for max skip
-                    (4, 7), (6, 10)  # The two on the left near Jack the thrower 
+                    (4, 7), (6, 10),  # The two on the left near Jack the thrower 
                     (10, 7), (12, 12)  # The two near the flamethrower
                     ]),  # 4-12
                 ([],[]),  # 4-13
@@ -690,7 +702,7 @@ class objects:
                     ),# 4-14  ok
                 
                 
-                ([0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0],
+                ([0x0 for _ in range(13)],
                     [
                         (9, 12), 
                         (5, 6),(7, 6),
@@ -736,13 +748,23 @@ class objects:
                 ]
             ]
 
+    all_versions = [J1, US]
 
 
 
 
+    def randomize_version_all(self):
+        selected_version = random.choice(objects.all_versions)
+        help = objects.all_versions.index(selected_version)
+        nframes = [16, 16, 26, 30, 26]
 
-
-
+        for world_i in range(5):
+            for frame_i in range(nframes[world_i]):
+                print("--------------", world_i, "-", frame_i, "------------------")
+                items_id, items_xy = selected_version[world_i][frame_i]
+                print(help)
+                self.clear_frame(world_i, frame_i)
+                self.add_objects(world_i, frame_i, items_id, items_xy)
 
 
 
@@ -881,6 +903,7 @@ class objects:
 
 
     def add_objects(self, world_i, frame_i, object_ids, objects_co):
+        print(f"adding objects for {world_i} - {frame_i}")
         assert len(object_ids) == len(objects_co), "Each ID must have it coordinates"
         for one in object_ids:
             assert one in objects.ID.keys(), f"Can't use the id {one}"
@@ -901,11 +924,12 @@ class objects:
 
 
         #Pointers fix
-        self.level_pointers[level_pointer+1:] = [x + 3*len(object_ids) for x in self.level_pointers[level_pointer+1:]]
+        self.level_pointers[world_nframes[world_i] + frame_i+1:] = [x + 3*len(object_ids) for x in self.level_pointers[world_nframes[world_i] + frame_i+1:]]
 
 
 
     def clear_frame(self, world_i, frame_i):
+        print("clearing frame", world_i, "-", frame_i)
         # Works, nothing to change here.
         world_nframes = [0, 16, 32, 58, 88]
         level_pointer = self.level_pointers[world_nframes[world_i] + frame_i] - 0xCD41
@@ -913,6 +937,5 @@ class objects:
         self.table[level_pointer] = 0
         for _ in range(count * 3):
             self.table.pop(level_pointer+1)
-
         #Pointers fix
-        self.level_pointers[level_pointer+1:] = [x - 3*count for x in self.level_pointers[level_pointer+1:]]
+        self.level_pointers[world_nframes[world_i] + frame_i +1:] = [x - 3*count for x in self.level_pointers[world_nframes[world_i] + frame_i+1:]]
