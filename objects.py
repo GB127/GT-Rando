@@ -507,7 +507,7 @@ class objects:
                 ([],[])  # 2-25
                 ]
             ,
-            [  # World 3
+            [  # World 3  DONE
                 (   [0x0 for _ in range(6)],
                     [(1, 5), (2, 5), (3, 5), (12,5), (13,5), (14,5)]),  # 3-0
 
@@ -628,7 +628,7 @@ class objects:
                         ])  # 3-29
                 ]
             ,
-            [  # World 4
+            [  # World 4  DONE
                 (   [0x0 for _ in range(6)],
                     [(11, 11), (12, 11), (13, 11), (11, 12), (12, 12), (13, 12)]),  # 4-0
                 (   [0x0 for _ in range(11)],
@@ -639,16 +639,23 @@ class objects:
                         (7, 10), (8, 12),
                         (11, 2), (11, 3),
                         (13, 2), (14, 2)]),  # 4-1
-                ([0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1A, 0x1A, 0x1A],
-                    [(1, 6), (1, 7),
-                    (6, 12), (7, 12),
-                    (13, 10), (14, 10), (11, 11), (11, 12),
-                    (3, 10), (2, 11), (1, 12)]),  # 4-2
-                (   [0x1A for _ in range(7)],
-                    [(8, 4), 
-                    (5, 7), (6, 7), (8, 7),
-                    (3, 12), (7, 12),
-                    (14, 5)]),  # 4-3
+                ([0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1A, 0x1A, 0x1A, 0x1A],
+                    [(1, 6), (1, 7),  # The two barrels on the left
+                    (6, 12), (7, 12),  # The two barrels in bottom middle
+                    (13, 10), (14, 10), (11, 11), (11, 12),  # The four barrels in the bottom right
+                    (3, 10), (2, 12), (4, 12), # The three stone blocks in the bottom left square
+                    (2, 7)  # The lone stone block on the middle left
+                    ]),  # 4-2
+                (   [0x1A for _ in range(12)],
+                    [
+                        (2,2),  # The top left stone block
+                        (3, 7), (3, 8),  # The left stone block duo
+                        (5, 4), (5, 7),  # The two blocks in the middle of the duos
+                        (7, 7), (8, 7),  # The right stone block duo
+                        (7, 12),  # The lone block in the bottom
+                        (8, 4),  # The lone block up of the right dup
+                        (11, 4), (11, 7), (14, 5)  # The three blocks on the top right 
+                        ]),  # 4-3  ok
                 ([],[]),  # 4-4
                 ([0x1C],[(7, 11)]),  # 4-5
                 ([],[]),  # 4-6
@@ -665,20 +672,22 @@ class objects:
                 ([0x0 for _ in range(6)],
                 [(12, 2), (13, 2), (14, 2),
                 (12, 3), (13, 3), (14, 3)]),  # 4-9
-                ([0x1A, 0x1A],[(5, 7), (7, 5)]),  # 4-10
+                ([0x1A, 0x1A],[(4, 4), (4, 10)]),  # 4-10  ok
                 (   [0x0 for _ in range(4)],
                     [(1, 11), (2, 11), 
                     (13, 11), (14, 11)]),  # 4-11
-                (   [0x1A, 0x1A, 0x1A, 0x1A, 0x1A],
-                    [(7, 4), (10, 4), 
-                    (8, 7), 
-                    (4, 10), (7, 10)]),  # 4-12
+                (   [0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A],
+                    [(7, 4), (10, 4), # The two on the top for max skip
+                    (4, 7), (6, 10)  # The two on the left near Jack the thrower 
+                    (10, 7), (12, 12)  # The two near the flamethrower
+                    ]),  # 4-12
                 ([],[]),  # 4-13
-                (   [0x20, 0x20, 0x20, 0x20, 0x1E, 0x1E, 0x1C, 0x1C],
-                    [(4, 6), (5, 6),
-                    (10, 6), (11, 6),
-                    (7, 10),(8, 10),
-                    (13, 8), (2, 8)]),# 4-14
+
+
+                (   [0x1C for _ in range(4)],
+                    [(3, 11), (2, 11),  # The green block duo on the left
+                    (8, 11), (13, 11)]  # The other two
+                    ),# 4-14  ok
                 
                 
                 ([0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0],
@@ -706,10 +715,12 @@ class objects:
                 [(1, 3), (1, 2),
                 (6, 6), (6, 7)]),  # 4-20
                 ([],[]),  # 4-21
-                ([0x1A for _ in range(4)],
-                    [(5, 7),
-                    (7, 8), (7, 8),
-                    (10, 7)]),  # 4-22
+                ([0x1A for _ in range(5)],
+                    [(9, 4), # The top right
+                    (6, 8), (6, 9),  # The duo
+                    (9, 7),  # The bottom right
+                    (6, 6)  # The solo left
+                    ]),  # 4-22
 
                 (   [0x1A, 0x0, 0x0, 0x0,0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0],
                     [
