@@ -751,21 +751,39 @@ class objects:
     all_versions = [J1, US]
 
 
-
-
     def randomize_version_all(self):
         selected_version = random.choice(objects.all_versions)
-        help = objects.all_versions.index(selected_version)
         nframes = [16, 16, 26, 30, 26]
 
         for world_i in range(5):
             for frame_i in range(nframes[world_i]):
-                print("--------------", world_i, "-", frame_i, "------------------")
                 items_id, items_xy = selected_version[world_i][frame_i]
-                print(help)
                 self.clear_frame(world_i, frame_i)
                 self.add_objects(world_i, frame_i, items_id, items_xy)
+        self.write_data()
 
+    def randomize_version_worldbyworld(self):
+        nframes = [16, 16, 26, 30, 26]
+
+        for world_i in range(5):
+            selected_version = random.choice(objects.all_versions)
+            for frame_i in range(nframes[world_i]):
+                items_id, items_xy = selected_version[world_i][frame_i]
+                self.clear_frame(world_i, frame_i)
+                self.add_objects(world_i, frame_i, items_id, items_xy)
+        self.write_data()
+
+
+
+    def randomize_version_roombyroom(self):
+        nframes = [16, 16, 26, 30, 26]
+
+        for world_i in range(5):
+            for frame_i in range(nframes[world_i]):
+                items_id, items_xy = random.choice(objects.all_versions)[world_i][frame_i]
+                self.clear_frame(world_i, frame_i)
+                self.add_objects(world_i, frame_i, items_id, items_xy)
+        self.write_data()
 
 
 
