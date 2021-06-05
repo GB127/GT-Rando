@@ -67,7 +67,7 @@ class objects:
                     [(6,6),(9,6), (7,5),(8,5),(5,7),(5,8),(4,8),(10,7),(10,8),(11,8)]),  # World 1-0
                 (   [],
                     []), # 1-0
-                (   [0xA for _ in range(4)],
+                (   [0x1A for _ in range(4)],
                     [(3,8),(8,8),(9,8),(10,9)]),  # 1-2
                 (   [0x8 for _ in range(7)],
                     [(6,11),(8,11),(5,4),(5,5),(5,6),(10,11),(7,8)]),  # 1-3
@@ -409,7 +409,7 @@ class objects:
                 (   [],
                     []), # 1-1  ok
 
-                (   [0xA for _ in range(4)],
+                (   [0x1A for _ in range(4)],
                     [(2,9),(5, 9),(6,8),(10,10)]),  # 1-2  ok
 
                 (   [0x8 for _ in range(7)],
@@ -750,40 +750,24 @@ class objects:
 
     all_versions = [J1, US]
 
+    def randomize_version(self, all=False, world=False, room=False):
+        assert [all, world, room].count(True) == 1, "You can only use one of the options"
 
-    def randomize_version_all(self):
-        selected_version = random.choice(objects.all_versions)
-        nframes = [16, 16, 26, 30, 26]
-
-        for world_i in range(5):
-            for frame_i in range(nframes[world_i]):
-                items_id, items_xy = selected_version[world_i][frame_i]
-                self.clear_frame(world_i, frame_i)
-                self.add_objects(world_i, frame_i, items_id, items_xy)
-        self.write_data()
-
-    def randomize_version_worldbyworld(self):
-        nframes = [16, 16, 26, 30, 26]
-
-        for world_i in range(5):
+        if all:
             selected_version = random.choice(objects.all_versions)
+        nframes = [16, 16, 26, 30, 26]
+
+        for world_i in range(5):
+            if world:
+                selected_version = random.choice(objects.all_versions)
             for frame_i in range(nframes[world_i]):
+                if room:
+                    selected_version = random.choice(objects.all_versions)
                 items_id, items_xy = selected_version[world_i][frame_i]
                 self.clear_frame(world_i, frame_i)
                 self.add_objects(world_i, frame_i, items_id, items_xy)
         self.write_data()
 
-
-
-    def randomize_version_roombyroom(self):
-        nframes = [16, 16, 26, 30, 26]
-
-        for world_i in range(5):
-            for frame_i in range(nframes[world_i]):
-                items_id, items_xy = random.choice(objects.all_versions)[world_i][frame_i]
-                self.clear_frame(world_i, frame_i)
-                self.add_objects(world_i, frame_i, items_id, items_xy)
-        self.write_data()
 
 
 
@@ -921,7 +905,6 @@ class objects:
 
 
     def add_objects(self, world_i, frame_i, object_ids, objects_co):
-        print(f"adding objects for {world_i} - {frame_i}")
         assert len(object_ids) == len(objects_co), "Each ID must have it coordinates"
         for one in object_ids:
             assert one in objects.ID.keys(), f"Can't use the id {one}"
@@ -947,7 +930,6 @@ class objects:
 
 
     def clear_frame(self, world_i, frame_i):
-        print("clearing frame", world_i, "-", frame_i)
         # Works, nothing to change here.
         world_nframes = [0, 16, 32, 58, 88]
         level_pointer = self.level_pointers[world_nframes[world_i] + frame_i] - 0xCD41
