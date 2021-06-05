@@ -29,11 +29,13 @@ def flag_string(options):
         flags += "i"
     if options.Ritems:
         flags += "I"
-    #if options.Ralert:
-    #    flags += "a"
-    #if options.Rveryalert:
-    #    flags += "A"
 
+    if options.Vall:
+        flags += "V"
+    elif options.Vroom:
+        flags += "v"
+    elif options.Vworld:
+        flags += "Y"
     return flags
 
 def generateFile(options, filename):
@@ -46,6 +48,7 @@ def generateFile(options, filename):
         if options.Wselect:
             randogame.activateWorldSelection()
 
+        # Slippery section
         if options.Ricy:
             randogame.iceRandomizer()
         if options.Rveryicy:
@@ -58,6 +61,7 @@ def generateFile(options, filename):
         if options.noicy:
             randogame.no_icy()
 
+        # Dark section
         if options.Rdark:
             randogame.darkRandomizer()
         if options.Rverydark:
@@ -70,12 +74,16 @@ def generateFile(options, filename):
         if options.nodark:
             randogame.no_dark()
 
+        # Version section:
+        if any([options.Vall, options.Vroom, options.Vworld]):
+            randogame.all_objects.randomize_version(options.Vall, options.Vworld, options.Vroom)
+
+        #startTime = datetime.now()
+
+        # Exits + Items randomizers
         # Fix for 2P mode.
         if not options.Rexits_matchdir:
             randogame.fix_misdirection()
-
-        #startTime = datetime.now()
-        # Actual randomizer
         if options.Rfirst or options.Rexits or options.Ritems_pos or options.Ritems:
             if options.Rfirst: randogame.modify_data_starting_frame()  # Changement du code pour permettre une randomization du first frame.
             try:
@@ -92,7 +100,9 @@ def generateFile(options, filename):
         
         # Flavor randomizers : Doesn't change the gameplay at all, but are cool stuffs notheless!
         randogame.credits_frames_randomizer()
-        randogame.randomize_grabables()
+
+        if not options.graboff:
+            randogame.randomize_grabables()
         randogame.checksum(options.Adark, options.Aicy, options.ohko)
 
 

@@ -5,16 +5,19 @@ def getoptions():
 
     parser = argparse.ArgumentParser(description="Goof Troop Randomizer, Version 2.3", epilog="Written by Guylain Breton & Charles Matte-Breton")
 
-    """
-    # Alert rooms
-        # Logic : big A => May be higher than X, thus capital letter
-    parser.add_argument("-a", "--alert", action="store_true",
-    help="Randomize which rooms enemies auto-chase you", dest="Ralert")
-    parser.add_argument("-A", "--Valert", action="store_true",
-    help="Randomize which rooms enemies auto-chase you, random & higher count than vanilla", dest="Rveryalert")
-    parser.add_argument("--allalert", action="store_true",
-    help="Enemies will always chase you in all rooms", dest="Aalert")
-    """
+
+    # Versions
+        # V for Whole game
+        # v for all rooms seperately
+        # Y for per world
+    # NOTE : There are four total versions : US, J1, J2 and J3
+    parser.add_argument("-V", "--Vall", action="store_true",
+    help="Randomize which Version will be used for the whole game", dest="Vall")
+    parser.add_argument("-Y", "--Vworld", action="store_true",
+    help="Randomize which version will be used, world by world", dest="Vworld")
+    parser.add_argument("-v", "--Vroom", action="store_true",
+    help="Randomize which version will be used, room by room", dest="Vroom")
+
 
 
 
@@ -25,8 +28,6 @@ def getoptions():
     parser.add_argument("-D", "--Vdark", action="store_true",
     help="Randomize which rooms are dark, random & higher count than vanilla", dest="Rverydark")
 
-
-
     # Icy rooms
         # Logic : S for slippery
         # Logic : big S => May be higher than 2, thus capital letter
@@ -35,7 +36,6 @@ def getoptions():
 
     parser.add_argument("-S", "--Vicy", action="store_true",
     help="Randomize which rooms are icy,random & higher count than vanilla", dest="Rveryicy")
-
 
     # First frame randomizer
     parser.add_argument("-f", "--first", action="store_true",
@@ -81,6 +81,10 @@ def getoptions():
     # Password cheat
     parser.add_argument("--worldselect", action="store_true",
     help="Allows to select the world of your choice with a banana...", dest="Wselect")
+
+    # Disable the grabables randomizer
+    parser.add_argument("--graboff", action="store_true",
+    help="Disable the randomization of all the grabable items sprites.", dest="graboff")
 
     # Seed
     parser.add_argument("--seed", action="store", help="Seed for the randomization",
