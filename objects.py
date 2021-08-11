@@ -4,26 +4,24 @@ from copy import deepcopy
 class objects:
     grabable = [x for x in range(0, 0x1A, 2)]
     kickable = [x for x in range(0x1A, 0x22, 2)]
-    ID = {
-        0x0 : "Baril",
-        0x2 : "Amphore",
-        0x4 : "Egg",
-        0x6 : "Sign",
-        0x8 : "Plant",
-        0xA : "Bomb",
-        0xC : "Log",
-        0xE : "2 logs",
-        0x10 : "Icy thing?",
-        0x12 : "coquillage",
-        0x14 : "Trash can?",
-        0x16 : "Gray Rock",
-        0x18 : "Vanilla rock",
-        0x1A : "Star block",
-        0x1C : "Greeen bombable stone",
-        0x1E : "Orange bombable stone",
-        0x20 : "Red bombable stone"
-        }        #NOTE : Didn't try higher than 0x50
 
+    Baril = 0
+    Amphore = 0x2
+    Egg = 0x4
+    Egg = 0x6
+    Plant = 0x8
+    Bomb = 0xA
+    Log = 0xC
+    Logs_2 = 0xE
+    Ice_block = 0x10
+    Coqui = 0x12
+    Trash_can = 0x14
+    Gray_rock = 0x16
+    Van_rock = 0x18
+    Star_block = 0x1A
+    Green_block = 0x1C
+    Orange_block = 0x1E
+    Red_block = 0x20
 
     J1 = [
             [  # World 0
@@ -340,7 +338,6 @@ class objects:
                 ([],[])  # 4-25
                 ]
             ]
-
 
     US = [
             [  # World 0   DONE
@@ -755,6 +752,7 @@ class objects:
 
         if all:
             selected_version = random.choice(objects.all_versions)
+        print("Selected version: ", objects.all_versions.index(selected_version))
         nframes = [16, 16, 26, 30, 26]
 
         for world_i in range(5):

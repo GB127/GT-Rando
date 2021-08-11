@@ -60,7 +60,7 @@ class debug(GT):
 
         self.freespace += [offset for offset in range(0x72A9, 0x72D6)]
         self.used = []
-        
+
 
 
 
@@ -360,47 +360,6 @@ def getoptions_debug():
     return options
 
 
-
-
-
-    """
-    JSR AntiPiracy      ;808024 ;Prevent SRAM to be used, if SRAM size != 0 loop forever
-    ;80F2A9 / 0072A9
-    AntiPiracy:
-    {
-    LDA #$70            ;80F2A9     
-    PHA                 ;80F2AB     
-    PLB                 ;80F2AC     ;Pull bank (#$70)
-    REP #$10            ;80F2AD     ;XY is now 16bit
-    LDX #$7F00          ;80F2AF     ;707F00
-    .loopZero
-    LDA #$00            ;80F2B2
-    .loop    
-    STA $0000,X         ;80F2B4     ;$707F00
-    CMP $0000,X         ;80F2B7     
-    BNE .return         ;80F2BA      
-    CLC                 ;80F2BC     
-    ADC #$11            ;80F2BD     ;ADD #$11
-    BNE .loop           ;80F2BF     
-    REP #$21            ;80F2C1     A in 16bit, set Carry
-    TXA                 ;80F2C3     
-    ADC #$FF00          ;80F2C4     ADD #$FF00
-    TAX                 ;80F2C7     
-    SEP #$20            ;80F2C8     A in 8bit
-    BPL .loopZero       ;80F2CA     
-    LDA #$80            ;80F2CC     
-    STA $2100           ;80F2CE     Set Force Blank
-    BRA $80F2D1         ;80F2D1   
-    .return             
-    SEP #$30            ;80F2D3     
-    RTS                 ;80F2D5     
-    }"""
-
-
-
-
-
-
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as original:
         startTime = datetime.now()
@@ -412,13 +371,11 @@ if __name__ == "__main__":
         game.do_all_modify()
         game.no_dark()
 
+        debugging = game.all_objects
+        #debugging.print_world(3,13)
+        debugging.randomize_version(all=True)
 
-        test = objects(game.data)
-
-        test.randomize_grabables()
-        test.add_objects(0,0,[3], [(3,5)])
-        test.save()
-
+        debug.disable_heart_loss()
         with open("debug.smc", "wb") as newgame:
             print("Time taken to edit files : ", datetime.now() - startTime)
             print(f"Testing case have been created! {datetime.now()}")
