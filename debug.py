@@ -375,7 +375,7 @@ if __name__ == "__main__":
         #debugging.print_world(3,13)
         debugging.randomize_version(all=True)
 
-        debug.disable_heart_loss()
+        game.disable_heart_loss()
         with open("debug.smc", "wb") as newgame:
             print("Time taken to edit files : ", datetime.now() - startTime)
             print(f"Testing case have been created! {datetime.now()}")
