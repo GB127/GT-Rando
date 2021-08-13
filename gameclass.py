@@ -2,6 +2,9 @@ from patch import *
 from world import *
 
 
+
+
+
 def get_world_indexs(world=None):
     if world:
         assert 0 <= world <= 4, "World must be 0, 1, 2, 3 or 4"
@@ -69,8 +72,6 @@ class GT(ROM):
 
         # Cast rom_data to array of c_ubyte to pass to the DLL (don't copy)
         bytes = (c_ubyte * len(rom_data)).from_buffer(rom_data)
-
-
         # Unused regions of the original ROM the DLL can use to put data and code into
         holes_list = [
             # unused
@@ -97,13 +98,27 @@ class GT(ROM):
             s_rom_hole( 0x14538,  0x7FA ), # addr [$82C538, $82CD32)
             # class 1 & 2 sprite data
             s_rom_hole(  0x6760,  0xB49 )] # addr [$80E760, $80F2A9)
-
         num_holes = len(holes_list)
         # Cast holes_list to array of s_rom_hole to pass to the DLL (don't copy)
         holes = (s_rom_hole * num_holes)(*holes_list)
-
         # Return 1 on success, 0 on error
         self.data = lib.commence(num_banks, pointer(bytes), num_holes, pointer(holes))
+        print(self.data)
+
+    def __str__(self):
+        """
+        screen 52 has flags 2
+        screen 63 has flags 1
+        screen 64 has flags 1
+        screen 65 has flags 2
+        screen 78 has flags 2
+        screen 103 has flags 2
+        screen 105 has flags 2
+        """
+        return "|".join(str(self.data.contents.game.screens[x].flags) for x in get_world_indexs())
+
+
+
 
     def arrow_platform_bidirect(self):
         self.rewrite(0xDD62, [0x22, 0x33,0xFF,0x81])
@@ -288,3 +303,4 @@ class GT(ROM):
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as game:
         test = GT(game.read())
+        print(test)
