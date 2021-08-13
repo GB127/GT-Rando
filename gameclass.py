@@ -1,6 +1,12 @@
 from patch import *
 from world import *
 
+def get_world_indexs(world):
+    assert 0 <= world <= 4, "World must be 0, 1, 2, 3 or 4"
+    id_per_world =   [0, 16, 32, 58, 88, 114]
+    return range(id_per_world[world], id_per_world[world+1])
+
+
 def room_to_index(tup=None, id=None):
         all_nFrames = [16, 16, 26, 30, 26]
 
