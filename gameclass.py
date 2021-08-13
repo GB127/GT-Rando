@@ -217,24 +217,6 @@ class GT(ROM):
         for no in range(count):
             self[offsets[no]] |= 2
 
-    def alert_Randomizer(self, count=10):
-        # Not used currently.
-        """Randomize which rooms are alert up to the count given.
-            """
-        for offset in range(0x1FF35, 0x1FFA7):  # Remove all alert rooms
-            self[offset] = self[offset] & 3
-        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
-
-        for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
-            offsets.remove(self.get_darkice_index(world, boss_frame))
-        random.shuffle(offsets)
-        for no in range(count):
-            self[offsets[no]] |= 4
-
-    def allAlert(self):
-        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
-        for offset in offsets: self[offset] |= 4
-
 
     def checksum(self, alldark=False, allice=False, ohko=False):
         """Add some infos on the title screen : checksum for validating races seeds.
