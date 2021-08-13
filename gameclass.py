@@ -8,15 +8,13 @@ def get_world_indexs(world):
 
 
 def room_to_index(tup=None, id=None):
-        all_nFrames = [16, 16, 26, 30, 26]
-
-        id_per_world =   [0, 15, 31, 57, 88]
+        id_per_world =   [0, 16, 32, 58, 88]
         if tup:
             return id_per_world[tup[0]] + tup[1]
         if id:
             for world, borne in enumerate(id_per_world[-1::-1]):
-                if id > borne:
-                    return (4 - world, id - borne - 1)
+                if id >= borne:
+                    return (4 - world, id - borne)
         if id == 0:
             return (0,0)
 
