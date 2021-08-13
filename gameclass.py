@@ -1,8 +1,6 @@
+from patch import *
 from world import *
-from objects import objects
 
-class RandomizerError(BaseException):
-    pass
 
 class ROM:
     header = bytearray(
@@ -36,38 +34,55 @@ class ROM:
         for no, byte in enumerate(iterable_rewrite):
             self.data[start + no] = byte
 
-
     def __getitem__(self,offset):
         return self.data[offset]
     def __setitem__(self,offset, value):
         self.data[offset] = value
 
 class GT(ROM):
-    def __init__(self,data, seed):
+    def __init__(self, data):
         super().__init__(data)  # Header removal
-        self.modify_data_ice_dark_alert()  # Changement du code en prévision du randomizer pour pouvoir changer le nombre.
-        self.modify_objects_data()
-        self.removeExitFromData(3,1,0)  # Enlever exit inutilisé
-        self.removeExitFromData(1,15,0) # Enlever exit inutilisé
-        self.removeExitFromData(1,13,1) # Enlever exit inutilisé
-        self.arrow_platform_bidirect()
-        self.seed = seed
-        self.add_credits()  # Ajout credits
+        file_size = len(self.data)
+        num_bytes = file_size
+        num_banks = int(num_bytes / 32768)
 
-        self.setmulti(0x72A9, 0x72D5, 0xEA)  # Free space from piracy check
+        # Cast rom_data to array of c_ubyte to pass to the DLL (don't copy)
+        bytes = (c_ubyte * len(rom_data)).from_buffer(rom_data)
 
 
-        self.setmulti(0x0131DF, 0x131E0, 0xEA)  # Disable the counter so you never see demo
-            # I did this because if we happen to have a dark room in demo, the screens will be glitchy
+        # Unused regions of the original ROM the DLL can use to put data and code into
+        holes_list = [
+            # unused
+            s_rom_hole(  0x7380,  0xC20 ),
+            s_rom_hole(  0xFF40,   0xB0 ),
+            s_rom_hole( 0x14D50, 0x10A0 ),
+            s_rom_hole( 0x1FAF0,  0x500 ),
+            s_rom_hole( 0x2A7A0, 0x1850 ),
+            s_rom_hole( 0x47E10,  0x1E0 ),
+            s_rom_hole( 0x4FD60,  0x290 ),
+            s_rom_hole( 0x5E250,  0x5A0 ),
+            s_rom_hole( 0x5FBF0,  0x200 ),
+            s_rom_hole( 0x7B5D0, 0x1E20 ),
+            s_rom_hole( 0x7FB30,  0x2C0 ),
+            # gtiles, ctiles & exits
+            s_rom_hole( 0x18CE7, 0x00E9 ), # addr [$838CE7, $838DD0)
+            s_rom_hole( 0x1F303, 0x06BF ), # addr [$83F303, $83F9C2)
+            s_rom_hole( 0x48000, 0x5280 ), # addr [$898000, $89D280)
+            s_rom_hole( 0x4F100, 0x0C48 ), # addr [$89F100, $89FD48)
+            s_rom_hole( 0x50000, 0x3F70 ), # addr [$8A8000, $8ABF70)
+            s_rom_hole( 0x54000, 0x1FB8 ), # addr [$8AC000, $8ADFB8)
+            s_rom_hole( 0x58000, 0x6240 ), # addr [$8B8000, $8BE240)
+            # itile data
+            s_rom_hole( 0x14538,  0x7FA ), # addr [$82C538, $82CD32)
+            # class 1 & 2 sprite data
+            s_rom_hole(  0x6760,  0xB49 )] # addr [$80E760, $80F2A9)
 
+        num_holes = len(holes_list)
+        # Cast holes_list to array of s_rom_hole to pass to the DLL (don't copy)
+        holes = (s_rom_hole * num_holes)(*holes_list)
 
-        # Création des différents world pour permettre leur randomization isolé.
-        self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
-        self.all_objects = objects(self.data)
-
-
-    def randomize_grabables(self):
-        self.all_objects.randomize_grabables()
+        # Return 1 on success, 0 on error
+        self.data = lib.commence(num_banks, pointer(bytes), num_holes, pointer(holes))
 
     def arrow_platform_bidirect(self):
         self.rewrite(0xDD62, [0x22, 0x33,0xFF,0x81])
@@ -76,147 +91,6 @@ class GT(ROM):
                                 0xA9, 0xA8, 0x8D, 0x61, 0x02, 0xA9,
                                 0x48, 0x8D, 0x64, 0x02, 0xA9, 0x02,
                                 0x85, 0x02, 0x6B])
-
-
-    def removeExitFromData(self, world_i, frame_i, index):
-        """Remove a specific exit from a said world-frame. 
-                index (int): which exit
-           """
-        offsets, values = [], []
-        base = self[0x01F303 + world_i]
-
-        count_offset = 0x10000 + self[0x1F303 + base + 2*frame_i + 1] * 16 * 16 + self[0x1F303 + base + 2*frame_i]
-        vanilla_count = self[count_offset]
-
-        # Preparation for removal
-        for i in range(vanilla_count):
-            offsets.append(list(count_offset + x + 6 * i + 1 for x in range(6)))
-            values.append([self[count_offset + x + 6 * i + 1] for x in range(6)])
-
-        # Actual removal of exit
-        if index == vanilla_count -1:  # On pourra ptet enlever les clauses de if/else.
-            pass  # Pcq c'était déjà le dernier de la liste.
-        else:  # On décale les valeurs.
-            for i in range(index, vanilla_count-1):
-                for no, offset in enumerate(offsets[i]):
-                    self[offset] = values[i+1][no]
-        self[count_offset] -=1
-
-    def modify_objects_data(self):
-        # Moving the entire table
-        values = []
-        for offset in range(0x14621,0x14D32):
-            values.append(self[offset])
-        self.rewrite(0x14D41, values)
-
-        # Fixing the pointers:
-        for offset in range(0x01453D, 0x014621, 2):
-            try:
-                self[offset] += 0x20
-                self[offset+1] += 0x7
-            except ValueError:
-                self[offset] += 0x20 - 256
-                self[offset+1] += 0x8
-
-    def fix_misdirection(self):
-        # For 2P mode if directions aren't paired.
-        self.setmulti(0x27F2, 0x27F4, 0xEA)
-        self.setmulti(0x27FF, 0x2801, 0xEA)
-
-    def modify_data_ice_dark_alert(self):
-        """Change old code to new code to be more flexible."""
-        self.rewrite(0x28CC,
-            [0x64, 0xCA, 0xA6, 0xB6, 0xA5, 0xB7, 0x18,
-             0x7F, 0x30, 0xFF, 0x83, 0xAA, 0xBF, 0x30,
-             0xFF, 0x83, 0x29, 0x01, 0xF0, 0x02, 0xE6,
-             0xCA, 0x60])
-        # I believe this was before the alert mode. I want to revert this.
-        """
-        self.rewrite(0x280E,
-            [0xBF, 0x30, 0xFF, 0x83, 0x29, 0x02, 0xD0,
-             0x2822-0x2815])
-        self.rewrite(0x2816,
-                [0xBF, 0x30, 0xFF, 0x83, 0x29, 0x04, 0xF0, 0x2820-0x281D, 0x8D, 0x4F, 0x1A])
-        """
-        self.rewrite(0x280E,
-                [0xBF, 0x30, 0xFF, 0x83, 0x29, 0x04, 0xF0, 0x2818-0x2815, 0x8D, 0x4F, 0x1A])
-        self.rewrite(0x2819,
-            [0xBF, 0x30, 0xFF, 0x83, 0x29, 0x02, 0xD0,
-             0x2822-0x2820])
-
-
-
-        # Building the empty table.
-        self.rewrite(0x1FF30, [0+5, 16+5, 32+5, 58+5, 88+5]) # Data offsets for Ice and Dark rooms
-        self.setmulti(0x1FF35, 0x1FFA6, 0x0)  # Data table for Ice and Dark.
-
-        # Vanilla values replacement
-        for couple in [(2,4),(2,20),(3,7),(3,20),(4,15),(4,17)]:  # Dark rooms vanilla
-            self[self.get_darkice_index(couple[0], couple[1])] += 2
-        for couple in [(3,5),(3,6)]:  # Ice room vanilla
-            self[self.get_darkice_index(couple[0], couple[1])] += 1
-
-
-    def modify_data_starting_frame(self):
-        """Change the code to allow randomization of first frame.
-            """
-        self.rewrite(0x1F95, [0x20, 0x81, 0xF3, 0xEA])
-
-        self.rewrite(0x7381, 
-            [0xA6, 0xB6, 0xBD, 0xA7, 0xFF, 0x85, 0xB7, 
-            0x8A, 0x0A, 0xAA,  # ASL B7 for access to table
-            0xBD, 0xAC, 0xFF,  # LDA X
-            0x8D, 0x4C, 0x01,  # X P1?
-            0x8D, 0xCC, 0x01,  # X P2?
-            0xBD, 0xAD, 0xFF,  # LDA X
-            0x8D, 0x4D, 0x01,  # X P1?
-            0x8D, 0xCD, 0x01,  # X P2?
-            0x64, 0xA8, 0x60])
-
-        # Building the data table:
-        self.setmulti(0x1FFA7, 0x1FFAB, 0)
-
-        self.setmulti(0x1FFAC,0x1FFAC + 9, 0)
-            # X0, Y0, X1 , Y1 , X2, Y2, X3, Y3, X4, Y4
-
-        # Jump for when we beat a boss
-        self.rewrite(0x23E2,
-            [0x20, 0xA0, 0xF3, 0xEA])
-
-        # When we beat a boss
-        self.rewrite(0x73A0,  # FIXME : Decaler correctement
-            [0xE6, 0xB6, 0xA6, 0xB6,0xBD, 0xA7,
-             0xFF, 0x85, 0xB7, 0x60])
-
-
-    def no_dark(self):
-        for offset in range(0x1FF35, 0x1FFA7):  # Remove all dark rooms
-            self[offset] = self[offset] & 1
-
-    def no_icy(self):
-        for offset in range(0x1FF35, 0x1FFA7):  # Remove all ice rooms
-            self[offset] = self[offset] & 2
-
-
-
-    def darkRandomizer(self, count=6):
-        """Randomize which rooms are dark up to the count given (Defaults to vanilla value (6)).
-            """
-        for offset in range(0x1FF35, 0x1FFA7):  # Remove all dark rooms
-            self[offset] = self[offset] & 5
-        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
-
-        for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
-            offsets.remove(self.get_darkice_index(world, boss_frame))
-        offsets.remove(self.get_darkice_index(3,11))  # Cave bell room
-        # offsets.remove(self.get_darkice_index(4,19))
-        offsets.remove(self.get_darkice_index(4,8))  # That one platform room hulk got
-        # offsets.remove(self.get_darkice_index(4,6))
-
-        random.shuffle(offsets)
-        for no in range(count):
-            self[offsets[no]] |= 2
-
 
     def checksum(self, alldark=False, allice=False, ohko=False):
         """Add some infos on the title screen : checksum for validating races seeds.
@@ -253,7 +127,6 @@ class GT(ROM):
             0xE6, 0x14,  # INC $14 ;Restore Code overwritten by the hook
             0x6B  # RTL
             ])
-
 
 
     def ohko(self):
@@ -295,125 +168,6 @@ class GT(ROM):
             self[credits_cs_offsets(cs)[0]] = random.randint(0,4)
             self[credits_cs_offsets(cs)[1]] = random.randint(0,[15, 15, 25, 29, 25][self[credits_cs_offsets(cs)[0]]])
 
-
-
-    def allDark(self, sanity=True):
-        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
-        
-        for world, boss_frame in enumerate([14, 15, 25, 25, 25]):
-            offsets.remove(self.get_darkice_index(world, boss_frame))
-
-        for offset in offsets: self[offset] |= 2
-
-    def allIcy(self):
-        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
-
-        for offset in offsets: self[offset] |= 1
-
-
-    def activateWorldSelection(self):
-        """Put a banana on the box of the world you want to go.
-            Cherry for all the rest of the boxes
-            Example : Banana on the 3rd box = World 2 (3rd world of the game)
-            """
-        self.setmulti(0x1C67F, 0x1C692, 0x0)
-        self[0x1c680] = 0x1
-        self[0x1c686] = 0x1
-        self[0x1c68c] = 0x1
-        self[0x1c692] = 0x1
-
-    def iceRandomizer(self, count=2):
-        """Randomize which rooms are icy up to the count given (Defaults to vanilla value (2)).
-            """
-        for offset in range(0x1FF35, 0x1FFA7):  # Remove all ice rooms
-            self[offset] = self[offset] & 6
-        offsets = [offset for offset in range(0x1FF35, 0x1FFA7)]
-        random.shuffle(offsets)
-        for no in range(count):
-            self[offsets[no]] |= 1
-
-    def get_darkice_index(self, world_i,frame_i):
-        """Formula to get the indice.
-            """
-        offsets = [0, 16, 32, 58, 88]
-        return offsets[world_i] + frame_i + 0x1FF35
-
-    def add_credits(self):
-        """This function will add the credits of the contributors of this project.
-            """
-
-        def add_credits_line(self, text,*, center=True, color=0, underlined=False, spacing=0xD):
-            """ This function will add a single line to the credits of the game.
-                """
-
-            assert len(text) <= 32, f"Text line too long ({len(text)}). Must be < 32"
-            assert color <= int("1111", base=2), "0 < Color < 0" # FIXME : I tried to check if color < 0, but couldn't make it work.
-
-            credits_range = self[0x5F99E: 0x5FDFF +1]
-            offset = credits_range.index(0xFF) + 0x5F99E
-                # 0xFF will call the "THE END sprites if it's at "nombre de return"
-                # In other words, this will fetch the end of the current credits.
-            stats = self[offset: offset +20]
-                # After the credits, the total time is there. I need to keep them, so I created
-                # a new variable.
-
-            self[offset] = spacing  # Nb de returns (vertical spacing)
-            offset += 1
-            self[offset] = 16 - len(text) // 2 if center else 1 # Horizontal Alignement
-            offset += 1
-            self[offset] = len(text)  # nombre de lettres
-            offset += 1
-            self[offset] = color * 4
-                    # bit 0 displayed the text weirdly (jap?)
-                    # bit 1 displayed nothing => If set, always display nothing?
-                    # bit 2 - 5 : Color stuffs
-                    # byte 6-7 : Mirrors stuffs
-
-            for letter in text:  # Writing the string
-                offset += 1
-                self[offset] = ord(letter.upper())
-            for value in stats:
-                offset += 1
-                assert offset <= 0x5FDFF, "Too much text added"  # This is the check to make sure we don't pass the allowed range.
-                self[offset] = value
-            if underlined:
-                string = "¨" * len(text)
-                add_credits_line(self, string ,center=center, color=color, spacing=0x1)
-
-        add_credits_line(self, "Goof Troop randomizer", underlined=True, color=4, spacing=16)
-        add_credits_line(self, "Version 2.3", spacing=1)
-        add_credits_line(self, f"Seed : {self.seed}", spacing=1)
-        add_credits_line(self, "Developers", underlined=True, color=4)
-        add_credits_line(self, "Data structure & management", underlined=True, color=3, spacing = 0x4)
-        add_credits_line(self, "Guylain Breton - Niamek", spacing=1)
-        add_credits_line(self, "Randomization logic & code", underlined=True, color=2, spacing=0x4)
-        add_credits_line(self, "Charles Matte-Breton", spacing=1)
-        add_credits_line(self, "Special thanks", underlined=True, color=3)
-        add_credits_line(self, "PsychoManiac", spacing=2)
-        add_credits_line(self, "Zarby89", spacing=2)
-
-    def getter_passwords(self,world=None):
-        """Return the offsets of all passwords
-            """
-        if world == None:
-            return list(range(0x1C67F, 0x1C693))
-        return [x for x in range(0x1C67F + 5*(world -1), 0x1C684 + 5*(world-1))]
-
-    def passwordRandomizer(self):
-        """Password randomizer"""
-        password = [0x0, 0x1, 0x2, 0x3]
-
-        check = False
-        while check is False:
-            # Actual randomization of the password
-            for i in self.getter_passwords():
-                self[i] = random.choice(password)
-
-            # Let's check if two passwords are identical  
-            Worlds_passwords = []
-            for world in range(1,5):
-                Worlds_passwords.append(list(self.data[offset] for offset in self.getter_passwords(world)))
-            check = all([1 == Worlds_passwords.count(x) for x in Worlds_passwords])
 
     def randomizerWithVerification(self, options):
 
@@ -508,3 +262,8 @@ class GT(ROM):
                     print(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")
                     raise RandomizerError(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")  # print world number as 1-indexed for readability
 
+
+
+if __name__ == "__main__":
+    with open("Vanilla.smc", "rb") as game:
+        test = GT(game.read())
