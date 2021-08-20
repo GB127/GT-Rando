@@ -1,30 +1,6 @@
 from patch import *
-from world import *
-
-
-
-
-
-def get_world_indexs(world=None):
-    if world:
-        assert 0 <= world <= 4, "World must be 0, 1, 2, 3 or 4"
-        id_per_world =   [0, 16, 32, 58, 88, 114]
-        return range(id_per_world[world], id_per_world[world+1])
-    else:
-        return range(114)
-
-
-def room_to_index(tup=None, id=None):
-        id_per_world =   [0, 16, 32, 58, 88]
-        if tup:
-            return id_per_world[tup[0]] + tup[1]
-        if id:
-            for world, borne in enumerate(id_per_world[-1::-1]):
-                if id >= borne:
-                    return (4 - world, id - borne)
-        if id == 0:
-            return (0,0)
-
+from objects import Version, Grabbables
+from generic import world_indexes, room_to_index, RandomizerError
 
 class ROM:
     header = bytearray(
@@ -46,7 +22,7 @@ class ROM:
         elif len(data) % 1024 == 0:
             self.data = bytearray(data)
         else:
-            raise BaseException("Your game seems to be corrupted")
+            raise RandomizerError("Your game seems to be corrupted")
         for n,i in enumerate(self.data[0x7FC0:0x7FFF]):
             assert i == self.header[n]
 
@@ -65,59 +41,67 @@ class ROM:
 
 class GT(ROM):
     def __init__(self, data):
-        super().__init__(data)  # Header removal
-        file_size = len(self.data)
-        num_bytes = file_size
-        num_banks = int(num_bytes / 32768)
+        super().__init__(data)  # Will be gone eventually
+        # Unused regions of the original ROM the DLL can use to put data and code into
+        holes_list = [  # All the free space we have TODO : Compare with my findings
+                # unused
+                s_rom_hole(  0x7380,  0xC20 ),
+                s_rom_hole(  0xFF40,   0xB0 ),
+                s_rom_hole( 0x14D50, 0x10A0 ),
+                s_rom_hole( 0x1FAF0,  0x500 ),
+                s_rom_hole( 0x2A7A0, 0x1850 ),
+                s_rom_hole( 0x47E10,  0x1E0 ),
+                s_rom_hole( 0x4FD60,  0x290 ),
+                s_rom_hole( 0x5E250,  0x5A0 ),
+                s_rom_hole( 0x5FBF0,  0x200 ),
+                s_rom_hole( 0x7B5D0, 0x1E20 ),
+                s_rom_hole( 0x7FB30,  0x2C0 ),
+                # gtiles, ctiles & exits
+                s_rom_hole( 0x18CE7, 0x00E9 ), # addr [$838CE7, $838DD0)
+                s_rom_hole( 0x1F303, 0x06BF ), # addr [$83F303, $83F9C2)
+                s_rom_hole( 0x48000, 0x5280 ), # addr [$898000, $89D280)
+                s_rom_hole( 0x4F100, 0x0C48 ), # addr [$89F100, $89FD48)
+                s_rom_hole( 0x50000, 0x3F70 ), # addr [$8A8000, $8ABF70)
+                s_rom_hole( 0x54000, 0x1FB8 ), # addr [$8AC000, $8ADFB8)
+                s_rom_hole( 0x58000, 0x6240 ), # addr [$8B8000, $8BE240)
+                # itile data
+                s_rom_hole( 0x14538,  0x7FA ), # addr [$82C538, $82CD32)
+                # class 1 & 2 sprite data
+                s_rom_hole(  0x6760,  0xB49 )] # addr [$80E760, $80F2A9)
 
         # Cast rom_data to array of c_ubyte to pass to the DLL (don't copy)
-        bytes = (c_ubyte * len(rom_data)).from_buffer(rom_data)
-        # Unused regions of the original ROM the DLL can use to put data and code into
-        holes_list = [
-            # unused
-            s_rom_hole(  0x7380,  0xC20 ),
-            s_rom_hole(  0xFF40,   0xB0 ),
-            s_rom_hole( 0x14D50, 0x10A0 ),
-            s_rom_hole( 0x1FAF0,  0x500 ),
-            s_rom_hole( 0x2A7A0, 0x1850 ),
-            s_rom_hole( 0x47E10,  0x1E0 ),
-            s_rom_hole( 0x4FD60,  0x290 ),
-            s_rom_hole( 0x5E250,  0x5A0 ),
-            s_rom_hole( 0x5FBF0,  0x200 ),
-            s_rom_hole( 0x7B5D0, 0x1E20 ),
-            s_rom_hole( 0x7FB30,  0x2C0 ),
-            # gtiles, ctiles & exits
-            s_rom_hole( 0x18CE7, 0x00E9 ), # addr [$838CE7, $838DD0)
-            s_rom_hole( 0x1F303, 0x06BF ), # addr [$83F303, $83F9C2)
-            s_rom_hole( 0x48000, 0x5280 ), # addr [$898000, $89D280)
-            s_rom_hole( 0x4F100, 0x0C48 ), # addr [$89F100, $89FD48)
-            s_rom_hole( 0x50000, 0x3F70 ), # addr [$8A8000, $8ABF70)
-            s_rom_hole( 0x54000, 0x1FB8 ), # addr [$8AC000, $8ADFB8)
-            s_rom_hole( 0x58000, 0x6240 ), # addr [$8B8000, $8BE240)
-            # itile data
-            s_rom_hole( 0x14538,  0x7FA ), # addr [$82C538, $82CD32)
-            # class 1 & 2 sprite data
-            s_rom_hole(  0x6760,  0xB49 )] # addr [$80E760, $80F2A9)
-        num_holes = len(holes_list)
-        # Cast holes_list to array of s_rom_hole to pass to the DLL (don't copy)
-        holes = (s_rom_hole * num_holes)(*holes_list)
-        # Return 1 on success, 0 on error
-        self.data = lib.commence(num_banks, pointer(bytes), num_holes, pointer(holes))
-        print(self.data)
+        bytes = (c_ubyte * len(self.data)).from_buffer(self.data)
+
+
+        num_banks = int(len(self.data) / 0x80000)
+        holes = (s_rom_hole * len(holes_list))(*holes_list)
+
+        # This is our big game data.
+        self.data_complete = lib.commence(num_banks, pointer(bytes), len(holes_list), pointer(holes))
+
+        # This is the workable data
+        self.data = self.data_complete.contents.game
+
+        self.Version = Version(self.data)
+        self.Grabbables = Grabbables(self.data)
+
+
 
     def __str__(self):
-        """
-        screen 52 has flags 2
-        screen 63 has flags 1
-        screen 64 has flags 1
-        screen 65 has flags 2
-        screen 78 has flags 2
-        screen 103 has flags 2
-        screen 105 has flags 2
-        """
-        return "|".join(str(self.data.contents.game.screens[x].flags) for x in get_world_indexs())
-
-
+        def get_dark_rooms():
+            dark_rooms = []
+            for id in world_indexes():
+                if self.data.screens[id].flags & 2:
+                    dark_rooms.append(str(room_to_index(id=id)))
+            return f'{len(dark_rooms)} Dark Rooms: ' + " ".join(dark_rooms)
+        def get_ice_rooms():
+            ice_rooms = []
+            for id in world_indexes():
+                if self.data.screens[id].flags & 1:
+                    ice_rooms.append(str(room_to_index(id=id)))
+            return f'{len(ice_rooms)} Icy Rooms: ' + " ".join(ice_rooms)
+        line = "\n" + "-" * 50 + "\n"
+        return "testing"
 
 
     def arrow_platform_bidirect(self):
@@ -128,42 +112,42 @@ class GT(ROM):
                                 0x48, 0x8D, 0x64, 0x02, 0xA9, 0x02,
                                 0x85, 0x02, 0x6B])
 
-    def checksum(self, alldark=False, allice=False, ohko=False):
-        """Add some infos on the title screen : checksum for validating races seeds.
-            """
-        sprites = [
-            (0x6, 0x2), (0x8, 0x4), (0xA, 0x4), (0xC, 0x4),
-            (0xE, 0x4),(0x28, 0x2),(0x40, 0x6),(0x42, 0x6),
-            (0x44, 0x6), (0x46, 0x6),(0x48, 0x6),(0x4A, 0x4), 
-            (0x4C, 0x6)]
 
-        self.rewrite(0x0131D4, [0x22,0x20,0xFB,0x8F]) # JSL InputEndLoop
-        self.rewrite(0x7FB20, [0xAD, 0x80, 0x00, 0x9, 0x10, 0x8D, 0x80, 0x0])
+    """
+        def checksum(self, alldark=False, allice=False, ohko=False):
+            sprites = [
+                (0x6, 0x2), (0x8, 0x4), (0xA, 0x4), (0xC, 0x4),
+                (0xE, 0x4),(0x28, 0x2),(0x40, 0x6),(0x42, 0x6),
+                (0x44, 0x6), (0x46, 0x6),(0x48, 0x6),(0x4A, 0x4), 
+                (0x4C, 0x6)]
 
-        current = 0x7FB28
-        for no in range(5):  # Drawing the checksum!
-            selection = random.choice(sprites)
+            self.rewrite(0x0131D4, [0x22,0x20,0xFB,0x8F]) # JSL InputEndLoop
+            self.rewrite(0x7FB20, [0xAD, 0x80, 0x00, 0x9, 0x10, 0x8D, 0x80, 0x0])
+
+            current = 0x7FB28
+            for no in range(5):  # Drawing the checksum!
+                selection = random.choice(sprites)
+                self.rewrite(current, [
+                    0xA9, 0xE0, # LDA X position!
+                    0x8D, 0xA0 + 4*no, 0x1A,  # STA $1AA0 ;Set X to 0x08
+                    0xA9, (0x10 + 32*no), # LDA Y position!
+                    0x8D, 0xA1 + 4*no, 0x1A,  # STA $1AA1 ;Set Y to 0x10
+                    0xA9, selection[0], # LDA Tile!
+                    0x8D, 0xA2 + 4*no, 0x1A,  # STA $1AA2 ;Set C (tile) to 0x0C
+                    0xA9, selection[1], # LDA palette!
+                    0x8D, 0xA3 + 4*no, 0x1A])  # STA $1AA3 ;Set Palette to 0x04
+                current += 20
+
             self.rewrite(current, [
-                0xA9, 0xE0, # LDA X position!
-                0x8D, 0xA0 + 4*no, 0x1A,  # STA $1AA0 ;Set X to 0x08
-                0xA9, (0x10 + 32*no), # LDA Y position!
-                0x8D, 0xA1 + 4*no, 0x1A,  # STA $1AA1 ;Set Y to 0x10
-                0xA9, selection[0], # LDA Tile!
-                0x8D, 0xA2 + 4*no, 0x1A,  # STA $1AA2 ;Set C (tile) to 0x0C
-                0xA9, selection[1], # LDA palette!
-                0x8D, 0xA3 + 4*no, 0x1A])  # STA $1AA3 ;Set Palette to 0x04
-            current += 20
-
-        self.rewrite(current, [
-            0xA9, 0xAA,  # LDA #$AA
-            0x8D, 0xA0, 0x1C,# STA $1CA0 ;Set size for the 4 first sprites to 16x16
-            0x8D, 0xA1, 0x1C,# STA $1CA0 ;Set size for the 4-8 sprites to 16x16
-            # Do more copy if I need more!
-            0xC2, 0x20,  # REP #$20 ;Restore Code overwritten by the hook
-            0xE6, 0x14,  # INC $14 ;Restore Code overwritten by the hook
-            0x6B  # RTL
-            ])
-
+                0xA9, 0xAA,  # LDA #$AA
+                0x8D, 0xA0, 0x1C,# STA $1CA0 ;Set size for the 4 first sprites to 16x16
+                0x8D, 0xA1, 0x1C,# STA $1CA0 ;Set size for the 4-8 sprites to 16x16
+                # Do more copy if I need more!
+                0xC2, 0x20,  # REP #$20 ;Restore Code overwritten by the hook
+                0xE6, 0x14,  # INC $14 ;Restore Code overwritten by the hook
+                0x6B  # RTL
+                ])
+    """
 
     def ohko(self):
         # for touching enemies or thrown projectiles
@@ -182,7 +166,7 @@ class GT(ROM):
         #  code than simply touching him without his hookshot
         self.rewrite(0xD63C, [0x9E, 0x1D, 0x01, 0x9E, 0x3F, 0x01,0x80, 0x2])
 
-
+"""
     def credits_frames_randomizer(self):
         def credits_cs_offsets(which):
             assert 0 <= which <= 13, f'which must be in range 0-13'
@@ -203,7 +187,6 @@ class GT(ROM):
         for cs in range(14):
             self[credits_cs_offsets(cs)[0]] = random.randint(0,4)
             self[credits_cs_offsets(cs)[1]] = random.randint(0,[15, 15, 25, 29, 25][self[credits_cs_offsets(cs)[0]]])
-
 
     def randomizerWithVerification(self, options):
 
@@ -298,9 +281,11 @@ class GT(ROM):
                     print(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")
                     raise RandomizerError(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")  # print world number as 1-indexed for readability
 
-
+"""
 
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as game:
         test = GT(game.read())
-        print(test)
+        # testing =  test.data.screens[0].exits[0].dst_screen
+
+        test.Version()

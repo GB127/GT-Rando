@@ -1,41 +1,6 @@
 from gameclass import GT
-from datetime import datetime
-from world import *
-import random
-from command import *
-from objects import objects
-import matplotlib.pyplot as plt
-from matplotlib.patches import Circle
-import cv2
-import numpy as np
 
 class debug(GT):
-    def __str__(self):
-        string = ""
-        for world in self.all_worlds:
-            string += str(world)
-        return string
-
-
-    def print_world(self, world_i, arg=None):
-        if arg == "items": 
-            print(f"World {world_i} items")
-            print(self.all_worlds[world_i].items)
-        else: print(self.all_worlds[world_i])
-
-
-    def __init__(self,data):
-        self.list_freespace()
-        super().__init__(data, seed="Debug")
-
-
-    def do_all_modify(self):
-        # Code that will do all stuffs that uses freespace except add credits since it's already in the init.
-        self.modify_data_ice_dark_alert()
-        self.modify_data_starting_frame()
-        self.checksum()
-        self.credits_frames_randomizer()
-
     def list_freespace(self):
         self.freespace = [offset for offset in range(0x7374, 0x7FB0)]
         self.freespace += [offset for offset in range(0xFF33, 0x10000)]
@@ -61,171 +26,111 @@ class debug(GT):
         self.freespace += [offset for offset in range(0x72A9, 0x72D6)]
         self.used = []
 
+    """
+        def boss_randomizer(self):
+            def boss0_throws(self):
+
+                # Fast throw: les trois premiers ou les trois derniers. high throw c'est l'autre
+                for no, offset in enumerate([0x018FA7, 0x018FAB, 0x018FAF, 0x018F9B, 0x018F9F, 0x018FA3]):
+                    direction = no%3
+                    check = False
+                    while check is False:
+                        X = random.randint([0x1, 0x0, -0x5][direction],[0x5, 0x0, -0x1][direction])
+                        Y = random.randint(0x1, 0x8)
+                        if abs(X/Y) > 5/8: continue 
+                        self[offset] = 0 if any([X == 0x5, X == -0x5]) else random.randint(0,0xFF)
+                        # High byte
+                        self[offset+1] = X if X >= 0 else 256 + X
+                        self[offset + 2] = 0 if Y == 0x8 else random.randint(0x0, 0xFF)
+                        self[offset + 3] = Y
+                        check = True
 
 
+                # Gravity:
+                # Plus on descend en valeur, plus la gravité est forte
 
-    def quick_bosses(self):
-        #self[0xB4AB] = 0x1  # For now, only kill one to clear the boss for world 0.
+                # Highthrow
+                # Initial throw
+                    # Valeurs à réviser
+                    # Minimum acceptable pour la vitesse minimale: F5
+                    # Maximum acceptable pour la vitesse minimale: F9
+                    # Minimum acceptable pour la vitesse maximale : 0
+                    # Maximum acceptable pour la vitesse maximale : 0xC0
+                speedvalues = sorted([game[0x018FAA], game[0x018FAE], game[0x018FB2]])
 
-        self[0xC563] = 0x1
+                # Highest value possible plot
+                a1 = (0xC0 - 0xF9)/(8 - 1)
+                b1 = 0xC0 - a1 * 8
+                # lowest value possible plot
+                a2 = (0x0 - 0xF5)/(8 - 1)
+                b2 = 0x00 - a2 * 8
 
-    def early_bosses(self):
-        """Changes exits so that bosses are reached within the very first exit of a world!
-        """
-        self[0x1F3ED] = 14
-        self[0x1F4C3] = 15
-        self[0x1F58D] = 25
-        self[0x1f6f7] = 25
-        self[0x1f6f7 + 4] = 180
-        self[0x1F877] = 25
-
-
-    def boss_randomizer(self):
-        def boss0_throws(self):
-
-            # Fast throw: les trois premiers ou les trois derniers. high throw c'est l'autre
-            for no, offset in enumerate([0x018FA7, 0x018FAB, 0x018FAF, 0x018F9B, 0x018F9F, 0x018FA3]):
-                direction = no%3
-                check = False
-                while check is False:
-                    X = random.randint([0x1, 0x0, -0x5][direction],[0x5, 0x0, -0x1][direction])
-                    Y = random.randint(0x1, 0x8)
-                    if abs(X/Y) > 5/8: continue 
-                    self[offset] = 0 if any([X == 0x5, X == -0x5]) else random.randint(0,0xFF)
-                    # High byte
-                    self[offset+1] = X if X >= 0 else 256 + X
-                    self[offset + 2] = 0 if Y == 0x8 else random.randint(0x0, 0xFF)
-                    self[offset + 3] = Y
-                    check = True
+                low = int(a2 * speedvalues[0] + b2)
+                high = int(a1 * speedvalues[-1] + b1)
+                lowest = int(a2 * speedvalues[-1] + b2)
+                print(lowest, low, high)
+                # Initial
+                try:
+                    game[0x00430D] = random.randint(low, high)
+                except ValueError: 
+                    # L'ordre des extrêmes donne une contradiction. 
+                    # Optons pour l'extrème qui donne plus de possibilités...
+                    game[0x430D] = random.randint(lowest, low)
+                #game[0x00430E] = 0xFF
+                    # Ne pas changer, car ça sera trop fort sinon.
 
 
-            # Gravity:
-            # Plus on descend en valeur, plus la gravité est forte
-
-            # Highthrow
-            # Initial throw
-                # Valeurs à réviser
-                # Minimum acceptable pour la vitesse minimale: F5
-                # Maximum acceptable pour la vitesse minimale: F9
-                # Minimum acceptable pour la vitesse maximale : 0
-                # Maximum acceptable pour la vitesse maximale : 0xC0
-            speedvalues = sorted([game[0x018FAA], game[0x018FAE], game[0x018FB2]])
-
-            # Highest value possible plot
-            a1 = (0xC0 - 0xF9)/(8 - 1)
-            b1 = 0xC0 - a1 * 8
-            # lowest value possible plot
-            a2 = (0x0 - 0xF5)/(8 - 1)
-            b2 = 0x00 - a2 * 8
-
-            low = int(a2 * speedvalues[0] + b2)
-            high = int(a1 * speedvalues[-1] + b1)
-            lowest = int(a2 * speedvalues[-1] + b2)
-            print(lowest, low, high)
-            # Initial
-            try:
-                game[0x00430D] = random.randint(low, high)
-            except ValueError: 
-                # L'ordre des extrêmes donne une contradiction. 
-                # Optons pour l'extrème qui donne plus de possibilités...
-                game[0x430D] = random.randint(lowest, low)
-            #game[0x00430E] = 0xFF
-                # Ne pas changer, car ça sera trop fort sinon.
-
-
-            # After the peak
-            game[0x004312] = 0x0
-                # 0 = Almost instantly drop down to the floor.
-                # I will change that in the following days.
-            #game[0x004313] = 0xFF
-                # Ne pas change,r car ça sera trop fort sinon.
+                # After the peak
+                game[0x004312] = 0x0
+                    # 0 = Almost instantly drop down to the floor.
+                    # I will change that in the following days.
+                #game[0x004313] = 0xFF
+                    # Ne pas change,r car ça sera trop fort sinon.
 
 
 
 
 
 
-            for offset in [0x018F9B, 0x018F9F, 0x018FA3]:  # Fast throw
-                pass
+                for offset in [0x018F9B, 0x018F9F, 0x018FA3]:  # Fast throw
+                    pass
 
-            #ZZZZZ
-
-
-            # Fast throw
-            # Initial
-            #game[0x0042F5] = test
-            #game[0x0042F6] = test2
-            # After
-            #game[0x0042FA] = test3  # Fast throw
-            #game[0x0042FB] = test4  # Fast throw
+                #ZZZZZ
 
 
+                # Fast throw
+                # Initial
+                #game[0x0042F5] = test
+                #game[0x0042F6] = test2
+                # After
+                #game[0x0042FA] = test3  # Fast throw
+                #game[0x0042FB] = test4  # Fast throw
 
-        def boss0_behaviour_items(self):
-            # NPC decision maker
-            """ NPC decision maker
-                dw $B266 ;02 ;Pop Out and Back In Routine without Items
-                dw $B29A ;04 ;Pop Out and Back In Routine fake item
-                dw $B2ED ;06 ;Pop Out and Back In Routine throwing random item
 
-                Vanilla values:
-                    3x2  (9.375%)  without items
-                    6x4  (18.75%)  fake item
-                    23x6 (71.875%)  throw
-                """
-            new_values = [0x6] * random.randint(0,32)
-            while len(new_values) != 32:
-                new_values.append(random.choice([0x2, 0x4]))  # I don't mind this one being 50/50 since it won't affect the gameplay
-            random.shuffle(new_values)
-            self.rewrite(0x1A1C8, new_values)
 
-            
-            # Thrown item table.
-            """ Thrown item table.
-                00 barel
-                02 pot 
-                04 egg 
-                06 sign
-                08 plant
-                0A bomb
-                0C log
-                0E fence 
-                10 ice 
-                12 shell 
-                14 plates
-                16 rock
-                18 nut
-                1A spike
-                FF = nothing
-                
-                10x0  (31.25%)  Barrel
-                6xA  (18.75%)  Bomb
-                8x1A  (25.0%)  Spike
-                8xFF  (25.0%)  No item thrown
-                """
-            throwable_items = [0,0x2,0x4,0x6,0x8,0xC, 0xE, 0x10, 0x12, 0x14, 0x16, 0x18]
-            bomb =  0xA
-            spike = 0x1A
-            nothing = 0xFF
-            thrown_items = []
-            for _ in range(random.randint(0,32)):  # TODO : Need to find the highest acceptable value.
-                thrown_items.append(random.choice([nothing, spike])) # FIXME : I want something more random so it's not "always" 50/50
+            def boss0_behaviour_items(self):
+                # NPC decision maker
+                NPC decision maker
+                    dw $B266 ;02 ;Pop Out and Back In Routine without Items
+                    dw $B29A ;04 ;Pop Out and Back In Routine fake item
+                    dw $B2ED ;06 ;Pop Out and Back In Routine throwing random item
 
-            # TODO: Do something for bombs
+                    Vanilla values:
+                        3x2  (9.375%)  without items
+                        6x4  (18.75%)  fake item
+                        23x6 (71.875%)  throw
+                    
+                new_values = [0x6] * random.randint(0,32)
+                while len(new_values) != 32:
+                    new_values.append(random.choice([0x2, 0x4]))  # I don't mind this one being 50/50 since it won't affect the gameplay
+                random.shuffle(new_values)
+                self.rewrite(0x1A1C8, new_values)
 
-            random_item = random.choice(throwable_items + ["all"])
-            while len(thrown_items) != 32:
-                if random_item == "all":
-                    thrown_items.append(random.choice(throwable_items))
-                else:
-                    thrown_items.append(random_item)
-            random.shuffle(thrown_items)
-            #self.rewrite(0x1A228, thrown_items)
-            print(new_values)
-            print(thrown_items)
-        boss0_throws(self)
-        #boss0_behaviour_items(self)
+            boss0_throws(self)
+            #boss0_behaviour_items(self)
+    """
 
+    """
     def showMap(self, world_i, show_exits=True, show_items=True):
         this_world = self.all_worlds[world_i]
         
@@ -279,104 +184,10 @@ class debug(GT):
 
         plt.show()
         return ''
-
-    def setExit(self, world_i, source_exit, destination_exit, match=False):
-        """Set a specific exit to a specific exit."""
-        this_world = self.all_worlds[world_i]
-        this_world.exits.setExit(source_exit, destination_exit)
-        self[this_world.exits.offsets[source_exit][0]] = this_world.exits.destination_frames[source_exit]
-        self[this_world.exits.offsets[source_exit][4]] = this_world.exits.destination_Xpos[source_exit]
-        self[this_world.exits.offsets[source_exit][5]] = this_world.exits.destination_Ypos[source_exit]
-        #hook bug fix
-        if self[this_world.exits.offsets[source_exit][3]]>=2**7:self[this_world.exits.offsets[source_exit][3]] = self[this_world.exits.offsets[source_exit][3]]-2**7
-        self[this_world.exits.offsets[source_exit][3]] = self[this_world.exits.offsets[source_exit][3]]+this_world.exits.destination_hookshotHeightAtArrival[source_exit]*2**7
-
-        if match:
-            self.setExit(world_i, destination_exit, source_exit)
-
-    def disable_heart_loss(self):
-        self[0x5D1B] = 0xEA
-        self[0x5D1C] = 0xEA
-
-    def speed_goofy(self, value):
-        self[0x18E1B] -= value
-        self[0x18E1D] += value
-
-        self[0x18E2B] += value
-        self[0x18E2D] -= value
-
-        self[0x18E17] -= value
-        self[0x18E27] += value
-
-
-        self[0x18E23] += value
-        self[0x18E33] -= value
-
-
-    def __setitem__(self,offset, value):
-        if offset in self.freespace:
-            self.used.append(offset)
-            self.freespace.pop(self.freespace.index(offset))
-        super().__setitem__(offset,value)
-
-    def set_item(self, world_i,item_i,  value):
-        self.all_worlds[world_i].items.set_item(item_i, value)
-        self.all_worlds[world_i].writeWorldInData()
-
-    def do_not_place_keydoors(self):
-        self[0x14377] = 0xEA
-        self[0x14378] = 0xEA
-
-    def modify_data_stars(self):
-        super().modify_data_stars()
-        for offset in range(0x14621,0x14D32):
-            self[offset] = 0
-            self.freespace += [offset]
-class randomized(debug):
-    def __init__(self, data):
-        self.data = bytearray(data)
-        self.all_worlds = [World(self.data, 0),World(self.data, 1),World(self.data, 2),World(self.data, 3),World(self.data, 4)]
-
-
-    def __setitem__(self,offset, value):
-        self.data[offset] = value
-
-
-def getoptions_debug():
-    # Fonction qui aidera pour faire rouler les randomizers rapidement.
-
-    options = getoptions()
-
-    # Voici ce que l'On doit modifier à la main pour obtenir ce que l'On veut!
-
-    options.Rfirst = False
-    options.Rexits = True  #e
-    options.Rexits_matchdir = False  #u
-    options.Rexits_pair = True  #U
-    options.Ritems_pos = True  #i
-    options.Ritems = False  #I
-
-
-    return options
-
+    """
 
 if __name__ == "__main__":
-    with open("Vanilla.smc", "rb") as original:
-        startTime = datetime.now()
-        print("generating...")
-
-        game = debug(original.read())
-        # game = randomized(original.read())
-        game.activateWorldSelection()
-        game.do_all_modify()
-        game.no_dark()
-
-        debugging = game.all_objects
-        #debugging.print_world(3,13)
-        debugging.randomize_version(all=True)
-
-        game.disable_heart_loss()
-        with open("debug.smc", "wb") as newgame:
-            print("Time taken to edit files : ", datetime.now() - startTime)
-            print(f"Testing case have been created! {datetime.now()}")
-            newgame.write(game.data)
+    with open("Vanilla.smc", "rb") as game:
+        test = GT(game.read())
+        # testing =  test.data.screens[0].exits[0].dst_screen
+        test.Grabbables(game_by_game=True, world_by_world=True)
