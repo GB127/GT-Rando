@@ -133,70 +133,7 @@ lib.conclude.restype = c_uint
 rom_data = bytearray(2<<20)
 
 #------------------------------------------------------------------------------
-# Load ROM
-
-fp = open('Vanilla.smc', 'rb')
-
-fp.seek(0,2)
-file_size = fp.tell()
-fp.seek(0)
-
-# Read the file into the start of the 2 MiB buffer (don't resize)
-rom_data[0:file_size] = fp.read(file_size)
-fp.close()
-
-#------------------------------------------------------------------------------
-# Commence
-
-num_bytes = file_size
-num_banks = int(num_bytes / 32768)
-
-# Cast rom_data to array of c_ubyte to pass to the DLL (don't copy)
-bytes = (c_ubyte * len(rom_data)).from_buffer(rom_data)
-
-# Unused regions of the original ROM the DLL can use to put data and code into
-holes_list = [
-  # unused
-  s_rom_hole(  0x7380,  0xC20 ),
-  s_rom_hole(  0xFF40,   0xB0 ),
-  s_rom_hole( 0x14D50, 0x10A0 ),
-  s_rom_hole( 0x1FAF0,  0x500 ),
-  s_rom_hole( 0x2A7A0, 0x1850 ),
-  s_rom_hole( 0x47E10,  0x1E0 ),
-  s_rom_hole( 0x4FD60,  0x290 ),
-  s_rom_hole( 0x5E250,  0x5A0 ),
-  s_rom_hole( 0x5FBF0,  0x200 ),
-  s_rom_hole( 0x7B5D0, 0x1E20 ),
-  s_rom_hole( 0x7FB30,  0x2C0 ),
-  # gtiles, ctiles & exits
-  s_rom_hole( 0x18CE7, 0x00E9 ), # addr [$838CE7, $838DD0)
-  s_rom_hole( 0x1F303, 0x06BF ), # addr [$83F303, $83F9C2)
-  s_rom_hole( 0x48000, 0x5280 ), # addr [$898000, $89D280)
-  s_rom_hole( 0x4F100, 0x0C48 ), # addr [$89F100, $89FD48)
-  s_rom_hole( 0x50000, 0x3F70 ), # addr [$8A8000, $8ABF70)
-  s_rom_hole( 0x54000, 0x1FB8 ), # addr [$8AC000, $8ADFB8)
-  s_rom_hole( 0x58000, 0x6240 ), # addr [$8B8000, $8BE240)
-  # itile data
-  s_rom_hole( 0x14538,  0x7FA ), # addr [$82C538, $82CD32)
-  # class 1 & 2 sprite data
-  s_rom_hole(  0x6760,  0xB49 )] # addr [$80E760, $80F2A9)
-
-num_holes = len(holes_list)
-# Cast holes_list to array of s_rom_hole to pass to the DLL (don't copy)
-holes = (s_rom_hole * num_holes)(*holes_list)
-
-# Return 1 on success, 0 on error
-data = lib.commence(num_banks, pointer(bytes), num_holes, pointer(holes))
-
-#------------------------------------------------------------------------------
-# Modify some stuff
-
-# Test darkness and ice physics on screen 0, 1 & 2
-data.contents.game.screens[0].flags  = e_rom_screen_flag.ROM_SCREEN_FLAG_ICE_PHYSICS
-data.contents.game.screens[1].flags |= e_rom_screen_flag.ROM_SCREEN_FLAG_DARKNESS
-data.contents.game.screens[2].flags |= e_rom_screen_flag.ROM_SCREEN_FLAG_ICE_PHYSICS
-data.contents.game.screens[2].flags |= e_rom_screen_flag.ROM_SCREEN_FLAG_DARKNESS
-
+"""
 #------------------------------------------------------------------------------
 # Conclude
 
@@ -205,12 +142,10 @@ result = s_result()
 # Returns 1 on success, 0 on error
 rv = lib.conclude(pointer(result))
 
-print("num_banks = " + str(result.num_banks))
-print("num_bytes = " + str(result.num_bytes))
-
 #------------------------------------------------------------------------------
 # Save result to disk
 
 f = open("goof_troop_mod.smc", "wb")
 f.write(rom_data[0:result.num_banks*32768])
 f.close()
+"""

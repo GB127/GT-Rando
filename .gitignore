@@ -22,3 +22,8 @@ debug.bp
 debug.srm
 stats.py
 spoilers.py
+patch.dll
+goof_troop_mod.smc
+.gitignore
+Vanilla_noh.smc
+patch.py
