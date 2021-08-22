@@ -190,4 +190,5 @@ if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as game:
         test = GT(game.read())
         # testing =  test.data.screens[0].exits[0].dst_screen
-        test.Grabbables(game_by_game=True, world_by_world=True)
+        test.Versions(room_by_room=True)
+        print(test.Versions)

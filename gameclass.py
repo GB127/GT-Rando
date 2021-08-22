@@ -1,5 +1,5 @@
 from patch import *
-from objects import Version, Grabbables
+from objects import Versions, Grabbables
 from generic import world_indexes, room_to_index, RandomizerError
 
 class ROM:
@@ -82,7 +82,7 @@ class GT(ROM):
         # This is the workable data
         self.data = self.data_complete.contents.game
 
-        self.Version = Version(self.data)
+        self.Versions = Versions(self.data)
         self.Grabbables = Grabbables(self.data)
 
 

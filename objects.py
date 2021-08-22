@@ -37,7 +37,9 @@ class Grabbables:
         pass
 
     def __call__(self, game_by_game=False, world_by_world=False, room_by_room=False, object_by_object=False):
-        if [world_by_world, room_by_room, game_by_game, object_by_object].count(True) > 1: 
+        if not any([world_by_world, room_by_room, game_by_game, object_by_object]):
+            return
+        elif [world_by_world, room_by_room, game_by_game, object_by_object].count(True) > 1: 
             explication = f"You cannot use more than one options among the {self.__class__.__name__} options"
             options_selected = "\n".join([
                     f'   world by world : {world_by_world}',
@@ -46,8 +48,10 @@ class Grabbables:
                     f'   object by object : {object_by_object}'
                     ])
             raise RandomizerError(f'{explication}\n\nOptions selected:\n{options_selected}')
-        data = self.data.screens
 
+        print(f"Randomizing {self.__class__.__name__}...")
+
+        data = self.data.screens        
         if game_by_game: new_grabbables = [random.choice(range(0,0x1A,2)) for x in range(0,0x1A,2)]
         for world in range(5):
             if world_by_world: new_grabbables = [random.choice(range(0,0x1A,2)) for x in range(0,0x1A,2)]
@@ -58,17 +62,21 @@ class Grabbables:
                     if item < 0x1A:
                         if object_by_object: new_grabbables = [random.choice(range(0,0x1A,2)) for x in range(0,0x1A,2)]
                         item = new_grabbables[int(item/2)]
+        print(f"Finished Randomizing {self.__class__.__name__}.")
+
     def __str__(self):
         pass
 
 
-class Version:
+class Versions:
     def __init__(self, data):
         self.versions = [0 for _ in world_indexes()]
         self.data = data
 
     def __call__(self, world_by_world=False, room_by_room=False, game_by_game=False):
-        if [world_by_world, room_by_room, game_by_game].count(True) > 1: 
+        if not any([world_by_world, room_by_room, game_by_game]):
+            return
+        elif [world_by_world, room_by_room, game_by_game].count(True) > 1: 
             explication = f"You cannot use more than one options among the {self.__class__.__name__} options"
             options_selected = "\n".join([
                     f'   world by world : {world_by_world}',
@@ -77,6 +85,7 @@ class Version:
                     ])
             raise RandomizerError(f'{explication}\n\nOptions selected:\n{options_selected}')
 
+        print(f"Randomizing {self.__class__.__name__}...")
         if game_by_game: new_version = random.randint(0,3)
         for world in range(5):
             if world_by_world: new_version = random.randint(0,3)
@@ -84,6 +93,8 @@ class Version:
                 if room_by_room: new_version = random.randint(0,3)
                 self.versions[id] = new_version
         self.save()
+        print(f"Finished Randomizing {self.__class__.__name__}.")
+
 
     def __str__(self):
         versions_names = ["US", "J1", "J2", "J3"]
