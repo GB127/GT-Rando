@@ -46,38 +46,18 @@ class Grabbables:
                     f'   object by object : {object_by_object}'
                     ])
             raise RandomizerError(f'{explication}\n\nOptions selected:\n{options_selected}')
-
-
         data = self.data.screens
-        if game_by_game:
-            new_grabbables = [random.choice(range(0,0x1A,2)) for x in range(0,0x1A,2)]
-            for id_screen in world_indexes():
-                for id_item in data[id_screen].itiles:
-                    item = id_item.type
-                    if item < 0x1A:
-                        item = new_grabbables[int(item/2)]
-        elif world_by_world:
-            for world in range(5):
-                new_grabbables = [random.choice(range(0,0x1A,2)) for x in range(0,0x1A,2)]
-                for id_screen in world_indexes(world):
-                    for id_item in data[id_screen].itiles:
-                        item = id_item.type
-                        if item < 0x1A:
-                            item = new_grabbables[int(item/2)]
-        elif room_by_room:
-            for id_screen in world_indexes():
-                new_grabbables = [random.choice(range(0,0x1A,2)) for x in range(0,0x1A,2)]
-                for id_item in data[id_screen].itiles:
-                    item = id_item.type
-                    if item < 0x1A:
-                        item = new_grabbables[int(item/2)]
-        elif object_by_object:
-            for id_screen in world_indexes():
-                for id_item in data[id_screen].itiles:
-                    item = id_item.type
-                    if item < 0x1A:
-                        item = random.choice(range(0,0x1A,2))
 
+        if game_by_game: new_grabbables = [random.choice(range(0,0x1A,2)) for x in range(0,0x1A,2)]
+        for world in range(5):
+            if world_by_world: new_grabbables = [random.choice(range(0,0x1A,2)) for x in range(0,0x1A,2)]
+            for id_screen in world_indexes(world):
+                if room_by_room: new_grabbables = [random.choice(range(0,0x1A,2)) for x in range(0,0x1A,2)]
+                for id_item in data[id_screen].itiles:
+                    item = id_item.type
+                    if item < 0x1A:
+                        if object_by_object: new_grabbables = [random.choice(range(0,0x1A,2)) for x in range(0,0x1A,2)]
+                        item = new_grabbables[int(item/2)]
     def __str__(self):
         pass
 
@@ -97,17 +77,11 @@ class Version:
                     ])
             raise RandomizerError(f'{explication}\n\nOptions selected:\n{options_selected}')
 
-        if world_by_world:
-            for world in range(5):
-                new_version = random.randint(0,3)
-                for id in world_indexes(world):
-                    self.versions[id] = new_version
-        elif room_by_room:
-            for id in world_indexes():
-                self.versions[id] = random.randint(0,3)
-        elif game_by_game:
-            new_version = random.randint(0,3)
+        if game_by_game: new_version = random.randint(0,3)
+        for world in range(5):
+            if world_by_world: new_version = random.randint(0,3)
             for id in world_indexes(world):
+                if room_by_room: new_version = random.randint(0,3)
                 self.versions[id] = new_version
         self.save()
 
