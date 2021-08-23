@@ -49,23 +49,16 @@ class Grabbables:
                     ])
             raise RandomizerError(f'{explication}\n\nOptions selected:\n{options_selected}')
 
-        print(f"Randomizing {self.__class__.__name__}...")
-
-        data = self.data.screens        
-        if game_by_game: new_grabbables = [random.choice(range(0,0x1A,2)) for x in range(0,0x1A,2)]
-        for world in range(5):
-            if world_by_world: new_grabbables = [random.choice(range(0,0x1A,2)) for x in range(0,0x1A,2)]
-            for id_screen in world_indexes(world):
-                if room_by_room: new_grabbables = [random.choice(range(0,0x1A,2)) for x in range(0,0x1A,2)]
-                for id_item in data[id_screen].itiles:
-                    item = id_item.type
-                    if item < 0x1A:
-                        if object_by_object: new_grabbables = [random.choice(range(0,0x1A,2)) for x in range(0,0x1A,2)]
-                        item = new_grabbables[int(item/2)]
-        print(f"Finished Randomizing {self.__class__.__name__}.")
 
     def __str__(self):
-        pass
+        totaux = {}
+        item_names = ["Barrel", "Pot", "Egg", "Sign", "Plant", "Bomb", "Log", "Something", "RedBox", "Shell", "Something2", "Rock", "Coconut", "Star Block", "Green Block", "Orange Block", "Red Block"]
+        for id_screen in world_indexes():
+            for id_item in range(self.data.screens[id_screen].num_itiles):
+                current_item = self.data.screens[id_screen].itiles[id_item].type
+                if current_item >= 0x1A: continue
+                totaux[item_names[int(current_item/2)]] = totaux.get(item_names[int(current_item/2)], 0) + 1
+        return str(totaux)
 
 
 class Versions:
@@ -116,6 +109,7 @@ class Versions:
         totals_str = "Totals      " + "      ".join(totals)
 
         return f'Versions:\n{table}\n\n{totals_str}'
+
 
     def save(self):  # Because of the huge datas and how I approached, the save function is separate from the call.
         def transform_co_byt(coordinates):
