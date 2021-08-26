@@ -66,23 +66,24 @@ class Exits2:
         return all_ids == test
 
 
-    def __call__(self, keep_direction=False, move_boss=False, pair_exits=False):  #FIXME : Do pair_exits
+    def __call__(self, keep_direction=False, move_boss=False, pair_exits=False):
+        assert not move_boss, "Moving boss is not supported yet" # Comment this line when working on the move_boss.
         opposite = {    "N": "S",
                         "S": "N",
                         "W": "E",
                         "E": "W",
                         "↗": "↗"
                         }
-        # FIXME: Uniformize the if/elif of keep_direction
+
         # Create a backup for loopings.
         boss_screen = self.data.levels[self.world_i].boss_screen_index
 
         backup_screens_exitws = deepcopy(self.screens_exits)
 
-        # Prepare the empty data
+        # Prepare the empty data. Keep the boss at the vanilla place if needed.
         for screen in deepcopy(self.screens_exits):
             self.screens_exits[screen] = {}
-            try:
+            try:  # FIXME : Improve the code so it doesn't always do the try
                 if backup_screens_exitws[screen]["N"] == boss_screen and not move_boss:
                     self.screens_exits[screen]["N"] = boss_screen
                     del backup_screens_exitws[screen]["N"]
@@ -90,17 +91,18 @@ class Exits2:
                     vanilla_screen_to_boss = screen
             except KeyError:
                 pass
+
         # Fetch the data for easy shuffling.
         all_destinations = {} if keep_direction else []
         for screen in backup_screens_exitws:
             for direction in backup_screens_exitws[screen]:
-                    if not keep_direction:                         
-                        all_destinations += [backup_screens_exitws[screen][direction]]
-                    elif keep_direction: 
+                    if keep_direction: 
                         all_destinations[direction] = all_destinations.get(direction, []) + [backup_screens_exitws[screen][direction]]
+                    elif not keep_direction:
+                        all_destinations += [backup_screens_exitws[screen][direction]]
 
 
-        if move_boss:
+        if move_boss:  # Immediately place the boss at the new location if moved.
             if keep_direction: boss_direction = "N"
             else: boss_direction = choice(["N", "S", "W", "E"])  # No stairs here because we can't lock a stair!
             all_possibilities = []
@@ -109,10 +111,10 @@ class Exits2:
                     all_possibilities.append(screen)
             new_screen_to_boss = choice(all_possibilities)
             self.screens_exits[new_screen_to_boss][boss_direction] = boss_screen
-            del backup_screens_exitws[new_screen_to_boss][boss_direction]
-            
-            if keep_direction: all_destinations[opposite[boss_direction]].append(vanilla_screen_to_boss)
-            else: all_destinations.append(vanilla_screen_to_boss)
+            print(self.screens_exits)
+
+            # FIXME : Clean up
+
 
         # Randomization!
         if keep_direction:
@@ -122,13 +124,17 @@ class Exits2:
             shuffle(all_destinations)
 
 
+
+
+
         # Distribution des nouvelles destinations:
         for screen in backup_screens_exitws:
             for direction in backup_screens_exitws[screen]:
                 try:
                     self.screens_exits[screen][direction]
-                except KeyError:  # Works
-                    current_lens = [len(self.screens_exits[x]) for x in self.screens_exits]
+                    # Paired if this doesn't trigger the keyerror.
+                except KeyError:
+                    # Not setted yet.
                     if not keep_direction: access_destination = all_destinations
                     elif keep_direction: access_destination = all_destinations[direction]
                     new_destination = access_destination[0]
