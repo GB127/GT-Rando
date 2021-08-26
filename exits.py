@@ -1,6 +1,6 @@
 from generic import world_indexes, room_to_index, world_indexes
 from copy import deepcopy
-from random import shuffle
+from random import shuffle, choice
 
 class Exits2:
     exits_type = {  "N":[4, 18, 20, 132, 146, 148],
@@ -74,31 +74,45 @@ class Exits2:
                         "↗": "↗"
                         }
         # FIXME: Uniformize the if/elif of keep_direction
-
         # Create a backup for loopings.
-        new_screens_exits = deepcopy(self.screens_exits)  #FIXME : Change names
-
         boss_screen = self.data.levels[self.world_i].boss_screen_index
+
+        backup_screens_exitws = deepcopy(self.screens_exits)
+
+        # Prepare the empty data
         for screen in deepcopy(self.screens_exits):
+            self.screens_exits[screen] = {}
             try:
-                if new_screens_exits[screen]["N"] == boss_screen and not move_boss:
-                    self.screens_exits[screen] = {}
+                if backup_screens_exitws[screen]["N"] == boss_screen and not move_boss:
                     self.screens_exits[screen]["N"] = boss_screen
-                    del new_screens_exits[screen]["N"]
+                    del backup_screens_exitws[screen]["N"]
                 else:
-                    self.screens_exits[screen] = {}
+                    vanilla_screen_to_boss = screen
             except KeyError:
-                self.screens_exits[screen] = {}
-
-        # Fetch the data
+                pass
+        # Fetch the data for easy shuffling.
         all_destinations = {} if keep_direction else []
-        for screen in new_screens_exits:
-            for direction in new_screens_exits[screen]:
+        for screen in backup_screens_exitws:
+            for direction in backup_screens_exitws[screen]:
                     if not keep_direction:                         
-                        all_destinations += [new_screens_exits[screen][direction]]
+                        all_destinations += [backup_screens_exitws[screen][direction]]
                     elif keep_direction: 
-                        all_destinations[direction] = all_destinations.get(direction, []) + [new_screens_exits[screen][direction]]
+                        all_destinations[direction] = all_destinations.get(direction, []) + [backup_screens_exitws[screen][direction]]
 
+
+        if move_boss:
+            if keep_direction: boss_direction = "N"
+            else: boss_direction = choice(["N", "S", "W", "E"])  # No stairs here because we can't lock a stair!
+            all_possibilities = []
+            for screen in backup_screens_exitws.keys():
+                if boss_direction in backup_screens_exitws[screen]:
+                    all_possibilities.append(screen)
+            new_screen_to_boss = choice(all_possibilities)
+            self.screens_exits[new_screen_to_boss][boss_direction] = boss_screen
+            del backup_screens_exitws[new_screen_to_boss][boss_direction]
+            
+            if keep_direction: all_destinations[opposite[boss_direction]].append(vanilla_screen_to_boss)
+            else: all_destinations.append(vanilla_screen_to_boss)
 
         # Randomization!
         if keep_direction:
@@ -107,17 +121,23 @@ class Exits2:
         elif not keep_direction:
             shuffle(all_destinations)
 
+
         # Distribution des nouvelles destinations:
-        for screen in new_screens_exits:
-            for direction in new_screens_exits[screen]:
-                if not keep_direction: access_destination = all_destinations
-                elif keep_direction: access_destination = all_destinations[direction]
-                new_destination = access_destination[0]
-                
-                self.screens_exits[screen][direction] = new_destination
-                del access_destination[0]
+        for screen in backup_screens_exitws:
+            for direction in backup_screens_exitws[screen]:
+                try:
+                    self.screens_exits[screen][direction]
+                except KeyError:  # Works
+                    current_lens = [len(self.screens_exits[x]) for x in self.screens_exits]
+                    if not keep_direction: access_destination = all_destinations
+                    elif keep_direction: access_destination = all_destinations[direction]
+                    new_destination = access_destination[0]
+                    self.screens_exits[screen][direction] = new_destination
+                    del access_destination[0]
 
-
+                    if pair_exits and keep_direction:
+                        self.screens_exits[new_destination][opposite[direction]] = screen # Works
+                        all_destinations[opposite[direction]].remove(screen)
 
 """class Exits:
     def getUnlockedExits(self, currently_unlocked):
