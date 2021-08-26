@@ -65,9 +65,9 @@ class Exits2:
                 continue
             test = enter_room([], copy_exits, starting_screen) 
             test.sort()
-
-        return all_ids == test
-
+            if all_ids == test: continue
+            else: return False
+        return True
 
     def __call__(self, keep_direction=False, move_boss=False, pair_exits=False):
         assert not move_boss, "Moving boss is not supported yet" # Comment this line when working on the move_boss.
