@@ -60,8 +60,11 @@ class Exits2:
         
         all_ids = list(self.screens_exits.keys())
         copy_exits = deepcopy(self.screens_exits)
-        test = enter_room([], copy_exits, 0) 
-        test.sort()
+        for starting_screen in self.screens_exits:
+            if starting_screen == self.data.levels[self.world_i].boss_screen_index:
+                continue
+            test = enter_room([], copy_exits, starting_screen) 
+            test.sort()
 
         return all_ids == test
 
