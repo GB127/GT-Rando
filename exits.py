@@ -69,7 +69,8 @@ class Exits2:
             else: return False
         return True
 
-    def __call__(self, keep_direction=False, move_boss=False, pair_exits=False):
+    def __call__(self,randomize=False, keep_direction=False, move_boss=False, pair_exits=False):
+        if not randomize: return
         assert not move_boss, "Moving boss is not supported yet" # Comment this line when working on the move_boss.
         opposite = {    "N": "S",
                         "S": "N",
