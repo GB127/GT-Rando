@@ -122,17 +122,6 @@ class s_result(Structure):
     ("num_banks", c_uint),
     ("num_bytes", c_uint)]
 
-#------------------------------------------------------------------------------
-
-lib = cdll.LoadLibrary('./patch.dll')
-
-lib.commence.restype = POINTER(s_rom_data)
-lib.conclude.restype = c_uint
-
-# The DLL expects a buffer exactly 2 MiB in size (maximum size of a LoROM)
-rom_data = bytearray(2<<20)
-
-#------------------------------------------------------------------------------
 """
 #------------------------------------------------------------------------------
 # Conclude

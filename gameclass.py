@@ -1,6 +1,7 @@
 from patch import *
 from objects import Versions, Grabbables
 from generic import world_indexes, room_to_index, RandomizerError
+from world import World2
 
 class ROM:
     header = bytearray(
@@ -26,22 +27,12 @@ class ROM:
         for n,i in enumerate(self.data[0x7FC0:0x7FFF]):
             assert i == self.header[n]
 
-    def setmulti(self, offset1, offset2, value, jumps=1):
-        for i in range(offset1, offset2 +1, jumps):
-            self.data[i] = value
-
-    def rewrite(self, start, iterable_rewrite):
-        for no, byte in enumerate(iterable_rewrite):
-            self.data[start + no] = byte
-
-    def __getitem__(self,offset):
-        return self.data[offset]
-    def __setitem__(self,offset, value):
-        self.data[offset] = value
-
 class GT(ROM):
     def __init__(self, data):
-        super().__init__(data)  # Will be gone eventually
+        super().__init__(data)  # For header removal, Will be gone eventually once the patch can handle this.
+
+
+        # Code from psychomaniac, converted to class attributes.
         # Unused regions of the original ROM the DLL can use to put data and code into
         holes_list = [  # All the free space we have TODO : Compare with my findings
                 # unused
@@ -69,6 +60,14 @@ class GT(ROM):
                 # class 1 & 2 sprite data
                 s_rom_hole(  0x6760,  0xB49 )] # addr [$80E760, $80F2A9)
 
+        self.lib = cdll.LoadLibrary('./patch.dll')
+        self.lib.commence.restype = POINTER(s_rom_data)
+        self.lib.conclude.restype = c_uint
+
+        # The DLL expects a buffer exactly 2 MiB in size (maximum size of a LoROM)
+        rom_data = bytearray(2<<20)
+
+
         # Cast rom_data to array of c_ubyte to pass to the DLL (don't copy)
         bytes = (c_ubyte * len(self.data)).from_buffer(self.data)
 
@@ -76,14 +75,18 @@ class GT(ROM):
         num_banks = int(len(self.data) / 0x80000)
         holes = (s_rom_hole * len(holes_list))(*holes_list)
 
-        # This is our big game data.
-        self.data_complete = lib.commence(num_banks, pointer(bytes), len(holes_list), pointer(holes))
 
-        # This is the workable data
+        # This is our complete game data.
+        self.data_complete = self.lib.commence(num_banks, pointer(bytes), len(holes_list), pointer(holes))
+
+        # End of Psychomaniac's code importation.
+
+        
+        # This is the workable data  (WIP, need to generate a debug file to test)
         self.data = self.data_complete.contents.game
-
-        self.Versions = Versions(self.data)
-        self.Grabbables = Grabbables(self.data)
+        #self.Versions = Versions(self.data)
+        #self.Grabbables = Grabbables(self.data)
+        #self.Worlds = [World2(self.data, x) for x in range(5)]
 
 
 
@@ -101,7 +104,7 @@ class GT(ROM):
                     ice_rooms.append(str(room_to_index(id=id)))
             return f'{len(ice_rooms)} Icy Rooms: ' + " ".join(ice_rooms)
         line = "\n" + "-" * 50 + "\n"
-        return "testing"
+        return f'{get_dark_rooms()}\n{get_ice_rooms()}'
 
 
     def arrow_platform_bidirect(self):
@@ -188,104 +191,10 @@ class GT(ROM):
             self[credits_cs_offsets(cs)[0]] = random.randint(0,4)
             self[credits_cs_offsets(cs)[1]] = random.randint(0,[15, 15, 25, 29, 25][self[credits_cs_offsets(cs)[0]]])
 
-    def randomizerWithVerification(self, options):
-
-        fix_boss_exit = True
-        fix_locked_doors = True
-        keep_direction = options.Rexits_matchdir
-        pair_exits = options.Rexits_pair
-
-        exits_rando = options.Rexits
-        items_rando = options.Ritems_pos or options.Ritems
-        firstframe_rando = options.Rfirst
-        max_iter_big_step = 50000
-        max_iter_small_step = 50
-        for world_i, this_world in enumerate(self.all_worlds):
-            number_of_tries = 0
-            print('Trying to find a world configuration for which you cannot get stuck...')
-            for i in range(max_iter_big_step):
-                for j in range(max_iter_big_step):#exits and items randomization
-                    if exits_rando:
-                        for k in range(max_iter_big_step):
-                            this_world.exits.randomize(fix_boss_exit,fix_locked_doors,keep_direction,pair_exits)
-                            if this_world.allFramesConnectedVerification(): break
-
-                    find = False
-                    for k in range(max_iter_small_step):
-                        if items_rando:
-                            this_world.items.randomize(options.Ritems_pos)
-                        if firstframe_rando:
-                            # this_world.randomizeFirstExit()
-                            this_world.randomizeFirstExit()
-
-                        #check feasability
-                        unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
-                        number_of_tries += 1
-                        if (all(unlocked_exits) and all(unlocked_items) and boss_reached): find = True
-                        if find: break
-                    if find: break
-                    elif number_of_tries>max_iter_big_step:
-                        print(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")
-                        raise RandomizerError(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")
-
-
-                if i<(max_iter_big_step-1) and find:
-                    feasibility_results = []#shows how many times we do not get stuck if we play randomly
-                    early_boss_results = []
-                    for m in range(50):
-                        unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
-                        feasibility_results.append(boss_reached)
-                        if not pair_exits: early_boss_indicator = 1 #the check to make sure that a level is not too quick to finish is removed when exits are not paired
-                        early_boss_results.append(early_boss_indicator)
-                    
-                    #print(sum(feasibility_results)/len(feasibility_results))
-                    #print(sum(early_boss_results)/len(early_boss_results))
-                    if (sum(feasibility_results)/len(feasibility_results))==1 and (sum(early_boss_results)/len(early_boss_results))>0.85: 
-
-                        if world_i == 3:
-                            feasibility_results = []#shows how many times we do not get stuck if we play randomly
-                            early_boss_results = []
-                            true_starting_exit = deepcopy(this_world.starting_exit)
-                            this_world.starting_exit = 0 #room with door that requires to do a puzzle
-                            for m in range(50):
-                                unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
-                                feasibility_results.append(boss_reached)
-                                early_boss_results.append(early_boss_indicator)
-                            this_world.starting_exit = true_starting_exit
-
-                            if (sum(feasibility_results)/len(feasibility_results))==1:
-                                this_world.writeWorldInData()
-                                print(f"Assigned new exits and items to world {world_i+1} after {number_of_tries} iterations")  # print world number as 1-indexed for readability
-                                break
-                            
-                        # elif world_i == 4:
-                        #     feasibility_results = []#shows how many times we do not get stuck if we play randomly
-                        #     early_boss_results = []
-                        #     true_starting_exit = deepcopy(this_world.starting_exit)
-                        #     this_world.starting_exit = 36 #room with arrow platform where you can get stuck
-                        #     for m in range(50):
-                        #         unlocked_exits, unlocked_items, boss_reached, early_boss_indicator = this_world.feasibleWorldVerification()
-                        #         feasibility_results.append(boss_reached)
-                        #         early_boss_results.append(early_boss_indicator)
-                        #     this_world.starting_exit = true_starting_exit
-                        #     if (sum(feasibility_results)/len(feasibility_results))==1:
-                        #         this_world.writeWorldInData()
-                        #         print(f"Assigned new exits and items to world {world_i+1} after {number_of_tries} iterations")  # print world number as 1-indexed for readability
-                        #         break
-
-                        else:
-                            this_world.writeWorldInData()
-                            print(f"Assigned new exits and items to world {world_i+1} after {number_of_tries} iterations")  # print world number as 1-indexed for readability
-                            break
-                else: 
-                    print(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")
-                    raise RandomizerError(f"Was not able to find a feasible configuration with these settings for world {world_i+1}")  # print world number as 1-indexed for readability
-
 """
 
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as game:
         test = GT(game.read())
-        # testing =  test.data.screens[0].exits[0].dst_screen
 
-        test.Version()
+        test.Versions()

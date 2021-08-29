@@ -1,4 +1,6 @@
 from gameclass import GT
+from patch import *
+
 
 class debug(GT):
     def list_freespace(self):
@@ -26,88 +28,15 @@ class debug(GT):
         self.freespace += [offset for offset in range(0x72A9, 0x72D6)]
         self.used = []
 
-    """
-        def boss_randomizer(self):
-            def boss0_throws(self):
 
-                # Fast throw: les trois premiers ou les trois derniers. high throw c'est l'autre
-                for no, offset in enumerate([0x018FA7, 0x018FAB, 0x018FAF, 0x018F9B, 0x018F9F, 0x018FA3]):
-                    direction = no%3
-                    check = False
-                    while check is False:
-                        X = random.randint([0x1, 0x0, -0x5][direction],[0x5, 0x0, -0x1][direction])
-                        Y = random.randint(0x1, 0x8)
-                        if abs(X/Y) > 5/8: continue 
-                        self[offset] = 0 if any([X == 0x5, X == -0x5]) else random.randint(0,0xFF)
-                        # High byte
-                        self[offset+1] = X if X >= 0 else 256 + X
-                        self[offset + 2] = 0 if Y == 0x8 else random.randint(0x0, 0xFF)
-                        self[offset + 3] = Y
-                        check = True
+    def save_file(self):
+        result = s_result()
+        rv = self.lib.conclude(pointer(result))
+        with open("debug.smc", "wb") as debug_file:
+            debug_file.write(self.data[0:result.num_banks*32768])
 
-
-                # Gravity:
-                # Plus on descend en valeur, plus la gravité est forte
-
-                # Highthrow
-                # Initial throw
-                    # Valeurs à réviser
-                    # Minimum acceptable pour la vitesse minimale: F5
-                    # Maximum acceptable pour la vitesse minimale: F9
-                    # Minimum acceptable pour la vitesse maximale : 0
-                    # Maximum acceptable pour la vitesse maximale : 0xC0
-                speedvalues = sorted([game[0x018FAA], game[0x018FAE], game[0x018FB2]])
-
-                # Highest value possible plot
-                a1 = (0xC0 - 0xF9)/(8 - 1)
-                b1 = 0xC0 - a1 * 8
-                # lowest value possible plot
-                a2 = (0x0 - 0xF5)/(8 - 1)
-                b2 = 0x00 - a2 * 8
-
-                low = int(a2 * speedvalues[0] + b2)
-                high = int(a1 * speedvalues[-1] + b1)
-                lowest = int(a2 * speedvalues[-1] + b2)
-                print(lowest, low, high)
-                # Initial
-                try:
-                    game[0x00430D] = random.randint(low, high)
-                except ValueError: 
-                    # L'ordre des extrêmes donne une contradiction. 
-                    # Optons pour l'extrème qui donne plus de possibilités...
-                    game[0x430D] = random.randint(lowest, low)
-                #game[0x00430E] = 0xFF
-                    # Ne pas changer, car ça sera trop fort sinon.
-
-
-                # After the peak
-                game[0x004312] = 0x0
-                    # 0 = Almost instantly drop down to the floor.
-                    # I will change that in the following days.
-                #game[0x004313] = 0xFF
-                    # Ne pas change,r car ça sera trop fort sinon.
-
-
-
-
-
-
-                for offset in [0x018F9B, 0x018F9F, 0x018FA3]:  # Fast throw
-                    pass
-
-                #ZZZZZ
-
-
-                # Fast throw
-                # Initial
-                #game[0x0042F5] = test
-                #game[0x0042F6] = test2
-                # After
-                #game[0x0042FA] = test3  # Fast throw
-                #game[0x0042FB] = test4  # Fast throw
-
-
-
+"""  BOSS RANDOMIZER WIP
+            def boss_randomizer(self):
             def boss0_behaviour_items(self):
                 # NPC decision maker
                 NPC decision maker
@@ -126,11 +55,6 @@ class debug(GT):
                 random.shuffle(new_values)
                 self.rewrite(0x1A1C8, new_values)
 
-            boss0_throws(self)
-            #boss0_behaviour_items(self)
-    """
-
-    """
     def showMap(self, world_i, show_exits=True, show_items=True):
         this_world = self.all_worlds[world_i]
         
@@ -188,7 +112,11 @@ class debug(GT):
 
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as game:
-        test = GT(game.read())
-        # testing =  test.data.screens[0].exits[0].dst_screen
-        test.Versions(room_by_room=True)
-        print(test.Versions)
+        test = debug(game.read())  # Open the debug class, which, as the time of writting, an exact copy of the class GT on gameclass.py
+        print("\n---------------------------------------")
+        print("Testing the fetching data by printing some infos\n")
+        print(test)  # Print dark & Ice rooms, proves that it can fetch the data correctly.
+        print("\nFetching data works")
+        print("---------------------------------------")
+        print("Trying to save a file...")
+        test.save_file()
