@@ -36,18 +36,41 @@ class Grabbables:
 
         pass
 
-    def __call__(self, game_by_game=False, world_by_world=False, room_by_room=False, object_by_object=False):
-        if not any([world_by_world, room_by_room, game_by_game, object_by_object]):
+    def __call__(self, game_by_game=False, world_by_world=False, screen_by_screen=False, object_by_object=False):
+        def generate_newItems():
+            new_distribution = {}
+            Barrel, Pot, Egg, Sign, Plant, Bomb, Log, Something, RedBox, Shell, Something2, Rock, Coconut, Star_Block, Green_Block, Orange_Block, Red_Block = [x for x in range(0, 0x21, 2)]
+            changeables_items = [Barrel, Pot, Egg, Sign, Plant, Bomb,
+                                Log, Something, RedBox, Shell, Something2,
+                                Rock, Coconut]
+            for grabbable in changeables_items:
+                new_distribution[grabbable] = random.choice(changeables_items)
+            return new_distribution
+
+
+        if not any([world_by_world, screen_by_screen, game_by_game, object_by_object]):
             return
-        elif [world_by_world, room_by_room, game_by_game, object_by_object].count(True) > 1: 
+        elif [world_by_world, screen_by_screen, game_by_game, object_by_object].count(True) > 1: 
             explication = f"You cannot use more than one options among the {self.__class__.__name__} options"
             options_selected = "\n".join([
                     f'   world by world : {world_by_world}',
-                    f'   room by room : {room_by_room}',
+                    f'   Screen by Screen : {screen_by_screen}',
                     f'   game by game : {game_by_game}',
                     f'   object by object : {object_by_object}'
                     ])
             raise RandomizerError(f'{explication}\n\nOptions selected:\n{options_selected}')
+
+
+        if game_by_game: new_items = generate_newItems()
+        for world_id in range(5):
+            if world_by_world: new_items = generate_newItems()
+            for id_screen in world_indexes():
+                if screen_by_screen: new_items = generate_newItems()
+                for id_item in range(self.data.screens[id_screen].num_itiles):
+                    if object_by_object: new_items = generate_newItems()
+                    current_item = self.data.screens[id_screen].itiles[id_item].type
+                    if current_item >= 0x1A: continue
+                    self.data.screens[id_screen].itiles[id_item].type = new_items[current_item]
 
 
     def __str__(self):
