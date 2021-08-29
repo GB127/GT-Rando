@@ -75,13 +75,15 @@ class Grabbables:
 
     def __str__(self):
         totaux = {}
+        count = 0
         item_names = ["Barrel", "Pot", "Egg", "Sign", "Plant", "Bomb", "Log", "Something", "RedBox", "Shell", "Something2", "Rock", "Coconut", "Star Block", "Green Block", "Orange Block", "Red Block"]
         for id_screen in world_indexes():
             for id_item in range(self.data.screens[id_screen].num_itiles):
                 current_item = self.data.screens[id_screen].itiles[id_item].type
                 if current_item >= 0x1A: continue
+                count += 1
                 totaux[item_names[int(current_item/2)]] = totaux.get(item_names[int(current_item/2)], 0) + 1
-        return str(totaux)
+        return f'{count} items\n{totaux}'
 
 
 class Versions:
