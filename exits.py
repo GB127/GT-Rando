@@ -2,7 +2,7 @@ from generic import world_indexes, room_to_index, world_indexes
 from copy import deepcopy
 from random import shuffle, choice
 
-class Exits2:
+class Exits:
     exits_type = {  "N":[4, 18, 20, 132, 146, 148],
                     "S":[68, 82, 84, 196, 210, 212],
                     "W":[98, 100, 226, 228],
@@ -13,6 +13,8 @@ class Exits2:
         self.data = data
         self.world_i = world_i
         self.screens_ids = screens_ids
+        self.boss_screen = self.data.levels[self.world_i].boss_screen_index
+
 
         self.screens_exits = {}
 
@@ -48,9 +50,9 @@ class Exits2:
             entered_ids = ids
             if new_location not in entered_ids:
                 entered_ids.append(new_location)
-            if not exits[new_location]:
+            if not exits[new_location]:  # All exits have been visited in this location
                 return ids
-            else:
+            else:  # There are some exits not visited yet.
                 copy_exits = deepcopy(exits)
                 for direction, destination in exits[new_location].items():
                     del copy_exits[new_location][direction]
@@ -58,128 +60,80 @@ class Exits2:
                     entered_ids = enter_room(entered_ids, copy_exits, destination)
                 return ids
         
-        all_ids = list(self.screens_exits.keys())
-        copy_exits = deepcopy(self.screens_exits)
         for starting_screen in self.screens_exits:
-            if starting_screen == self.data.levels[self.world_i].boss_screen_index:
+            if starting_screen ==  self.boss_screen: # We do not want to check accessibility from boss screen.
                 continue
-            test = enter_room([], copy_exits, starting_screen) 
-            test.sort()
-            if all_ids == test: continue
-            else: return False
+            accessible_B7 = enter_room([], deepcopy(self.screens_exits), starting_screen)
+            if list(self.screens_exits.keys()) == sorted(accessible_B7): continue
+            return False
         return True
 
-    def __call__(self,randomize=False, keep_direction=False, move_boss=False, pair_exits=False):
-        if not randomize: return
-        assert not move_boss, "Moving boss is not supported yet" # Comment this line when working on the move_boss.
-        opposite = {    "N": "S",
+    def __call__(self,  randomize=False, 
+                        keep_direction=False,
+                        move_boss=False,
+                        pair_exits=False):
+        def assemble_exits(keep_direction):
+            # Fetch the data for easy shuffling.
+            randomized_exits = {} if keep_direction else []
+            for screen in self.screens_exits.keys():
+                for direction in self.screens_exits[screen]:
+                        if self.screens_exits[screen][direction] == self.boss_screen: continue
+                        elif keep_direction:
+                            randomized_exits[direction] = randomized_exits.get(direction, []) + [self.screens_exits[screen][direction]]
+                        elif not keep_direction:
+                            randomized_exits += [self.screens_exits[screen][direction]]
+            return randomized_exits
+
+        def randomize_exits(exits, keep_direction):
+            if keep_direction:
+                for direction in exits.keys():
+                    shuffle(exits[direction])
+            elif not keep_direction:
+                shuffle(exits)
+
+        def create_empty_data():
+            empty_data = {}
+            for screen in self.screens_exits.keys():
+                empty_data[screen] = {}
+                for direction in self.screens_exits[screen]:
+                    empty_data[screen][direction] = {}
+                    try:
+                        if self.screens_exits[screen]["N"] == self.boss_screen:
+                            empty_data[screen]["N"] = self.boss_screen
+                    except KeyError: pass
+            return empty_data
+
+        def distribute_exits(empty_list, randomized_exits, pair_exits, keep_direction):
+            opposite = {    "N": "S",
                         "S": "N",
                         "W": "E",
                         "E": "W",
                         "↗": "↗"
                         }
 
-        # Create a backup for loopings.
-        boss_screen = self.data.levels[self.world_i].boss_screen_index
+            loop_exits = deepcopy(empty_list)
+            for screen in loop_exits:
+                for direction in loop_exits[screen]:
+                    if not empty_list[screen][direction]:
+                        if not keep_direction: access_destination = randomized_exits
+                        elif keep_direction: access_destination = randomized_exits[direction]
 
-        backup_screens_exitws = deepcopy(self.screens_exits)
+                        new_destination = access_destination[0]
+                        empty_list[screen][direction] = new_destination
+                        del access_destination[0]
 
-        # Prepare the empty data. Keep the boss at the vanilla place if needed.
-        for screen in deepcopy(self.screens_exits):
-            self.screens_exits[screen] = {}
-            try:  # FIXME : Improve the code so it doesn't always do the try
-                if backup_screens_exitws[screen]["N"] == boss_screen and not move_boss:
-                    self.screens_exits[screen]["N"] = boss_screen
-                    del backup_screens_exitws[screen]["N"]
-                else:
-                    vanilla_screen_to_boss = screen
-            except KeyError:
-                pass
+                        if pair_exits and keep_direction:
+                            empty_list[new_destination][opposite[direction]] = screen # Works
+                            randomized_exits[opposite[direction]].remove(screen)
+            self.screens_exits = empty_list
 
-        # Fetch the data for easy shuffling.
-        all_destinations = {} if keep_direction else []
-        for screen in backup_screens_exitws:
-            for direction in backup_screens_exitws[screen]:
-                    if keep_direction: 
-                        all_destinations[direction] = all_destinations.get(direction, []) + [backup_screens_exitws[screen][direction]]
-                    elif not keep_direction:
-                        all_destinations += [backup_screens_exitws[screen][direction]]
+        if not randomize: return
+        assert not move_boss, "Moving boss is not supported yet" # Comment this line when working on the move_boss.
 
-
-        if move_boss:  # Immediately place the boss at the new location if moved.
-            if keep_direction: boss_direction = "N"
-            else: boss_direction = choice(["N", "S", "W", "E"])  # No stairs here because we can't lock a stair!
-            all_possibilities = []
-            for screen in backup_screens_exitws.keys():
-                if boss_direction in backup_screens_exitws[screen]:
-                    all_possibilities.append(screen)
-            new_screen_to_boss = choice(all_possibilities)
-            self.screens_exits[new_screen_to_boss][boss_direction] = boss_screen
-            print(self.screens_exits)
-
-            # FIXME : Clean up
+        empty_data = create_empty_data()
+        all_exits = assemble_exits(keep_direction)
+        
+        randomize_exits(all_exits, keep_direction=keep_direction)
+        distribute_exits(empty_data, all_exits, pair_exits, keep_direction)
 
 
-        # Randomization!
-        if keep_direction:
-            for direction in deepcopy(all_destinations):
-                shuffle(all_destinations[direction])
-        elif not keep_direction:
-            shuffle(all_destinations)
-
-
-
-
-
-        # Distribution des nouvelles destinations:
-        for screen in backup_screens_exitws:
-            for direction in backup_screens_exitws[screen]:
-                try:
-                    self.screens_exits[screen][direction]
-                    # Paired if this doesn't trigger the keyerror.
-                except KeyError:
-                    # Not setted yet.
-                    if not keep_direction: access_destination = all_destinations
-                    elif keep_direction: access_destination = all_destinations[direction]
-                    new_destination = access_destination[0]
-                    self.screens_exits[screen][direction] = new_destination
-                    del access_destination[0]
-
-                    if pair_exits and keep_direction:
-                        self.screens_exits[new_destination][opposite[direction]] = screen # Works
-                        all_destinations[opposite[direction]].remove(screen)
-
-"""class Exits:
-    def getUnlockedExits(self, currently_unlocked):
-        new_unlocks = [0]*self.nExits
-        boss_reached = 0
-        for source_i in range(self.nExits):
-            if self.world_i == 3 and source_i == 0 and currently_unlocked[2]==0: #first puzzle of the cave world
-                new_unlocks[source_i] = currently_unlocked[source_i]
-            elif self.world_i == 3 and source_i == 45 and currently_unlocked[48]==0: #last puzzle of the cave world
-                new_unlocks[source_i] = currently_unlocked[source_i]
-            ### one ways temporary fix ###
-            elif self.world_i == 1 and source_i == 15 and currently_unlocked[16]==0: 
-                new_unlocks[source_i] = currently_unlocked[source_i]
-            elif self.world_i == 1 and source_i == 25 and currently_unlocked[26]==0: 
-                new_unlocks[source_i] = currently_unlocked[source_i]
-            elif self.world_i == 2 and source_i == 7 and currently_unlocked[8]==0: 
-                new_unlocks[source_i] = currently_unlocked[source_i]
-            elif self.world_i == 2 and source_i == 27 and currently_unlocked[26]==0: 
-                new_unlocks[source_i] = currently_unlocked[source_i]
-            elif self.world_i == 2 and source_i == 30 and currently_unlocked[29]==0: 
-                new_unlocks[source_i] = currently_unlocked[source_i]
-            elif self.world_i == 2 and source_i == 43 and currently_unlocked[44]==0: 
-                new_unlocks[source_i] = currently_unlocked[source_i]
-            elif self.world_i == 2 and source_i == 47 and currently_unlocked[48]==0: 
-                new_unlocks[source_i] = currently_unlocked[source_i]
-            ### end of temporary fix ###
-            elif currently_unlocked[source_i]:
-                destination_i = self.destination_exits[source_i]
-                if destination_i == None:
-                    boss_reached = 1
-                else:
-                    new_unlocks[source_i] = 1
-                    new_unlocks[destination_i] = 1
-        return new_unlocks, boss_reached
-"""

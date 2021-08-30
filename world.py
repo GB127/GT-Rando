@@ -1,7 +1,6 @@
-from exits import *
-from items import *
-from frames import *
-from doors import *
+from generic import world_indexes
+from items import Items2
+from exits import Exits
 
 class World():
     def __init__(self, data, world_i, starting_exit=0):
@@ -31,9 +30,8 @@ class World():
         self.nExits = len(self.exits.offsets)
         self.original_exits = deepcopy(self.exits)
 
-        # Items related.
-        self.items = Items(data, world_i)  # Items of all the world
-        self.nItems = len(self.items.offsets)
+        self.Exits = Exits(self.data,self.world_i, world_indexes(self.world_i))
+        self.Items = Items2(self.data, self.world_i, world_indexes(self.world_i))
 
         # Doors related
         self.doors = Doors(data, world_i, self.exits)
