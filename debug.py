@@ -113,10 +113,7 @@ class debug(GT):
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as game:
         test = debug(game.read())  # Open the debug class, which, as the time of writting, an exact copy of the class GT on gameclass.py
-        print("\n---------------------------------------")
-        print("Testing the fetching data by printing some infos\n")
-        print(test)  # Print dark & Ice rooms, proves that it can fetch the data correctly.
-        print("\nFetching data works")
-        print("---------------------------------------")
-        print("Trying to save a file...")
+
+        print(2<<20)
+
         test.save_file()

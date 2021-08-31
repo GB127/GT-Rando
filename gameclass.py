@@ -3,33 +3,37 @@ from objects import Versions, Grabbables
 from generic import world_indexes, room_to_index, RandomizerError
 from world import World2
 
-class ROM:
-    header = bytearray(
-        [0x47,0x4F,0x4F,0x46,0x20,0x54,0x52,0x4F,0x4F,0x50,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x30,0x00,0x09,0x00,0x01,0x08,0x00,0x2F,0xA5,0xD0,0x5A
-        ,0x20,0x50,0x72,0x6F,0xBC,0xFF,0xBC,0xFF,0xBC,0xFF,0xB4,0xFF,0xBC,0xFF,0xB8,0xFF,0x20,0x4D,0x2E,0x20,0xBC,0xFF,0xBC,0xFF,0xBC,0xFF,0xBC,0xFF,0xB0,0xFF,0xBC,0xFF
-        ])
+class GT:
     # NOTE for self : it's a LoROM
     # https://en.wikibooks.org/wiki/Super_NES_Programming/SNES_memory_map
+    header = bytearray(
+            [0x47,0x4F,0x4F,0x46,0x20,0x54,0x52,0x4F,0x4F,0x50,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x30,0x00,0x09,0x00,0x01,0x08,0x00,0x2F,0xA5,0xD0,0x5A
+            ,0x20,0x50,0x72,0x6F,0xBC,0xFF,0xBC,0xFF,0xBC,0xFF,0xB4,0xFF,0xBC,0xFF,0xB8,0xFF,0x20,0x4D,0x2E,0x20,0xBC,0xFF,0xBC,0xFF,0xBC,0xFF,0xBC,0xFF,0xB0,0xFF,0xBC,0xFF
+            ])
+    def __init__(self, data):
+        self.lib = cdll.LoadLibrary('./patch.dll')
+        self.lib.commence.restype = POINTER(s_rom_data)
+        self.lib.conclude.restype = c_uint
 
-    def __init__(self,data):
-        """
-            First, it checks if it has a header.
-            Then it copies the relevant data.
-            Then it checks if it's the correct game.
-                If not, it will raise an AssertionError
-            """
-        if len(data) % 1024 == 512:
-            self.data = bytearray(data[512:])
-        elif len(data) % 1024 == 0:
-            self.data = bytearray(data)
+
+        self.data = bytearray(2<<20)  # rom_data
+
+        # len(data) should be = to file_size from what I understand.
+        if len(data) % 1024 == 512:  # Have a header.
+            self.num_bytes = len(data[512:])
+            self.data[:len(data)] = bytearray(data[512:])  # Header removal
+        elif len(data) % 1024 == 0:  # No header
+            self.num_bytes = len(data)
+            self.data[:len(data)] = bytearray(data)
         else:
             raise RandomizerError("Your game seems to be corrupted")
         for n,i in enumerate(self.data[0x7FC0:0x7FFF]):
             assert i == self.header[n]
 
-class GT(ROM):
-    def __init__(self, data):
-        super().__init__(data)  # For header removal, Will be gone eventually once the patch can handle this.
+        num_banks = int(self.num_bytes / 0x80000)
+
+        # Cast rom_data to array of c_ubyte to pass to the DLL (don't copy)
+        bytes = (c_ubyte * len(self.data)).from_buffer(self.data)
 
 
         # Code from psychomaniac, converted to class attributes.
@@ -60,20 +64,8 @@ class GT(ROM):
                 # class 1 & 2 sprite data
                 s_rom_hole(  0x6760,  0xB49 )] # addr [$80E760, $80F2A9)
 
-        self.lib = cdll.LoadLibrary('./patch.dll')
-        self.lib.commence.restype = POINTER(s_rom_data)
-        self.lib.conclude.restype = c_uint
-
-        # The DLL expects a buffer exactly 2 MiB in size (maximum size of a LoROM)
-        rom_data = bytearray(2<<20)
-
-
-        # Cast rom_data to array of c_ubyte to pass to the DLL (don't copy)
-        bytes = (c_ubyte * len(self.data)).from_buffer(self.data)
-
-
-        num_banks = int(len(self.data) / 0x80000)
         holes = (s_rom_hole * len(holes_list))(*holes_list)
+
 
 
         # This is our complete game data.
@@ -82,11 +74,12 @@ class GT(ROM):
         # End of Psychomaniac's code importation.
 
         
+
         # This is the workable data  (WIP, need to generate a debug file to test)
         self.data = self.data_complete.contents.game
-        #self.Versions = Versions(self.data)
-        #self.Grabbables = Grabbables(self.data)
-        #self.Worlds = [World2(self.data, x) for x in range(5)]
+        self.Versions = Versions(self.data)
+        self.Grabbables = Grabbables(self.data)
+        self.Worlds = [World2(self.data, x) for x in range(5)]
 
 
 
