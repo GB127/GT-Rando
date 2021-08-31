@@ -16,29 +16,27 @@ class GT:
         self.lib.conclude.restype = c_uint
 
 
-        self.data = bytearray(2<<20)  # rom_data
+        self.rom_data = bytearray(2<<20)  # rom_data
 
         # len(data) should be = to file_size from what I understand.
         if len(data) % 1024 == 512:  # Have a header.
             self.num_bytes = len(data[512:])
-            self.data[:len(data)] = bytearray(data[512:])  # Header removal
+            self.rom_data[:len(data)] = bytearray(data[512:])  # Header removal
         elif len(data) % 1024 == 0:  # No header
             self.num_bytes = len(data)
-            self.data[:len(data)] = bytearray(data)
+            self.rom_data[:len(data)] = bytearray(data)
         else:
             raise RandomizerError("Your game seems to be corrupted")
-        for n,i in enumerate(self.data[0x7FC0:0x7FFF]):
+        for n,i in enumerate(self.rom_data[0x7FC0:0x7FFF]):
             assert i == self.header[n]
 
         num_banks = int(self.num_bytes / 0x80000)
 
         # Cast rom_data to array of c_ubyte to pass to the DLL (don't copy)
-        bytes = (c_ubyte * len(self.data)).from_buffer(self.data)
+        bytes = (c_ubyte * len(self.rom_data)).from_buffer(self.rom_data)
 
-
-        # Code from psychomaniac, converted to class attributes.
         # Unused regions of the original ROM the DLL can use to put data and code into
-        holes_list = [  # All the free space we have TODO : Compare with my findings
+        holes_list = [  # All the free space we have
                 # unused
                 s_rom_hole(  0x7380,  0xC20 ),
                 s_rom_hole(  0xFF40,   0xB0 ),
@@ -66,8 +64,6 @@ class GT:
 
         holes = (s_rom_hole * len(holes_list))(*holes_list)
 
-
-
         # This is our complete game data.
         self.data_complete = self.lib.commence(num_banks, pointer(bytes), len(holes_list), pointer(holes))
 
@@ -81,6 +77,11 @@ class GT:
         self.Grabbables = Grabbables(self.data)
         self.Worlds = [World2(self.data, x) for x in range(5)]
 
+    def save(self, filename):
+        result = s_result()
+        rv = self.lib.conclude(pointer(result))
+        with open("debug.smc", "wb") as debug_file:
+            debug_file.write(self.rom_data[0:result.num_banks*32768])
 
 
     def __str__(self):
