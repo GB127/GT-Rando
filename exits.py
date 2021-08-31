@@ -135,5 +135,3 @@ class Exits:
         
         randomize_exits(all_exits, keep_direction=keep_direction)
         distribute_exits(empty_data, all_exits, pair_exits, keep_direction)
-
-

@@ -33,7 +33,7 @@ class debug(GT):
         result = s_result()
         rv = self.lib.conclude(pointer(result))
         with open("debug.smc", "wb") as debug_file:
-            debug_file.write(self.data[0:result.num_banks*32768])
+            debug_file.write(self.data_complete[0:result.num_banks*32768])
 
 """  BOSS RANDOMIZER WIP
             def boss_randomizer(self):

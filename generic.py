@@ -1,11 +1,8 @@
 class RandomizerError(BaseException):
     pass
-#testing = self.data.screens[2].itiles[0].type
-#testing = self.data.screens[2].itiles[0].tile_index
-
 
 def world_indexes(world=None):
-    if world:
+    if world or world==0:
         assert 0 <= world <= 4, "World must be 0, 1, 2, 3 or 4"
         id_per_world =   [0, 16, 32, 58, 88, 114]
         return range(id_per_world[world], id_per_world[world+1])

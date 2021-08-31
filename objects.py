@@ -18,7 +18,7 @@ class Grabbables:
     def bosses(self):
                 # Thrown item table.
                 #Thrown item table.
-                #    00 barel
+                #    00 barrel
                 #    02 pot 
                 #    04 egg 
                 #    06 sign
@@ -60,6 +60,7 @@ class Grabbables:
                     ])
             raise RandomizerError(f'{explication}\n\nOptions selected:\n{options_selected}')
 
+        print(f"Randomizing {self.__class__.__name__}...")
 
         if game_by_game: new_items = generate_newItems()
         for world_id in range(5):
@@ -71,7 +72,7 @@ class Grabbables:
                     current_item = self.data.screens[id_screen].itiles[id_item].type
                     if current_item >= 0x1A: continue
                     self.data.screens[id_screen].itiles[id_item].type = new_items[current_item]
-
+        print(f"Finished Randomizing {self.__class__.__name__}.")
 
     def __str__(self):
         totaux = {}

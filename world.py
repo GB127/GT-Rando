@@ -2,37 +2,16 @@ from generic import world_indexes
 from items import Items2
 from exits import Exits
 
-class World():
-    def __init__(self, data, world_i, starting_exit=0):
-        """Create a world object that includes all characteristics of the world
-
-        Args:
-            data (bytearray): game data
-            world_i (int): World index (0-4)
-
-            starting_exit (int, optional): [description]. Defaults to 0.
-        """
-        assert isinstance(data, bytearray), "Must be a bytearray"
-        assert 0 <= world_i <= 4, "Must be in range 0-4."
-
-        all_nFrames = [16, 16, 26, 30, 26]  # Number of frames per world.
-        starting_frame_offsets = list(range(0x1FFA7, 0x1FFAC))  # Offset for world id
-
-        # General data
+class World2():
+    def __init__(self, data, world_i):
         self.world_i = world_i
         self.data = data
-        self.nFrames = all_nFrames[world_i]  # Number of frames of this world
-        self.starting_frame_offset = starting_frame_offsets[world_i]  # get the offset of world's first frame 
-        self.starting_frame = data[self.starting_frame_offset]
-
-        # Exits related.
-        self.exits = Exits(data, world_i)
-        self.nExits = len(self.exits.offsets)
-        self.original_exits = deepcopy(self.exits)
 
         self.Exits = Exits(self.data,self.world_i, world_indexes(self.world_i))
         self.Items = Items2(self.data, self.world_i, world_indexes(self.world_i))
 
+class World():
+    def __init__(self, data, world_i, starting_exit=0):
         # Doors related
         self.doors = Doors(data, world_i, self.exits)
 
@@ -41,38 +20,6 @@ class World():
                             self.exits.source_frames,
                             self.items.frames
                             )
-
-        self.starting_exit = starting_exit
-        self.initial_frame_coordinates_offsets = self.getInitialFrameCoordinatesOffsetsFromData()
-        self.initial_frame_coordinates = self.getInitialFrameCoordinates()
-
-        self.initial_frame_coordinates_offsets_vanilla = deepcopy(self.initial_frame_coordinates_offsets)
-        self.initial_frame_coordinates_vanilla = deepcopy(self.initial_frame_coordinates)
-
-    def __str__(self):
-        result = f'World {self.world_i} | {self.nFrames} frames | Starting frame : {self.starting_frame} | Boss frame : {[14, 15, 25, 25, 25][self.world_i]}\n'
-        result += f'{self.nItems} items\n'
-        result += str(self.items)
-
-        return result
-
-    def writeWorldInData(self):
-        #assign new exits and items to the ROM
-        for i in range(self.exits.nExits):
-            self.data[self.exits.offsets[i][0]] = self.exits.destination_frames[i]
-            self.data[self.exits.offsets[i][4]] = self.exits.destination_Xpos[i]
-            self.data[self.exits.offsets[i][5]] = self.exits.destination_Ypos[i]
-            #hook bug fix
-            if self.data[self.exits.offsets[i][3]]>=2**7:self.data[self.exits.offsets[i][3]] = self.data[self.exits.offsets[i][3]]-2**7
-            self.data[self.exits.offsets[i][3]] = self.data[self.exits.offsets[i][3]]+self.exits.destination_hookshotHeightAtArrival[i]*2**7
-
-        for i in range(self.items.nItems):
-            self.data[self.items.offsets[i]] = self.items.values[i]
-
-        #Assign starting frame and coordinates
-        self.data[self.starting_frame_offset] = self.starting_frame
-        for i, pos_offset in enumerate(self.initial_frame_coordinates_offsets):
-            self.data[pos_offset] = self.initial_frame_coordinates[i]
 
     def randomizeFirstFrame(self):
         all_nFrames = [16, 16, 26, 30, 26]  # Number of frames per world.
@@ -124,26 +71,6 @@ class World():
         else:
             self.initial_frame_coordinates_offsets, self.initial_frame_coordinates =[offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max], [self.exits.source_Xpos[starting_exit], self.exits.source_Ypos[starting_exit], self.exits.source_Xpos[starting_exit], self.exits.source_Ypos[starting_exit]]
         return self.initial_frame_coordinates_offsets, self.initial_frame_coordinates
-
-    def getInitialFrameCoordinates(self):
-        [offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max] = self.getInitialFrameCoordinatesOffsetsFromData()
-        return [self.data[offset_x_goofy], self.data[offset_y_goofy], self.data[offset_x_max], self.data[offset_y_max]]
-
-    def getInitialFrameCoordinatesOffsetsFromData(self):
-        
-        # Finalement j'ai du faire une modification, ça prend l'info à un seul endroit
-        # maintenant, et j'ai hardcodé le fait que les joueurs startent à la même position
-        # peu importe.
-
-        # FIXME : Remove some now useless code : we no longer need offset_xy_max
-
-        world_offset = self.world_i * 2
-        offset_x_goofy = 0x1FFAC + world_offset
-        offset_y_goofy = 0x1FFAC + world_offset + 1
-        offset_x_max = 0x1FFAC + world_offset
-        offset_y_max = 0x1FFAC + world_offset + 1
-
-        return [offset_x_goofy, offset_y_goofy, offset_x_max, offset_y_max]
 
     
     def feasibleWorldVerification(self):
@@ -205,6 +132,7 @@ class World():
                 break
 
         return unlocked_exits, unlocked_items, boss_reached, early_boss_indicator
+
 
     def softlockIsPossible(self, frames_reachable_conditions, items_reachable_conditions, unlocked_items):
         
@@ -414,15 +342,3 @@ class World():
                     items_reachable_conditions.remove(condition_i)
 
         return frames_reachable_conditions, items_reachable_conditions 
-
-
-    def allFramesConnectedVerification(self, starting_exit=0):
-        unlocked_exits = [0]*self.nExits
-        unlocked_exits[starting_exit] = 1
-        frames_filled_conditions = [1]*len(self.frames.conditions_types) #means that we already put all the bridges and hooks to reach the exits
-        for step in range(50): #max number or loops
-            #exits links
-            unlocked_exits, boss_reached = self.exits.getUnlockedExits(unlocked_exits)
-            #internal frame links
-            unlocked_exits = self.frames.getUnlockedExits(unlocked_exits, frames_filled_conditions)
-        return all(unlocked_exits)
