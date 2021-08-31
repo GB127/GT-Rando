@@ -114,6 +114,5 @@ if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as game:
         test = debug(game.read())  # Open the debug class, which, as the time of writting, an exact copy of the class GT on gameclass.py
 
-        print(2<<20)
-
         test.save_file()
+        print(test)
