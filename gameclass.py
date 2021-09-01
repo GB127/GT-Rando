@@ -30,7 +30,7 @@ class GT:
         for n,i in enumerate(self.rom_data[0x7FC0:0x7FFF]):
             assert i == self.header[n]
 
-        num_banks = int(self.num_bytes / 0x80000)
+        num_banks = int(self.num_bytes / 0x8000)
 
         # Cast rom_data to array of c_ubyte to pass to the DLL (don't copy)
         bytes = (c_ubyte * len(self.rom_data)).from_buffer(self.rom_data)
@@ -71,7 +71,7 @@ class GT:
 
         
 
-        # This is the workable data  (WIP, need to generate a debug file to test)
+        # This is the workable data
         self.data = self.data_complete.contents.game
         self.Versions = Versions(self.data)
         self.Grabbables = Grabbables(self.data)
@@ -109,42 +109,6 @@ class GT:
                                 0x48, 0x8D, 0x64, 0x02, 0xA9, 0x02,
                                 0x85, 0x02, 0x6B])
 
-
-    """
-        def checksum(self, alldark=False, allice=False, ohko=False):
-            sprites = [
-                (0x6, 0x2), (0x8, 0x4), (0xA, 0x4), (0xC, 0x4),
-                (0xE, 0x4),(0x28, 0x2),(0x40, 0x6),(0x42, 0x6),
-                (0x44, 0x6), (0x46, 0x6),(0x48, 0x6),(0x4A, 0x4), 
-                (0x4C, 0x6)]
-
-            self.rewrite(0x0131D4, [0x22,0x20,0xFB,0x8F]) # JSL InputEndLoop
-            self.rewrite(0x7FB20, [0xAD, 0x80, 0x00, 0x9, 0x10, 0x8D, 0x80, 0x0])
-
-            current = 0x7FB28
-            for no in range(5):  # Drawing the checksum!
-                selection = random.choice(sprites)
-                self.rewrite(current, [
-                    0xA9, 0xE0, # LDA X position!
-                    0x8D, 0xA0 + 4*no, 0x1A,  # STA $1AA0 ;Set X to 0x08
-                    0xA9, (0x10 + 32*no), # LDA Y position!
-                    0x8D, 0xA1 + 4*no, 0x1A,  # STA $1AA1 ;Set Y to 0x10
-                    0xA9, selection[0], # LDA Tile!
-                    0x8D, 0xA2 + 4*no, 0x1A,  # STA $1AA2 ;Set C (tile) to 0x0C
-                    0xA9, selection[1], # LDA palette!
-                    0x8D, 0xA3 + 4*no, 0x1A])  # STA $1AA3 ;Set Palette to 0x04
-                current += 20
-
-            self.rewrite(current, [
-                0xA9, 0xAA,  # LDA #$AA
-                0x8D, 0xA0, 0x1C,# STA $1CA0 ;Set size for the 4 first sprites to 16x16
-                0x8D, 0xA1, 0x1C,# STA $1CA0 ;Set size for the 4-8 sprites to 16x16
-                # Do more copy if I need more!
-                0xC2, 0x20,  # REP #$20 ;Restore Code overwritten by the hook
-                0xE6, 0x14,  # INC $14 ;Restore Code overwritten by the hook
-                0x6B  # RTL
-                ])
-    """
 
     def ohko(self):
         # for touching enemies or thrown projectiles
