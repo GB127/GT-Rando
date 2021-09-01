@@ -1,5 +1,5 @@
 from generic import world_indexes, room_to_index
-from items import Items2
+from items import Items
 from exits import Exits
 
 class World2():
@@ -8,7 +8,7 @@ class World2():
         self.data = data
 
         self.Exits = Exits(self.data,self.world_i, world_indexes(self.world_i))
-        self.Items = Items2(self.data, self.world_i, world_indexes(self.world_i))
+        self.Items = Items(self.data, self.world_i, world_indexes(self.world_i))
 
 
     def print_screen(self, B7):

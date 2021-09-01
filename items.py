@@ -2,7 +2,7 @@ from generic import world_indexes, room_to_index, RandomizerError
 from random import shuffle
 from copy import deepcopy
 
-class Items2:
+class Items:
     def __init__(self, data, world_i, screens_ids):
         self.data = data
         self.world_i = world_i
