@@ -12,9 +12,10 @@ class debug(GT):
 
 class World_debug(World):
     def __init__(self, data, world_i):
-        self.world_i = world_i
-        self.data = data
-
+        super().__init__(data, world_i)
+        del self.Exits
+        del self.Items
+        
         self.Exits = Exits_debug(self.data, self.world_i, world_indexes(self.world_i))
         self.Items = Items_debug(self.data, self.world_i, world_indexes(self.world_i))
 
