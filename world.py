@@ -2,7 +2,7 @@ from generic import world_indexes, room_to_index
 from items import Items
 from exits import Exits
 
-class World2():
+class World():
     def __init__(self, data, world_i):
         self.world_i = world_i
         self.data = data
@@ -77,16 +77,10 @@ class World2():
         print(boundary_bottom)
 
 
-class World():
+class World_old():
     def __init__(self, data, world_i, starting_exit=0):
         # Doors related
         self.doors = Doors(data, world_i, self.exits)
-
-        self.frames = Frames(data, 
-                            world_i, 
-                            self.exits.source_frames,
-                            self.items.frames
-                            )
 
     def randomizeFirstFrame(self):
         all_nFrames = [16, 16, 26, 30, 26]  # Number of frames per world.
