@@ -1,4 +1,4 @@
-from generic import world_indexes
+from generic import world_indexes, room_to_index
 from items import Items2
 from exits import Exits
 
@@ -12,33 +12,68 @@ class World2():
 
 
     def print_screen(self, B7):
-        ID_string = {
-            0x0 : "WW",
-            0x2 : "AA",
-            0x4 : "EE",
-            0x6 : "SS",
-            0x8 : "PP",
-            0xA : "BB",
-            0xC : "LL",
-            0xE : "22",
-            0x10 : "II",
-            0x12 : "CC",
-            0x14 : "TT",
-            0x16 : "RR",
-            0x18 : "rr",
-            0x1A : "XX",
-            0x1C : "GG",
-            0x1E : "OO",
-            0x20 : "RR"
+        def transform_byt_co(big_value):
+            assert big_value <= 0x6bc and big_value >=0, "Byte value must be 0 to 0x6BC"
+            assert big_value % 2 == 0, "Byte value must be pair, else it will appear gliched."
+
+            y = ( big_value // 0x40) / 2
+            x = (big_value % 0x40) / 2
+            return x/2, y
+
+        def get_interactives(screen_id):
+            screen_data = self.data.screens[screen_id]
+            interactives = []
+            for id in range(screen_data.num_itiles):
+                objet = screen_data.itiles[id]
+                interactives.append((objet.type, transform_byt_co(objet.tile_index)))
+            return interactives
+
+
+        screen_id = room_to_index(tup=(self.world_i, B7))
+
+
+        interactives_string = {
+            0x0 : "W",
+            0x2 : "A",
+            0x4 : "E",
+            0x6 : "S",
+            0x8 : "P",
+            0xA : "B",
+            0xC : "L",
+            0xE : "2",
+            0x10 : "I",
+            0x12 : "C",
+            0x14 : "T",
+            0x16 : "R",
+            0x18 : "r",
+            0x1A : "X",
+            0x1C : "G",
+            0x1E : "O",
+            0x20 : "R"
             }
 
         boundary_top = "_" * 34
         boundary_bottom = "¯" * 34
+
+
         string_list = []
-        for _ in range(28):
-            string_list.append("|" + " " * 32 + "|")
+        for y in range(28):
+            tempo = ["." for _ in range(32)]
+            # ...
+            for interactive in get_interactives(screen_id):
+                typ = interactive[0]
+                inter_x = interactive[1][0]
+                inter_y = interactive[1][1] 
+                if 2* inter_y == y or (2 * inter_y +1) == y:
+                    tempo[int(2 * inter_x)] = interactives_string[typ]
+                    tempo[int(2* inter_x) + 1] = interactives_string[typ]
+
+
+            new_str = "|" + "".join(tempo) + "|"
+            string_list.append(new_str)
 
         print(boundary_top)
+        print("\n".join(string_list))
         print(boundary_bottom)
 
 

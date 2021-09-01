@@ -1,13 +1,6 @@
 import random
 from generic import world_indexes, room_to_index, RandomizerError
 
-def transform_byt_co(self, big_value):
-    assert big_value <= 0x6bc and big_value >=0, "Byte value must be 0 to 0x6BC"
-    assert big_value % 2 == 0, "Byte value must be pair, else it will appear gliched."
-
-    y = ( big_value // 0x40) / 2
-    x = (big_value % 0x40) / 2
-    return x/2, y
 
 # https://github.com/Zarby89/GoofTroop/blob/master/Bank81.asm#L8296
 
