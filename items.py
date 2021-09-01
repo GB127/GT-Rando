@@ -1,4 +1,4 @@
-from generic import world_indexes, room_to_index
+from generic import world_indexes, room_to_index, RandomizerError
 from random import shuffle
 from copy import deepcopy
 
@@ -82,6 +82,21 @@ class Items2:
                         else:
                             self.fruits[screen_id] = self.fruits.get(screen_id, []) + [liste_all[0]]
                         liste_all.pop(0)
+
+        if not any([randomize_fruits, combine, completely_random, randomize_items]): return
+        if combine and any([randomize_fruits, randomize_items]):
+            explication = f"You cannot use the combine flag with randomize fruits or/and randomize items. This is to ensure the randomization stays the same even if it doesn't matter for the player"
+            options_selected = "\n".join([
+                    f'   Combine : {combine}',
+                    f'   randomize fruits: {randomize_fruits}',
+                    f'   randomize items: {randomize_items}',
+                    ])
+            raise RandomizerError(f'{explication}\n\nOptions selected:\n{options_selected}')
+
+
+            raise RandomizerError()
+        if completely_random: raise RandomizerError("The option completely random isn't supported yet.")
+
 
         liste_items = get_list_items()
         liste_fruits = get_list_fruits()
