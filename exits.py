@@ -16,7 +16,7 @@ class Exits:
         self.boss_screen = self.data.levels[self.world_i].boss_screen_index
 
 
-        self.screens_exits = {}
+        self.exits = {}
 
         for B7, screen_id in enumerate(screens_ids):
             tempo = {}
@@ -25,16 +25,16 @@ class Exits:
                     if self.data.screens[screen_id].exits[exi].type in values:
                         tempo[direction] = self.data.screens[screen_id].exits[exi].dst_screen
                         break
-            self.screens_exits[B7] = tempo
+            self.exits[B7] = tempo
 
 
     def __str__(self):
         # Contruisons le tableau.
         table = ""
         count = 0  # Pour des sauts de lignes.
-        for B7 in self.screens_exits:
+        for B7 in self.exits:
             count += 1
-            table += f'{str(B7):>3} : {str(self.screens_exits[B7]):40}'
+            table += f'{str(B7):>3} : {str(self.exits[B7]):40}'
             if count % 3 == 0:  # Si le tableau est trop large, réduire ce chiffre.
                 table += "\n"
         Accessibility = "All rooms are accessible" if self.all_rooms_accessible() else "There is a closed loop"
@@ -60,11 +60,11 @@ class Exits:
                     entered_ids = enter_room(entered_ids, copy_exits, destination)
                 return ids
         
-        for starting_screen in self.screens_exits:
+        for starting_screen in self.exits:
             if starting_screen ==  self.boss_screen: # We do not want to check accessibility from boss screen.
                 continue
-            accessible_B7 = enter_room([], deepcopy(self.screens_exits), starting_screen)
-            if list(self.screens_exits.keys()) == sorted(accessible_B7): continue
+            accessible_B7 = enter_room([], deepcopy(self.exits), starting_screen)
+            if list(self.exits.keys()) == sorted(accessible_B7): continue
             return False
         return True
 
@@ -75,13 +75,13 @@ class Exits:
         def assemble_exits(keep_direction):
             # Fetch the data for easy shuffling.
             randomized_exits = {} if keep_direction else []
-            for screen in self.screens_exits.keys():
-                for direction in self.screens_exits[screen]:
-                        if self.screens_exits[screen][direction] == self.boss_screen: continue
+            for screen in self.exits.keys():
+                for direction in self.exits[screen]:
+                        if self.exits[screen][direction] == self.boss_screen: continue
                         elif keep_direction:
-                            randomized_exits[direction] = randomized_exits.get(direction, []) + [self.screens_exits[screen][direction]]
+                            randomized_exits[direction] = randomized_exits.get(direction, []) + [self.exits[screen][direction]]
                         elif not keep_direction:
-                            randomized_exits += [self.screens_exits[screen][direction]]
+                            randomized_exits += [self.exits[screen][direction]]
             return randomized_exits
 
         def randomize_exits(exits, keep_direction):
@@ -93,12 +93,12 @@ class Exits:
 
         def create_empty_data():
             empty_data = {}
-            for screen in self.screens_exits.keys():
+            for screen in self.exits.keys():
                 empty_data[screen] = {}
-                for direction in self.screens_exits[screen]:
+                for direction in self.exits[screen]:
                     empty_data[screen][direction] = {}
                     try:
-                        if self.screens_exits[screen]["N"] == self.boss_screen:
+                        if self.exits[screen]["N"] == self.boss_screen:
                             empty_data[screen]["N"] = self.boss_screen
                     except KeyError: pass
             return empty_data
@@ -125,7 +125,7 @@ class Exits:
                         if pair_exits and keep_direction:
                             empty_list[new_destination][opposite[direction]] = screen # Works
                             randomized_exits[opposite[direction]].remove(screen)
-            self.screens_exits = empty_list
+            self.exits = empty_list
 
         if not randomize: return
         assert not move_boss, "Moving boss is not supported yet" # Comment this line when working on the move_boss.
