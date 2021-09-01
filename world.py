@@ -10,6 +10,38 @@ class World2():
         self.Exits = Exits(self.data,self.world_i, world_indexes(self.world_i))
         self.Items = Items2(self.data, self.world_i, world_indexes(self.world_i))
 
+
+    def print_screen(self, B7):
+        ID_string = {
+            0x0 : "WW",
+            0x2 : "AA",
+            0x4 : "EE",
+            0x6 : "SS",
+            0x8 : "PP",
+            0xA : "BB",
+            0xC : "LL",
+            0xE : "22",
+            0x10 : "II",
+            0x12 : "CC",
+            0x14 : "TT",
+            0x16 : "RR",
+            0x18 : "rr",
+            0x1A : "XX",
+            0x1C : "GG",
+            0x1E : "OO",
+            0x20 : "RR"
+            }
+
+        boundary_top = "_" * 34
+        boundary_bottom = "¯" * 34
+        string_list = []
+        for _ in range(28):
+            string_list.append("|" + " " * 32 + "|")
+
+        print(boundary_top)
+        print(boundary_bottom)
+
+
 class World():
     def __init__(self, data, world_i, starting_exit=0):
         # Doors related
