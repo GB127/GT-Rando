@@ -58,7 +58,7 @@ class World2():
 
         string_list = []
         for y in range(28):
-            tempo = ["." for _ in range(32)]
+            tempo = [" " for _ in range(32)]
             # ...
             for interactive in get_interactives(screen_id):
                 typ = interactive[0]
