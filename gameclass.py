@@ -1,7 +1,7 @@
 from patch import *
 from objects import Versions, Grabbables
 from generic import world_indexes, room_to_index, RandomizerError
-from world import World2
+from world import World
 
 class GT:
     # NOTE for self : it's a LoROM
@@ -75,12 +75,17 @@ class GT:
         self.data = self.data_complete.contents.game
         self.Versions = Versions(self.data)
         self.Grabbables = Grabbables(self.data)
-        self.Worlds = [World2(self.data, x) for x in range(5)]
+        self.Worlds = [World(self.data, x) for x in range(5)]
+
+
+
+
+
 
     def save(self, filename):
         result = s_result()
         rv = self.lib.conclude(pointer(result))
-        with open("debug.smc", "wb") as debug_file:
+        with open(filename, "wb") as debug_file:
             debug_file.write(self.rom_data[0:result.num_banks*32768])
 
 
