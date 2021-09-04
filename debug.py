@@ -21,7 +21,7 @@ class World_debug(World):
         
         self.Exits = Exits_debug(self.data, self.world_i, world_indexes(self.world_i))
         self.Items = Items_debug(self.data, self.world_i, world_indexes(self.world_i))
-"""
+
     def showMap(self, world_i, show_exits=True, show_items=True):
         this_world = self.all_worlds[world_i]  # This is now self.world_i
         
@@ -73,10 +73,32 @@ class World_debug(World):
         return
 
 
-"""
-
 class Exits_debug(Exits):
-    pass
+    def set_exit(self, B7, exit_id, destination):
+        # Destination : tuple (new_B7, exit_id)
+
+        def fetch_new_coordinates(destination, exit_id):
+            count = 0
+            for B7, screen_id in enumerate(self.screens_ids):
+                for exi in range(self.data.screens[screen_id].num_exits):
+                    current_exit = self.data.screens[screen_id].exits[exi]
+                    if current_exit.dst_screen == destination:
+                        count += 1
+                        if count == exit_id + 1:
+                            return current_exit.dst_x, current_exit.dst_y
+
+
+
+
+        assert isinstance(destination, tuple), f"Destination must be a tuple : (New B7, Entrance ID)\n Data received: {destination}"
+        assert destination[0] in range(len(self.screens_ids)) and B7 in range(len(self.screens_ids)) , f"B7 and New exit must be a value in {list(range(len(self.screens_ids)))}\nB7 : {B7} , New exit : {destination[0]}"
+        assert exit_id in range(self.data.screens[self.screens_ids[B7]].num_exits), f"B7 exit id must be in {list(range(self.data.screens[self.screens_ids[B7]].num_exits))}\nCurrent exit id : {exit_id}"
+        assert destination[1] in range(self.data.screens[self.screens_ids[destination[1]]].num_exits), f"Destination exit id must be in {list(range(self.data.screens[self.screens_ids[destination[0]]].num_exits))}"
+
+        self.data.screens[self.screens_ids[B7]].exits[exit_id].dst_screen = destination[0]
+        self.data.screens[self.screens_ids[B7]].exits[exit_id].dst_x, self.data.screens[self.screens_ids[B7]].exits[exit_id].dst_y = fetch_new_coordinates(destination[0], destination[1])
+        self.generate_data()
+
 
 class Items_debug(Items):
     def set_item(self, B7, item_id, new_item):
@@ -89,7 +111,7 @@ class Items_debug(Items):
             return liste
 
         items_names = {0x8 : "Hookshot", 0x9 : "Candle  ", 0xA : "Grey Key",0xB : "Gold Key", 0xC :"Shovel  ", 0xD : "Bell    ", 0xE : "Bridge  ", 0x40 : "Cherry  ", 0x42: "Banana  ", 0x44 : "Red Gem ", 0x46 : "Blue Gem"}
-        assert new_item in items_names.keys(), f"New item need to be a value in {list(items_names)}"
+        assert new_item in items_names.keys(), f"New item need to be a value in {list(items_names)}\n New item : {new_item}"
 
         self.data.screens[self.screens[B7]].class_2_sprites[compatible_ids()[item_id]].type = new_item
         self.generate_data()
@@ -98,6 +120,6 @@ class Items_debug(Items):
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as game:
         test = debug(game.read())
-        world_test = test.Worlds[4].Items
-        world_test.set_item(9,0,10)
+        world_test = test.Worlds[4].Exits
+        world_test.set_exit(0,0,(7,1))
         print(world_test)

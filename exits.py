@@ -14,11 +14,14 @@ class Exits:
         self.world_i = world_i
         self.screens_ids = screens_ids
         self.boss_screen = self.data.levels[self.world_i].boss_screen_index
+        self.generate_data()
 
 
+
+    def generate_data(self):
         self.exits = {}
 
-        for B7, screen_id in enumerate(screens_ids):
+        for B7, screen_id in enumerate(self.screens_ids):
             tempo = {}
             for exi in range(self.data.screens[screen_id].num_exits):
                 for direction, values in self.exits_type.items():
@@ -67,6 +70,7 @@ class Exits:
             if list(self.exits.keys()) == sorted(accessible_B7): continue
             return False
         return True
+
 
     def __call__(self,  randomize=False, 
                         keep_direction=False,
@@ -133,5 +137,5 @@ class Exits:
         empty_data = create_empty_data()
         all_exits = assemble_exits(keep_direction)
         
-        randomize_exits(all_exits, keep_direction=keep_direction)
+        randomize_exits(all_exits, keep_direction)
         distribute_exits(empty_data, all_exits, pair_exits, keep_direction)
