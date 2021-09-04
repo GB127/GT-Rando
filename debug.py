@@ -5,10 +5,13 @@ from items import Items
 from generic import world_indexes
 
 class debug(GT):
-    def save(self):
-        super().save("debug.smc")
+    def __init__(self, data):
+        super().__init__(data)        
         del self.Worlds
         self.Worlds = [World_debug(self.data, x) for x in range(5)]
+
+    def save(self):
+        super().save("debug.smc")
 
 class World_debug(World):
     def __init__(self, data, world_i):
@@ -18,7 +21,7 @@ class World_debug(World):
         
         self.Exits = Exits_debug(self.data, self.world_i, world_indexes(self.world_i))
         self.Items = Items_debug(self.data, self.world_i, world_indexes(self.world_i))
-
+"""
     def showMap(self, world_i, show_exits=True, show_items=True):
         this_world = self.all_worlds[world_i]  # This is now self.world_i
         
@@ -69,13 +72,32 @@ class World_debug(World):
         plt.show()
         return
 
-class Exits_debug(Exits):  # I'll write at the very least a way to edit a specific exit soonish.
+
+"""
+
+class Exits_debug(Exits):
     pass
 
-class Items_debug(Items): # I'll write at the very least a way to edit a specific item soonish.
-    pass
+class Items_debug(Items):
+    def set_item(self, B7, item_id, new_item):
+        def compatible_ids():
+            liste = []
+            for item_id in range(32):
+                check_item = self.data.screens[self.screens[B7]].class_2_sprites[item_id].type
+                if check_item in items_names.keys():
+                    liste.append(item_id)
+            return liste
+
+        items_names = {0x8 : "Hookshot", 0x9 : "Candle  ", 0xA : "Grey Key",0xB : "Gold Key", 0xC :"Shovel  ", 0xD : "Bell    ", 0xE : "Bridge  ", 0x40 : "Cherry  ", 0x42: "Banana  ", 0x44 : "Red Gem ", 0x46 : "Blue Gem"}
+        assert new_item in items_names.keys(), f"New item need to be a value in {list(items_names)}"
+
+        self.data.screens[self.screens[B7]].class_2_sprites[compatible_ids()[item_id]].type = new_item
+        self.generate_data()
+
 
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as game:
         test = debug(game.read())
-        print(test.Worlds[0].Items)
+        world_test = test.Worlds[4].Items
+        world_test.set_item(9,0,10)
+        print(world_test)
