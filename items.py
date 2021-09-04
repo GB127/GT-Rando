@@ -7,10 +7,13 @@ class Items:
         self.data = data
         self.world_i = world_i
         self.screens = screens_ids
+        self.generate_data()
 
+
+    def generate_data(self):
         self.items = {}
         self.fruits = {}
-        for B7, screen_id in enumerate(screens_ids):
+        for B7, screen_id in enumerate(self.screens):
             num_objets = self.data.screens[screen_id].num_class_2_sprites
             for objet_id in range(num_objets):
                 objet_type = self.data.screens[screen_id].class_2_sprites[objet_id].type
@@ -31,14 +34,14 @@ class Items:
             tempo_items = ""
             tempo_fruits = ""
             
-            if self.items.get(screen, False):
-                tempo_items = ", ".join([items_names[x] for x in self.items[screen]])
-                for item in self.items[screen]:
+            if self.items.get(B7, False):
+                tempo_items = ", ".join([items_names[x] for x in self.items[B7]])
+                for item in self.items[B7]:
                     counts_items[items_names[item]] = counts_items.get(items_names[item], 0) + 1
 
-            if self.fruits.get(screen, False):
-                tempo_fruits = ", ".join([fruits_names[x] for x in self.fruits[screen]])
-                for fruit in self.fruits[screen]:
+            if self.fruits.get(B7, False):
+                tempo_fruits = ", ".join([fruits_names[x] for x in self.fruits[B7]])
+                for fruit in self.fruits[B7]:
                     counts_fruits[fruits_names[fruit]] = counts_items.get(fruits_names[fruit], 0) + 1
 
             if any([tempo_fruits, tempo_items]):
@@ -95,7 +98,9 @@ class Items:
 
 
             raise RandomizerError()
-        if completely_random: raise RandomizerError("The option completely random isn't supported yet.")
+        assert completely_random, "The option completely random isn't supported yet."
+
+        print("Randomizing items and/or fruits...")
 
 
         liste_items = get_list_items()
@@ -108,3 +113,5 @@ class Items:
         if combine: shuffle(liste_all)
         
         distribute(liste_all, combine)
+
+        print("Finished Randomizing items and/or fruits!")
