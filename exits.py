@@ -2,6 +2,24 @@ from generic import world_indexes, room_to_index, world_indexes
 from copy import deepcopy
 from random import shuffle, choice
 
+
+class one_exit:
+    exits_type = {  "N":[4, 18, 20, 132, 146, 148],
+                    "S":[68, 82, 84, 196, 210, 212],
+                    "W":[98, 100, 226, 228],
+                    "E":[34, 35, 36, 50, 162, 163, 164, 178],
+                    "↗":[15, 143]}
+
+    def __init__(self, exit_data):
+        for direction in self.exits_type:
+            if exit_data.type in self.exits_type[direction]:
+                self.origin = direction
+        self.destination = exit_data.dst_screen
+        self.xy = exit_data.dst_x, exit_data.dst_y
+    def __str__(self):
+        return f'{self.destination:2}'
+
+
 class Exits:
     exits_type = {  "N":[4, 18, 20, 132, 146, 148],
                     "S":[68, 82, 84, 196, 210, 212],
@@ -24,24 +42,30 @@ class Exits:
         for B7, screen_id in enumerate(self.screens_ids):
             tempo = {}
             for exi in range(self.data.screens[screen_id].num_exits):
-                for direction, values in self.exits_type.items():
-                    if self.data.screens[screen_id].exits[exi].type in values:
-                        tempo[direction] = self.data.screens[screen_id].exits[exi].dst_screen
-                        break
+                data = self.data.screens[screen_id].exits[exi]
+                tempo_exit = one_exit(data)
+                tempo[tempo_exit.origin] = tempo_exit
             self.exits[B7] = tempo
 
 
     def __str__(self):
+        def str_screen(dictio):
+            liste = []
+            for direction, sortie in dictio.items():
+                liste.append(f'{direction}: {str(sortie)}')
+            return "   ".join(liste)
         # Contruisons le tableau.
         table = ""
         count = 0  # Pour des sauts de lignes.
         for B7 in self.exits:
             count += 1
-            table += f'{str(B7):>3} : {str(self.exits[B7]):40}'
+            table += f'{str(B7):>3} : {str_screen(self.exits[B7]):35}'
             if count % 3 == 0:  # Si le tableau est trop large, réduire ce chiffre.
                 table += "\n"
-        Accessibility = "All rooms are accessible" if self.all_rooms_accessible() else "There is a closed loop"
-        return f'{table}\n{Accessibility}'
+        
+        
+        #Accessibility = "All rooms are accessible" if self.all_rooms_accessible() else "There is a closed loop"
+        return f'{table}\n'#{Accessibility}'
 
 
     def all_rooms_accessible(self):
