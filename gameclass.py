@@ -78,10 +78,6 @@ class GT:
         self.Worlds = [World(self.data, x) for x in range(5)]
 
 
-
-
-
-
     def save(self, filename):
         result = s_result()
         rv = self.lib.conclude(pointer(result))
@@ -89,21 +85,23 @@ class GT:
             debug_file.write(self.rom_data[0:result.num_banks*32768])
 
 
+    #9:02 PM] PsychoManiac: The islander is a class 1 sprite, not class 2
+    #[9:02 PM] PsychoManiac: Type $0E
     def __str__(self):
-        def get_dark_rooms():
+        def str_dark_rooms():
             dark_rooms = []
             for id in world_indexes():
                 if self.data.screens[id].flags & 2:
                     dark_rooms.append(str(room_to_index(id=id)))
             return f'{len(dark_rooms)} Dark Rooms: ' + " ".join(dark_rooms)
-        def get_ice_rooms():
+        def str_ice_rooms():
             ice_rooms = []
             for id in world_indexes():
                 if self.data.screens[id].flags & 1:
                     ice_rooms.append(str(room_to_index(id=id)))
             return f'{len(ice_rooms)} Icy Rooms: ' + " ".join(ice_rooms)
         line = "\n" + "-" * 50 + "\n"
-        return f'{get_dark_rooms()}\n{get_ice_rooms()}'
+        return f'{str_dark_rooms()}\n{str_ice_rooms()}'
 
 
     def arrow_platform_bidirect(self):
