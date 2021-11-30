@@ -1,6 +1,8 @@
 from generic import world_indexes, room_to_index, world_indexes
 from copy import deepcopy
 from random import shuffle, choice
+import matplotlib.pyplot as plt
+import networkx as nx
 
 
 class one_exit:
@@ -21,31 +23,22 @@ class one_exit:
 
 
 class Exits:
-    exits_type = {  "N":[4, 18, 20, 132, 146, 148],
-                    "S":[68, 82, 84, 196, 210, 212],
-                    "W":[98, 100, 226, 228],
-                    "E":[34, 35, 36, 50, 162, 163, 164, 178],
-                    "↗":[15, 143]}
+    def __init__(self, data, world_i, screens_ids):
+        def generate_data():
+            self.exits = {}
+            for B7, screen_id in enumerate(self.screens_ids):
+                tempo = {}
+                for exi in range(self.data.screens[screen_id].num_exits):
+                    data = self.data.screens[screen_id].exits[exi]
+                    tempo_exit = one_exit(data)
+                    tempo[tempo_exit.origin] = tempo_exit
+                self.exits[B7] = tempo
 
-    def __init__(self, data,world_i, screens_ids):
         self.data = data
         self.world_i = world_i
         self.screens_ids = screens_ids
         self.boss_screen = self.data.levels[self.world_i].boss_screen_index
-        self.generate_data()
-
-
-
-    def generate_data(self):
-        self.exits = {}
-
-        for B7, screen_id in enumerate(self.screens_ids):
-            tempo = {}
-            for exi in range(self.data.screens[screen_id].num_exits):
-                data = self.data.screens[screen_id].exits[exi]
-                tempo_exit = one_exit(data)
-                tempo[tempo_exit.origin] = tempo_exit
-            self.exits[B7] = tempo
+        generate_data()
 
 
     def __str__(self):
@@ -163,3 +156,15 @@ class Exits:
         
         randomize_exits(all_exits, keep_direction)
         distribute_exits(empty_data, all_exits, pair_exits, keep_direction)
+
+
+
+    def network(self, world):  # https://networkx.org/documentation/stable/reference/generated/networkx.drawing.nx_pylab.draw_networkx.html#networkx.drawing.nx_pylab.draw_networkx
+        g = nx.Graph()
+        for screen_id in self.exits:
+            for exits in self.exits[screen_id].values():
+                g.add_edge(screen_id, exits.destination)
+        
+        nx.draw(g, with_labels=True, pos=nx.spring_layout(g), node_size=160)
+        plt.savefig(f"map {world}")
+        plt.close()
