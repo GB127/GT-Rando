@@ -1,6 +1,7 @@
 import random
 from generic import world_indexes, room_to_index, RandomizerError
-
+from random import shuffle
+from copy import deepcopy
 
 # https://github.com/Zarby89/GoofTroop/blob/master/Bank81.asm#L8296
 
@@ -8,36 +9,25 @@ class Grabbables:
     def __init__(self, data):
         self.data = data
 
-    def bosses(self):
-                # Thrown item table.
-                #Thrown item table.
-                #    00 barrel
-                #    02 pot 
-                #    04 egg 
-                #    06 sign
-                #    08 plant
-                #    0A bomb
-                #    0C log
-                #    0E fence 
-                #    10 ice 
-                #    12 shell 
-                #    14 plates
-                #    16 rock
-                #    18 nut
-                #    1A spike
-                #    FF = nothing
-
-        pass
-
     def __call__(self, game_by_game=False, world_by_world=False, screen_by_screen=False, object_by_object=False):
+        """Randomizes each thrownable items.
+
+            Args:
+                game_by_game (bool, optional).
+                world_by_world (bool, optional).
+                screen_by_screen (bool, optional).
+                object_by_object (bool, optional).
+        """
         def generate_newItems():
             new_distribution = {}
             Barrel, Pot, Egg, Sign, Plant, Bomb, Log, Something, RedBox, Shell, Something2, Rock, Coconut, Star_Block, Green_Block, Orange_Block, Red_Block = [x for x in range(0, 0x21, 2)]
             changeables_items = [Barrel, Pot, Egg, Sign, Plant, Bomb,
                                 Log, Something, RedBox, Shell, Something2,
                                 Rock, Coconut]
-            for grabbable in changeables_items:
-                new_distribution[grabbable] = random.choice(changeables_items)
+            changed_item = deepcopy(changeables_items)
+            shuffle(changed_item)
+            for grabbable, new_item in zip(changeables_items, changed_item):
+                new_distribution[grabbable] = new_item
             return new_distribution
 
 
@@ -58,7 +48,7 @@ class Grabbables:
         if game_by_game: new_items = generate_newItems()
         for world_id in range(5):
             if world_by_world: new_items = generate_newItems()
-            for id_screen in world_indexes():
+            for id_screen in world_indexes(world_id):
                 if screen_by_screen: new_items = generate_newItems()
                 for id_item in range(self.data.screens[id_screen].num_itiles):
                     if object_by_object: new_items = generate_newItems()
@@ -77,7 +67,7 @@ class Grabbables:
                 if current_item >= 0x1A: continue
                 count += 1
                 totaux[item_names[int(current_item/2)]] = totaux.get(item_names[int(current_item/2)], 0) + 1
-        return f'{count} items\n{totaux}'
+        return f'{totaux} - {count} items'
 
 
 class Versions:
@@ -86,6 +76,13 @@ class Versions:
         self.data = data
 
     def __call__(self, world_by_world=False, room_by_room=False, game_by_game=False):
+        """Randomize the versions
+
+        Args:
+            world_by_world (bool, optional).
+            room_by_room (bool, optional).
+            game_by_game (bool, optional).
+        """
         if not any([world_by_world, room_by_room, game_by_game]):
             return
         elif [world_by_world, room_by_room, game_by_game].count(True) > 1: 
