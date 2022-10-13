@@ -11,6 +11,11 @@ class GT:
             ,0x20,0x50,0x72,0x6F,0xBC,0xFF,0xBC,0xFF,0xBC,0xFF,0xB4,0xFF,0xBC,0xFF,0xB8,0xFF,0x20,0x4D,0x2E,0x20,0xBC,0xFF,0xBC,0xFF,0xBC,0xFF,0xBC,0xFF,0xB0,0xFF,0xBC,0xFF
             ])
     def __init__(self, data):
+        """Game data. Attributes:
+            Versions
+            Grabbables
+            Worlds
+        """
         self.lib = cdll.LoadLibrary('./patch.dll')
         self.lib.commence.restype = POINTER(s_rom_data)
         self.lib.conclude.restype = c_uint
@@ -73,9 +78,11 @@ class GT:
 
         # This is the workable data
         self.data = self.data_complete.contents.game
-        self.Versions = Versions(self.data)
-        self.Grabbables = Grabbables(self.data)
+        self.Versions = Versions(self.data)  # TODO : Versions Data for J2 and J3
+        self.Grabbables = Grabbables(self.data)  # WORKS, NOTHING TO DO.
+
         self.Worlds = [World(self.data, x) for x in range(5)]
+            # A world has ITEMS and EXITS attribute
 
 
     def save(self, filename):
@@ -87,6 +94,10 @@ class GT:
 
     #9:02 PM] PsychoManiac: The islander is a class 1 sprite, not class 2
     #[9:02 PM] PsychoManiac: Type $0E
+    
+    
+    
+    
     def __str__(self):
         def str_dark_rooms():
             dark_rooms = []
