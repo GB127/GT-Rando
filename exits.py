@@ -1,45 +1,65 @@
+from lib2to3.pytree import Base
 from generic import world_indexes, room_to_index, world_indexes
 from copy import deepcopy
 from random import shuffle, choice
 import matplotlib.pyplot as plt
-import networkx as nx
-
+from random import shuffle
 
 class one_exit:
-    exits_type = {  "N":[4, 18, 20, 132, 146, 148],
+    exits_type = { "N":[4, 18, 20, 132, 146, 148],
                     "S":[68, 82, 84, 196, 210, 212],
                     "W":[98, 100, 226, 228],
                     "E":[34, 35, 36, 50, 162, 163, 164, 178],
                     "↗":[15, 143]}
+    opposite = {"N": "S",
+                "S": "N",
+                "W": "E",
+                "E": "W",
+                "↗": "↗"
+                }
 
     def __init__(self, exit_data):
-        for direction in self.exits_type:
-            if exit_data.type in self.exits_type[direction]:
-                self.origin = direction
         self.destination = exit_data.dst_screen
         self.xy = exit_data.dst_x, exit_data.dst_y
+
+        for direction in self.exits_type:
+            if exit_data.type in self.exits_type[direction]:
+                self.direction = direction
+        if self.xy in [(200,66), (200,194), (120, 130), (152, 194), (24, 194), (88, 50), (104,50)]:
+            self.spawn = '↗'
+        elif self.xy[0] < 40:
+            self.spawn = 'W'
+        elif self.xy[0] > 180:
+            self.spawn = 'E'
+        elif self.xy[1] > 122:
+            self.spawn = 'S'
+        else:
+            self.spawn = 'N'
+
     def __str__(self):
-        return f'{self.destination:2}'
+        return f'{self.destination} ({self.spawn})'
+
+
 
 
 class Exits:
-    def __init__(self, data, world_i, screens_ids):
-        def generate_data():
-            self.exits = {}
-            for B7, screen_id in enumerate(self.screens_ids):
-                tempo = {}
-                for exi in range(self.data.screens[screen_id].num_exits):
-                    data = self.data.screens[screen_id].exits[exi]
-                    tempo_exit = one_exit(data)
-                    tempo[tempo_exit.origin] = tempo_exit
-                self.exits[B7] = tempo
+    def generate_data(self):
+        self.exits = {}
+        for B7, screen_id in enumerate(self.screens_ids):
+            tempo = {}
+            for exi in range(self.data.screens[screen_id].num_exits):
+                data = self.data.screens[screen_id].exits[exi]
+                tempo_exit = one_exit(data)
+                tempo[tempo_exit.direction] = tempo_exit
+            self.exits[B7] = tempo
+        return self.exits
 
+    def __init__(self, data, world_i, screens_ids):
         self.data = data
         self.world_i = world_i
         self.screens_ids = screens_ids
         self.boss_screen = self.data.levels[self.world_i].boss_screen_index
-        generate_data()
-
+        self.generate_data()
 
     def __str__(self):
         def str_screen(dictio):
@@ -50,121 +70,125 @@ class Exits:
         # Contruisons le tableau.
         table = ""
         count = 0  # Pour des sauts de lignes.
-        for B7 in self.exits:
+        for B7, data in self.generate_data().items():
             count += 1
-            table += f'{str(B7):>3} : {str_screen(self.exits[B7]):35}'
-            if count % 3 == 0:  # Si le tableau est trop large, réduire ce chiffre.
+            table += f'{str(B7):>3} : {str_screen(data):45}'
+            if count % 2 == 0:  # Si le tableau est trop large, réduire ce chiffre.
                 table += "\n"
-        
-        
-        #Accessibility = "All rooms are accessible" if self.all_rooms_accessible() else "There is a closed loop"
-        return f'{table}\n'#{Accessibility}'
+
+        return f'{table}'
 
 
-    def all_rooms_accessible(self):
-        """Return a bool.
-            True : All room are accessible
-            False : A room cannot be accessed (closed cloop somewhere)
-        """
-        def enter_room(ids, exits, new_location):
-            entered_ids = ids
-            if new_location not in entered_ids:
-                entered_ids.append(new_location)
-            if not exits[new_location]:  # All exits have been visited in this location
-                return ids
-            else:  # There are some exits not visited yet.
-                copy_exits = deepcopy(exits)
-                for direction, destination in exits[new_location].items():
-                    del copy_exits[new_location][direction]
-                for direction, destination in exits[new_location].items():
-                    entered_ids = enter_room(entered_ids, copy_exits, destination)
-                return ids
-        
-        for starting_screen in self.exits:
-            if starting_screen ==  self.boss_screen: # We do not want to check accessibility from boss screen.
-                continue
-            accessible_B7 = enter_room([], deepcopy(self.exits), starting_screen)
-            if list(self.exits.keys()) == sorted(accessible_B7): continue
-            return False
-        return True
-
-
-    def __call__(self,  randomize=False, 
+    def __call__(self,  randomize:bool, 
                         keep_direction=False,
                         move_boss=False,
                         pair_exits=False):
-        def assemble_exits(keep_direction):
+        """Randomize the exits.
+
+        Args:
+            randomize (bool):  Activate the randomizer or not.
+            keep_direction (bool, optional)
+            move_boss (bool, optional): NOTIMPLEMENTED
+            pair_exits (bool, optional)
+            NEW ARGUMENT FOR checking if RANDOMIZING LOCKED DOORS because some exits will need to stay
+        """
+        def exits_list():
+            """Retrieve all exits. And Returns a list of the exits."""
             # Fetch the data for easy shuffling.
-            randomized_exits = {} if keep_direction else []
+            randomized_exits = []
             for screen in self.exits.keys():
                 for direction in self.exits[screen]:
                         if self.exits[screen][direction] == self.boss_screen: continue
-                        elif keep_direction:
-                            randomized_exits[direction] = randomized_exits.get(direction, []) + [self.exits[screen][direction]]
-                        elif not keep_direction:
-                            randomized_exits += [self.exits[screen][direction]]
+                        randomized_exits += [self.exits[screen][direction]]
             return randomized_exits
 
-        def randomize_exits(exits, keep_direction):
+        def clear_exits():
+            """Sets all destinations and landing coordinates to 255. Used for an "if...". Logically, it means that it's cleared."""
+            for screen_id in self.screens_ids:
+                for exi in range(self.data.screens[screen_id].num_exits):
+                    self.data.screens[screen_id].exits[exi].dst_screen = 255
+                    self.data.screens[screen_id].exits[exi].dst_x, self.data.screens[screen_id].exits[exi].dst_y = 255,255
+
+        def set_boss_exit():
+            """Manually set the vanilla boss exit."""
+            boss_exit = next(x for x in all_exits if x.destination == self.boss_screen > 3)
+            van_screen_to_boss= [   room_to_index(tup=(0,12)),
+                                    room_to_index(tup=(1,14)),
+                                    room_to_index(tup=(2,24)),
+                                    room_to_index(tup=(3,24)),
+                                    room_to_index(tup=(4,24))][self.world_i]
+            self.data.screens[van_screen_to_boss].exits[0].dst_screen = boss_exit.destination
+            self.data.screens[van_screen_to_boss].exits[0].dst_x, self.data.screens[van_screen_to_boss].exits[0].dst_y = boss_exit.xy 
+            all_exits.remove(boss_exit)
+        
+        def next_exit(exit_type):
+            """Returns the correct exit to be set. it only checks if keep direction is True."""
+            exits_type = {  "N":[4, 18, 20, 132, 146, 148],
+                    "S":[68, 82, 84, 196, 210, 212],
+                    "W":[98, 100, 226, 228],
+                    "E":[34, 35, 36, 50, 162, 163, 164, 178],
+                    "↗":[15, 143]}
             if keep_direction:
-                for direction in exits.keys():
-                    shuffle(exits[direction])
-            elif not keep_direction:
-                shuffle(exits)
+                for direction in exits_type:
+                    if exit_type in exits_type[direction]:
+                        desired_direction = direction
+                return next(x for x in all_exits if x.direction == desired_direction)             
+            return all_exits[0]
 
-        def create_empty_data():
-            empty_data = {}
-            for screen in self.exits.keys():
-                empty_data[screen] = {}
-                for direction in self.exits[screen]:
-                    empty_data[screen][direction] = {}
-                    try:
-                        if self.exits[screen]["N"] == self.boss_screen:
-                            empty_data[screen]["N"] = self.boss_screen
-                    except KeyError: pass
-            return empty_data
+        def back_exit(screen_id, exit_type):
+            exits_type = {"N":[4, 18, 20, 132, 146, 148],
+                    "S":[68, 82, 84, 196, 210, 212],
+                    "W":[98, 100, 226, 228],
+                    "E":[34, 35, 36, 50, 162, 163, 164, 178],
+                    "↗":[15, 143]}
+            for direction in exits_type:
+                if exit_type in exits_type[direction]:
+                    desired_direction = direction
+            return next(x for x in all_exits if ((x.destination == room_to_index(id=screen_id)[1]) and (x.spawn == desired_direction)))
 
-        def distribute_exits(empty_list, randomized_exits, pair_exits, keep_direction):
-            opposite = {    "N": "S",
-                        "S": "N",
-                        "W": "E",
-                        "E": "W",
-                        "↗": "↗"
-                        }
+        def pairer(current_screen_id, exit_type, initial_exit):
+            exits_type = { "N":[4, 18, 20, 132, 146, 148],
+                            "S":[68, 82, 84, 196, 210, 212],
+                            "W":[98, 100, 226, 228],
+                            "E":[34, 35, 36, 50, 162, 163, 164, 178],
+                            "↗":[15, 143]}
+            return_exit = back_exit(current_screen_id, exit_type)
 
-            loop_exits = deepcopy(empty_list)
-            for screen in loop_exits:
-                for direction in loop_exits[screen]:
-                    if not empty_list[screen][direction]:
-                        if not keep_direction: access_destination = randomized_exits
-                        elif keep_direction: access_destination = randomized_exits[direction]
+            dest_screen_id = room_to_index(tup=(self.world_i, initial_exit.destination))
+            for exi_id in range(self.data.screens[dest_screen_id].num_exits):
+                for cle, valeurs in exits_type.items():
+                    if self.data.screens[room_to_index(tup=(self.world_i, initial_exit.destination))].exits[exi_id].type in valeurs:
+                        current_dir = cle
+                        break
+                if initial_exit.spawn == current_dir:
+                    self.data.screens[dest_screen_id].exits[exi_id].dst_screen = return_exit.destination
+                    self.data.screens[dest_screen_id].exits[exi_id].dst_x, self.data.screens[dest_screen_id].exits[exi_id].dst_y = return_exit.xy
+                    break
+            all_exits.remove(return_exit)
 
-                        new_destination = access_destination[0]
-                        empty_list[screen][direction] = new_destination
-                        del access_destination[0]
 
-                        if pair_exits and keep_direction:
-                            empty_list[new_destination][opposite[direction]] = screen # Works
-                            randomized_exits[opposite[direction]].remove(screen)
-            self.exits = empty_list
+
 
         if not randomize: return
         assert not move_boss, "Moving boss is not supported yet" # Comment this line when working on the move_boss.
 
-        empty_data = create_empty_data()
-        all_exits = assemble_exits(keep_direction)
+        all_exits = exits_list()
+        clear_exits()
+        set_boss_exit()
+
+        # shuffle(all_exits)  # need to fix world 1 and 3 with their unused exit, mthen it should be ready.
         
-        randomize_exits(all_exits, keep_direction)
-        distribute_exits(empty_data, all_exits, pair_exits, keep_direction)
+        for screen_id in self.screens_ids:
+            for exi in range(self.data.screens[screen_id].num_exits):
+                # Check if exit already set before.
+                if self.data.screens[screen_id].exits[exi].dst_screen != 255:
+                    continue
 
+                new_exit = next_exit(self.data.screens[screen_id].exits[exi].type)
+                self.data.screens[screen_id].exits[exi].dst_screen = new_exit.destination
+                self.data.screens[screen_id].exits[exi].dst_x, self.data.screens[screen_id].exits[exi].dst_y = new_exit.xy
+                all_exits.remove(new_exit)
 
-
-    def network(self, world):  # https://networkx.org/documentation/stable/reference/generated/networkx.drawing.nx_pylab.draw_networkx.html#networkx.drawing.nx_pylab.draw_networkx
-        g = nx.Graph()
-        for screen_id in self.exits:
-            for exits in self.exits[screen_id].values():
-                g.add_edge(screen_id, exits.destination)
-        
-        nx.draw(g, with_labels=True, pos=nx.spring_layout(g), node_size=160)
-        plt.savefig(f"map {world}")
-        plt.close()
+ 
+                if pair_exits:
+                    pairer(screen_id, self.data.screens[screen_id].exits[exi].type, new_exit)
