@@ -1,8 +1,7 @@
 from lib2to3.pytree import Base
+from logging import exception
 from generic import world_indexes, room_to_index, world_indexes
-from copy import deepcopy
-from random import shuffle, choice
-import matplotlib.pyplot as plt
+from random import shuffle
 from random import shuffle
 
 class one_exit:
@@ -39,9 +38,6 @@ class one_exit:
     def __str__(self):
         return f'{self.destination} ({self.spawn})'
 
-
-
-
 class Exits:
     def generate_data(self):
         self.exits = {}
@@ -59,6 +55,16 @@ class Exits:
         self.world_i = world_i
         self.screens_ids = screens_ids
         self.boss_screen = self.data.levels[self.world_i].boss_screen_index
+
+        if self.world_i == 1:
+            self.data.screens[room_to_index(tup=(1, 15))].num_exits = 0
+            self.data.screens[room_to_index(tup=(1, 13))].num_exits = 2
+            self.data.screens[room_to_index(tup=(1, 13))].exits[1] = self.data.screens[room_to_index(tup=(1, 13))].exits[2]
+        elif self.world_i == 3:
+            self.data.screens[room_to_index(tup=(3, 1))].num_exits = 1
+            self.data.screens[room_to_index(tup=(3, 1))].exits[0] = self.data.screens[room_to_index(tup=(3, 1))].exits[1]
+
+
         self.generate_data()
 
     def __str__(self):
@@ -98,8 +104,7 @@ class Exits:
             randomized_exits = []
             for screen in self.exits.keys():
                 for direction in self.exits[screen]:
-                        if self.exits[screen][direction] == self.boss_screen: continue
-                        randomized_exits += [self.exits[screen][direction]]
+                    randomized_exits += [self.exits[screen][direction]]
             return randomized_exits
 
         def clear_exits():
@@ -111,7 +116,7 @@ class Exits:
 
         def set_boss_exit():
             """Manually set the vanilla boss exit."""
-            boss_exit = next(x for x in all_exits if x.destination == self.boss_screen > 3)
+            boss_exit = next(x for x in all_exits if x.destination == self.boss_screen)
             van_screen_to_boss= [   room_to_index(tup=(0,12)),
                                     room_to_index(tup=(1,14)),
                                     room_to_index(tup=(2,24)),
@@ -144,15 +149,14 @@ class Exits:
             for direction in exits_type:
                 if exit_type in exits_type[direction]:
                     desired_direction = direction
-            return next(x for x in all_exits if ((x.destination == room_to_index(id=screen_id)[1]) and (x.spawn == desired_direction)))
-
+            tempo = next(x for x in all_exits if ((x.destination == room_to_index(id=screen_id)[1]) and (x.spawn == desired_direction)))
+            return tempo
         def pairer(current_screen_id, exit_type, initial_exit):
             exits_type = { "N":[4, 18, 20, 132, 146, 148],
                             "S":[68, 82, 84, 196, 210, 212],
                             "W":[98, 100, 226, 228],
                             "E":[34, 35, 36, 50, 162, 163, 164, 178],
                             "↗":[15, 143]}
-            return_exit = back_exit(current_screen_id, exit_type)
 
             dest_screen_id = room_to_index(tup=(self.world_i, initial_exit.destination))
             for exi_id in range(self.data.screens[dest_screen_id].num_exits):
@@ -161,10 +165,14 @@ class Exits:
                         current_dir = cle
                         break
                 if initial_exit.spawn == current_dir:
-                    self.data.screens[dest_screen_id].exits[exi_id].dst_screen = return_exit.destination
-                    self.data.screens[dest_screen_id].exits[exi_id].dst_x, self.data.screens[dest_screen_id].exits[exi_id].dst_y = return_exit.xy
+                    try:
+                        return_exit = back_exit(current_screen_id, exit_type)
+                        self.data.screens[dest_screen_id].exits[exi_id].dst_screen = return_exit.destination
+                        self.data.screens[dest_screen_id].exits[exi_id].dst_x, self.data.screens[dest_screen_id].exits[exi_id].dst_y = return_exit.xy
+                        all_exits.remove(return_exit)
+                    except StopIteration:
+                        break
                     break
-            all_exits.remove(return_exit)
 
 
 
@@ -176,19 +184,17 @@ class Exits:
         clear_exits()
         set_boss_exit()
 
-        # shuffle(all_exits)  # need to fix world 1 and 3 with their unused exit, mthen it should be ready.
+        shuffle(all_exits)
         
         for screen_id in self.screens_ids:
             for exi in range(self.data.screens[screen_id].num_exits):
                 # Check if exit already set before.
                 if self.data.screens[screen_id].exits[exi].dst_screen != 255:
                     continue
-
                 new_exit = next_exit(self.data.screens[screen_id].exits[exi].type)
+
                 self.data.screens[screen_id].exits[exi].dst_screen = new_exit.destination
                 self.data.screens[screen_id].exits[exi].dst_x, self.data.screens[screen_id].exits[exi].dst_y = new_exit.xy
                 all_exits.remove(new_exit)
-
- 
                 if pair_exits:
                     pairer(screen_id, self.data.screens[screen_id].exits[exi].type, new_exit)
