@@ -1,8 +1,9 @@
-from lib2to3.pytree import Base
-from logging import exception
 from generic import world_indexes, room_to_index, world_indexes
 from random import shuffle
 from random import shuffle
+import networkx as net # version 2.5
+import matplotlib.pyplot as plt
+
 
 class one_exit:
     exits_type = { "N":[4, 18, 20, 132, 146, 148],
@@ -84,6 +85,27 @@ class Exits:
 
         return f'{table}'
 
+
+    def __bool__(self):
+        """Returns True if all screens can be reached from the start."""
+        # TODO : 
+            # World 0 : Plank area and shovel area
+            # World 2 : Some of the castle's isolated dead ends
+        self.generate_data()
+        g = net.DiGraph()
+        for B7, exits in self.exits.items():
+            for one in exits.values():
+                net.add_path(g, [B7,one.destination])
+        #net.draw(g, with_labels=True, node_color='yellow')
+        # net.draw_planar(g, with_labels=True, node_color='yellow')
+        # net.draw_spectral(g, with_labels=True, node_color='yellow')
+        #net.draw_spring(g, with_labels=True, node_color='yellow')
+        nodes = net.shortest_path(g,0).keys()  #TODO : Onc ewe can change the first screen, the 0 will be that screen.
+        # plt.clf()
+        # g.clear()
+        if len(self.screens_ids) != len(nodes):
+            return False
+        return True
 
     def __call__(self,  randomize:bool, 
                         keep_direction=False,
@@ -180,21 +202,23 @@ class Exits:
         if not randomize: return
         assert not move_boss, "Moving boss is not supported yet" # Comment this line when working on the move_boss.
 
-        all_exits = exits_list()
-        clear_exits()
-        set_boss_exit()
+        while True:
+            all_exits = exits_list()
+            clear_exits()
+            set_boss_exit()
+            shuffle(all_exits)
+            for screen_id in self.screens_ids:
+                for exi in range(self.data.screens[screen_id].num_exits):
+                    # Check if exit already set before.
+                    if self.data.screens[screen_id].exits[exi].dst_screen != 255:
+                        continue
+                    new_exit = next_exit(self.data.screens[screen_id].exits[exi].type)
 
-        shuffle(all_exits)
-        
-        for screen_id in self.screens_ids:
-            for exi in range(self.data.screens[screen_id].num_exits):
-                # Check if exit already set before.
-                if self.data.screens[screen_id].exits[exi].dst_screen != 255:
-                    continue
-                new_exit = next_exit(self.data.screens[screen_id].exits[exi].type)
-
-                self.data.screens[screen_id].exits[exi].dst_screen = new_exit.destination
-                self.data.screens[screen_id].exits[exi].dst_x, self.data.screens[screen_id].exits[exi].dst_y = new_exit.xy
-                all_exits.remove(new_exit)
-                if pair_exits:
-                    pairer(screen_id, self.data.screens[screen_id].exits[exi].type, new_exit)
+                    self.data.screens[screen_id].exits[exi].dst_screen = new_exit.destination
+                    self.data.screens[screen_id].exits[exi].dst_x, self.data.screens[screen_id].exits[exi].dst_y = new_exit.xy
+                    all_exits.remove(new_exit)
+                    if pair_exits:
+                        pairer(screen_id, self.data.screens[screen_id].exits[exi].type, new_exit)
+            if self:
+                break
+            print("SOFTLOKCED")
