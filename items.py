@@ -1,117 +1,99 @@
-from generic import world_indexes, room_to_index, RandomizerError
+from generic import room_to_index, RandomizerError
 from random import shuffle
-from copy import deepcopy
 
 class Items:
     def __init__(self, data, world_i, screens_ids):
         self.data = data
         self.world_i = world_i
         self.screens = screens_ids
-        self.generate_data()
+
+    def __getitem__(self, screen_id, item_id=None):
+        items = []
+        num_objets = self.data.screens[screen_id].num_class_2_sprites
+        for objet_id in range(num_objets):
+            objet_type = self.data.screens[screen_id].class_2_sprites[objet_id].type
+            if objet_type in range(0x8, 0xF) or objet_type in range(0x40, 0x47, 2):
+                items += [objet_type]
+        if item_id:
+            return items[item_id]
+        else:
+            return items
 
 
-    def generate_data(self):
-        self.items = {}
-        self.fruits = {}
-        for B7, screen_id in enumerate(self.screens):
-            num_objets = self.data.screens[screen_id].num_class_2_sprites
-            for objet_id in range(num_objets):
-                objet_type = self.data.screens[screen_id].class_2_sprites[objet_id].type
-                if objet_type in range(0x8, 0xF):
-                    self.items[B7] = self.items.get(B7, []) + [objet_type]
-                elif objet_type in range(0x40, 0x47,2):
-                    self.fruits[B7] = self.fruits.get(B7, []) + [objet_type]
+    def __setitem__(self, tupl, new_item):
+        screen_id, item_id = tupl
+
+        num_objets = self.data.screens[screen_id].num_class_2_sprites
+        for objet_id in range(num_objets):
+            objet_type = self.data.screens[screen_id].class_2_sprites[objet_id].type
+            if objet_type in range(0x8, 0xF) or objet_type in range(0x40, 0x47, 2):
+                if item_id == 0:
+                    self.data.screens[screen_id].class_2_sprites[objet_id].type = new_item
+                    break
+                item_id -= 1
+
+
 
     def __str__(self):
         items_names = {0x8 : "Hookshot", 0x9 : "Candle  ", 0xA : "Grey Key",0xB : "Gold Key", 0xC :"Shovel  ", 0xD : "Bell    ", 0xE : "Bridge  "}
         fruits_names = {0x40 : "Cherry  ", 0x42: "Banana  ", 0x44 : "Red Gem ", 0x46 : "Blue Gem"}
-        counts_items = {}
-        counts_fruits = {}
-
-
         table_str = ""
         for B7, screen in enumerate(self.screens):
             tempo_items = ""
             tempo_fruits = ""
-            
-            if self.items.get(B7, False):
-                tempo_items = ", ".join([items_names[x] for x in self.items[B7]])
-                for item in self.items[B7]:
-                    counts_items[items_names[item]] = counts_items.get(items_names[item], 0) + 1
-
-            if self.fruits.get(B7, False):
-                tempo_fruits = ", ".join([fruits_names[x] for x in self.fruits[B7]])
-                for fruit in self.fruits[B7]:
-                    counts_fruits[fruits_names[fruit]] = counts_items.get(fruits_names[fruit], 0) + 1
-
-            if any([tempo_fruits, tempo_items]):
+            if self[screen]:
+                items = self[screen]
+                tempo_fruits = ", ".join([fruits_names[x] for x in items if x in fruits_names])
+                tempo_items =  ", ".join([items_names[x] for x in items if x in items_names])
                 table_str += f'{str(room_to_index(id=self.screens[B7])):8}{tempo_items:<48}| {tempo_fruits:<48}\n'
 
         line = "-" * 100
-        return f'{table_str}{line}\nItems totals : {counts_items}\nFruits totals: {counts_fruits}'
+        return f'{table_str}{line}'
 
-    def __call__(self, randomize_items=False, randomize_fruits=False, combine=False, completely_random=False):
-        def get_list_items():
-            liste = []
-            for liste_items in self.items.values():
-                liste += liste_items
-            return liste
+    def __call__(self, randomize_items=False, randomize_fruits=False, combine=False):
+        def randomized_items():
+            def item_pool():
+                items = []
+                for screen in self.screens:
+                    for item in self[screen]:
+                        if item in range(0x8, 0xF):
+                            items.append(item)
+                return items
 
-        def get_list_fruits():
-            liste = []
-            for liste_items in self.fruits.values():
-                liste += liste_items
-            return liste
+            def fruits_pool():
+                fruits = []
+                for screen in self.screens:
+                    for item in self[screen]:
+                        if item in range(0x40, 0x47, 2):
+                            fruits.append(item)
+                return fruits
 
-        def distribute(liste, combine):
-            liste_all = liste
-            if not combine:
-                for screen in self.items.keys():
-                    self.items[screen] = liste_all[:len(self.items[screen])]
-                    liste_all = liste_all[len(self.items[screen]):]
-                for screen in self.fruits.keys():
-                    self.fruits[screen] = liste_all[:len(self.fruits[screen])]
-                    liste_all = liste_all[len(self.fruits[screen]):]
-            elif combine:
-                self.copy_fruits = deepcopy(self.fruits)
-                self.copy_items = deepcopy(self.items)
-                self.fruits = {}
-                self.items = {}
-                for screen_id in self.screens:
-                    total = len(self.copy_fruits.get(screen_id, [])) + len(self.copy_items.get(screen_id, []))
-                    for item in range(total):
-                        if liste_all[0] in range(0x8, 0xF):
-                            self.items[screen_id] = self.items.get(screen_id, []) + [liste_all[0]]
-                        else:
-                            self.fruits[screen_id] = self.fruits.get(screen_id, []) + [liste_all[0]]
-                        liste_all.pop(0)
+            items = item_pool()
+            fruits = fruits_pool()
 
-        if not any([randomize_fruits, combine, completely_random, randomize_items]): return
-        if combine and any([randomize_fruits, randomize_items]):
-            explication = f"You cannot use the combine flag with randomize fruits or/and randomize items. This is to ensure the randomization stays the same even if it doesn't matter for the player"
-            options_selected = "\n".join([
-                    f'   Combine : {combine}',
-                    f'   randomize fruits: {randomize_fruits}',
-                    f'   randomize items: {randomize_items}',
-                    ])
-            raise RandomizerError(f'{explication}\n\nOptions selected:\n{options_selected}')
+            if randomize_items:
+                shuffle(items)
+            if randomize_fruits:
+                shuffle(fruits)
+            all_items = items + fruits
+            if combine:
+                shuffle(all_items)
+            return all_items
 
-
-            raise RandomizerError()
-        assert completely_random, "The option completely random isn't supported yet."
-
-        print("Randomizing items and/or fruits...")
-
-
-        liste_items = get_list_items()
-        liste_fruits = get_list_fruits()
-
-
-        if randomize_items: shuffle(liste_items)
-        if randomize_fruits: shuffle(liste_fruits)
-        liste_all = liste_items + liste_fruits
-        if combine: shuffle(liste_all)
-        
-        distribute(liste_all, combine)
-
-        print("Finished Randomizing items and/or fruits!")
+        if not any([randomize_fruits, randomize_items]): return
+        if combine and not all([randomize_fruits, randomize_items]):
+            raise RandomizerError("The flag combine must be used with both randomize fruits and randomize items")
+        all_items = randomized_items()
+        for screen in self.screens:
+            if self[screen]:
+                for item_id, current_item in enumerate(self[screen]):
+                    if combine:
+                        new_item = all_items[0]
+                    else:
+                        if current_item in range(0x8, 0xF):
+                            new_item = next(x for x in all_items if x in range(0x8, 0xF))
+                        elif current_item in range(0x40, 0x47, 2):
+                            new_item = next(x for x in all_items if x in range(0x40, 0x47, 2))
+                    self[screen, item_id] = new_item
+                    all_items.remove(new_item)
+        raise BaseException(f'\n{self}')
