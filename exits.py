@@ -108,9 +108,9 @@ class Exits:
         return True
 
     def __call__(self,  randomize:bool, 
-                        keep_direction=False,
+                        keep_direction=True,
                         move_boss=False,
-                        pair_exits=False):
+                        pair_exits=True):
         """Randomize the exits.
 
         Args:
@@ -221,4 +221,3 @@ class Exits:
                         pairer(screen_id, self.data.screens[screen_id].exits[exi].type, new_exit)
             if self:
                 break
-            print("SOFTLOKCED")
