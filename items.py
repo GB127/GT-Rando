@@ -7,7 +7,13 @@ class Items:
         self.world_i = world_i
         self.screens = screens_ids
 
-    def __getitem__(self, screen_id, item_id=None):
+    def __getitem__(self, screen_item_id):
+        if isinstance(screen_item_id, tuple):
+            screen_id = screen_item_id[0]
+            item_id = screen_item_id[1]
+        else:
+            screen_id = screen_item_id
+            item_id = None
         items = []
         num_objets = self.data.screens[screen_id].num_class_2_sprites
         for objet_id in range(num_objets):
@@ -31,8 +37,6 @@ class Items:
                     self.data.screens[screen_id].class_2_sprites[objet_id].type = new_item
                     break
                 item_id -= 1
-
-
 
     def __str__(self):
         items_names = {0x8 : "Hookshot", 0x9 : "Candle  ", 0xA : "Grey Key",0xB : "Gold Key", 0xC :"Shovel  ", 0xD : "Bell    ", 0xE : "Bridge  "}
@@ -80,20 +84,72 @@ class Items:
                 shuffle(all_items)
             return all_items
 
-        if not any([randomize_fruits, randomize_items]): return
-        if combine and not all([randomize_fruits, randomize_items]):
-            raise RandomizerError("The flag combine must be used with both randomize fruits and randomize items")
-        all_items = randomized_items()
-        for screen in self.screens:
-            if self[screen]:
-                for item_id, current_item in enumerate(self[screen]):
-                    if combine:
-                        new_item = all_items[0]
-                    else:
-                        if current_item in range(0x8, 0xF):
-                            new_item = next(x for x in all_items if x in range(0x8, 0xF))
-                        elif current_item in range(0x40, 0x47, 2):
-                            new_item = next(x for x in all_items if x in range(0x40, 0x47, 2))
-                    self[screen, item_id] = new_item
-                    all_items.remove(new_item)
-        raise BaseException(f'\n{self}')
+        while True:
+            if not any([randomize_fruits, randomize_items]): return
+            if combine and not all([randomize_fruits, randomize_items]):
+                raise RandomizerError("The flag combine must be used with both randomize fruits and randomize items")
+            all_items = randomized_items()
+            for screen in self.screens:
+                if self[screen]:
+                    for item_id, current_item in enumerate(self[screen]):
+                        if combine:
+                            new_item = all_items[0]
+                        else:
+                            if current_item in range(0x8, 0xF):
+                                new_item = next(x for x in all_items if x in range(0x8, 0xF))
+                            elif current_item in range(0x40, 0x47, 2):
+                                new_item = next(x for x in all_items if x in range(0x40, 0x47, 2))
+                        self[screen, item_id] = new_item
+                        all_items.remove(new_item)
+            if bool(self):
+                break
+
+    def __bool__(self):
+        """Some preliminary checks that we can do before even checking compatibility with
+            exits by assuming all exits are always reachable and have infinite items
+            Returns True if, , all items are accessible.
+            Returns False if there is some inaccessible items"""
+        GrayK = 0xA
+        GoldK = 0xB
+        Bridge = 0xE
+
+        # World 0
+        if any([x in [0xA, 0xB, 0xE] for x in self[10]]):
+            # Check if (0,10) has a needed object for W1.
+            # It's the screen with a banana and blue gem out of reach.
+            # Needs a hookshot to get them, thus can't get an
+            # usable item.
+            return False
+        if len([x for x in self[12] if x in range(0x8, 0xF)]) > 1:
+            # Check if (0,12) has at most 1 usable item. If there are
+            # More than 1 item, there is the risk that you can get softlocked
+            # By using items stupidly.
+            return False
+
+        # World 1
+        if len([x for x in self[room_to_index(tup=(1,13))] if x in range(0x8, 0xF)]) > 1:
+            return False
+        if self[room_to_index(tup=(1,7)), 2] in [GrayK, GoldK, Bridge]:
+            # Check if the Blue gem location in (1,7) has a key or bridge.
+            # I did not check the hookshot, because there are 2 extra hookshot in the second world.
+            # And this location is the only item that requires the hookshot.
+            return False
+        if Bridge in self[room_to_index(tup=(1,7))] and any([x in self[room_to_index(tup=(1,7))] for x in [GrayK, GoldK]]):
+            # If plank is not accessible, need to check if Key is locked.
+            raise BaseException(self)
+        if self[room_to_index(tup=(1,7)), 2] in [GrayK, GoldK, Bridge]:
+            # Check if the Blue gem location in (1,7) has a key or bridge.
+            # I did not check the hookshot, because there are 2 extra hookshot in the second world.
+            # And this location is the only item that requires the hookshot (and that is for a fruit).
+            return False
+
+        # World 2:
+        if self[room_to_index(tup=(2,6)), 2] in range(0x8, 0xF):
+            # Check if item in the center is a fruit. It must be a fruit
+            # to avoid a softlock if someone misuses or grab some useless items.
+            return False
+
+        # World 4:
+        if any([x in self[room_to_index(tup=(4,12))] for x in [GrayK, GoldK]]):
+            return False
+        return True
