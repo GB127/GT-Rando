@@ -5,12 +5,19 @@ from copy import deepcopy
 import networkx as net # version 2.5
 
 
-class one_exit:
+def exit_type_str(chiffre):
     exits_type = { "N":[4, 18, 20, 132, 146, 148],
                     "S":[68, 82, 84, 196, 210, 212],
                     "W":[98, 100, 226, 228],
                     "E":[34, 35, 36, 50, 162, 163, 164, 178],
                     "↗":[15, 143]}
+    for direction in exits_type:
+        if chiffre in exits_type[direction]:
+            return direction
+
+
+
+class one_exit:
     opposite = {"N": "S",
                 "S": "N",
                 "W": "E",
@@ -25,9 +32,7 @@ class one_exit:
         self.destination = exit_data.dst_screen
         self.xy = exit_data.dst_x, exit_data.dst_y
 
-        for direction in self.exits_type:
-            if exit_data.type in self.exits_type[direction]:
-                self.direction = direction
+        self.direction = exit_type_str(exit_data.type)
         if self.xy in [(200,66), (200,194), (120, 130), (152, 194), (24, 194), (88, 50), (104,50)]:
             self.spawn = '↗'
         elif self.xy[0] < 40:
@@ -170,15 +175,8 @@ class Exits:
         
         def next_exit(exit_type):
             """Returns the correct exit to be set. it only checks if keep direction is True."""
-            exits_type = {  "N":[4, 18, 20, 132, 146, 148],
-                    "S":[68, 82, 84, 196, 210, 212],
-                    "W":[98, 100, 226, 228],
-                    "E":[34, 35, 36, 50, 162, 163, 164, 178],
-                    "↗":[15, 143]}
             if keep_direction:
-                for direction in exits_type:
-                    if exit_type in exits_type[direction]:
-                        desired_direction = direction
+                desired_direction = exit_type_str(exit_type)
                 return next(x for x in all_exits if x.direction == desired_direction)
             return all_exits[0]
 
