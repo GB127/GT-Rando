@@ -1,9 +1,12 @@
+from pickle import FALSE
+from exits import Exits
 from gameclass import GT
+import random
 from generic import world_indexes, room_to_index
 from world import World
-from exits import Exits
+import networkx as net # version 2.5
+import matplotlib.pyplot as plt
 from items import Items
-from random import shuffle
 
 class debug(GT):
     def __init__(self, data):
@@ -15,14 +18,6 @@ class debug(GT):
         super().save("debug.smc")
 
 class World_debug(World):
-    def __init__(self, data, world_i):
-        super().__init__(data, world_i)
-        del self.Exits
-        del self.Items
-        
-        self.Exits = Exits_debug(self.data, self.world_i, world_indexes(self.world_i))
-        self.Items = Items_debug(self.data, self.world_i, world_indexes(self.world_i))
-
     def screen(self, B7):
         def transform_byt_co(big_value):
             assert big_value <= 0x6bc and big_value >=0, "Byte value must be 0 to 0x6BC"
@@ -88,54 +83,32 @@ class World_debug(World):
         print("\n".join(string_list))
         print(boundary_bottom)
 
+    def __init__(self, data, world_i):
+        self.world_i = world_i
+        self.data = data
+
+        self.Exits = Exits_debug(self.data,self.world_i, world_indexes(self.world_i))
+        self.Items = Items(self.data, self.world_i, world_indexes(self.world_i))
+
 
 class Exits_debug(Exits):
-    def set_exit(self, B7, exit_id, destination):
-        # Destination : tuple (new_B7, exit_id)
-
-        def fetch_new_coordinates(destination, exit_id):
-            count = 0
-            for B7, screen_id in enumerate(self.screens_ids):
-                for exi in range(self.data.screens[screen_id].num_exits):
-                    current_exit = self.data.screens[screen_id].exits[exi]
-                    if current_exit.dst_screen == destination:
-                        count += 1
-                        if count == exit_id + 1:
-                            return current_exit.dst_x, current_exit.dst_y
-
-        assert isinstance(destination, tuple), f"Destination must be a tuple : (New B7, Entrance ID)\n Data received: {destination}"
-        assert destination[0] in range(len(self.screens_ids)) and B7 in range(len(self.screens_ids)) , f"B7 and New exit must be a value in {list(range(len(self.screens_ids)))}\nB7 : {B7} , New exit : {destination[0]}"
-        assert exit_id in range(self.data.screens[self.screens_ids[B7]].num_exits), f"B7 exit id must be in {list(range(self.data.screens[self.screens_ids[B7]].num_exits))}\nCurrent exit id : {exit_id}"
-        assert destination[1] in range(self.data.screens[self.screens_ids[destination[1]]].num_exits), f"Destination exit id must be in {list(range(self.data.screens[self.screens_ids[destination[0]]].num_exits))}"
-
-        self.data.screens[self.screens_ids[B7]].exits[exit_id].dst_screen = destination[0]
-        self.data.screens[self.screens_ids[B7]].exits[exit_id].dst_x, self.data.screens[self.screens_ids[B7]].exits[exit_id].dst_y = fetch_new_coordinates(destination[0], destination[1])
-        self.generate_data()
-
-
-class Items_debug(Items):
-    def set_item(self, B7, item_id, new_item):
-        def compatible_ids():
-            liste = []
-            for item_id in range(32):
-                check_item = self.data.screens[self.screens[B7]].class_2_sprites[item_id].type
-                if check_item in items_names.keys():
-                    liste.append(item_id)
-            return liste
-
-        items_names = {0x8 : "Hookshot", 0x9 : "Candle  ", 0xA : "Grey Key",0xB : "Gold Key", 0xC :"Shovel  ", 0xD : "Bell    ", 0xE : "Bridge  ", 0x40 : "Cherry  ", 0x42: "Banana  ", 0x44 : "Red Gem ", 0x46 : "Blue Gem"}
-        assert new_item in items_names.keys(), f"New item need to be a value in {list(items_names)}\n New item : {new_item}"
-
-        self.data.screens[self.screens[B7]].class_2_sprites[compatible_ids()[item_id]].type = new_item
-        self.generate_data()
+    def nodes(self, save:bool=False):
+        g = super().nodes()
+        if save:
+            net.draw(g, with_labels=True, node_color='yellow')
+            net.draw_planar(g, with_labels=True, node_color='yellow')
+            net.draw_spectral(g, with_labels=True, node_color='yellow')
+            net.draw_spring(g, with_labels=True, node_color='yellow')
+            plt.savefig("Graph.png", format="PNG")
+            plt.clf()
+            g.clear()
+        return g
 
 
 if __name__ == "__main__":
     with open("Vanilla.smc", "rb") as game:
         test = debug(game.read())
-        # shuffle(tempo)
-        string1 = str(test.Worlds[0].Exits)
-        test.Worlds[0].Exits(randomize=True)
-        string2 = str(test.Worlds[0].Exits)
-        print(string1 == string2)
-        print(string2)
+        for x in range(1):
+            testing = test.Worlds[x].Exits
+            testing.nodes(save=True)
+            print(testing)

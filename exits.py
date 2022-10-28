@@ -3,7 +3,6 @@ from random import shuffle
 from random import shuffle
 from copy import deepcopy
 import networkx as net # version 2.5
-import matplotlib.pyplot as plt
 
 def exit_type_str(chiffre):
     exits_type = { "N":[4, 18, 20, 132, 146, 148],
@@ -100,25 +99,23 @@ class Exits:
 
         return f'{table}'
 
-
-    def __bool__(self):
-        """Returns True if all screens can be reached from the start."""
+    def nodes(self):
         # TODO :
             # World 0 : Plank area and shovel area
             # World 2 : Some of the castle's isolated dead ends
+            # World 4 : Pirate moving platform.
         self.generate_data()
         g = net.DiGraph()
         for B7, exits in self.exits.items():
             for one in exits.values():
                 net.add_path(g, [B7,one.destination])
-        #net.draw(g, with_labels=True, node_color='yellow')
-        # net.draw_planar(g, with_labels=True, node_color='yellow')
-        # net.draw_spectral(g, with_labels=True, node_color='yellow')
-        # net.draw_spring(g, with_labels=True, node_color='yellow')
-        #plt.savefig("Graph.png", format="PNG")
-        nodes = net.shortest_path(g,0).keys()  #TODO : Onc ewe can change the first screen, the 0 will be that screen.
-        #plt.clf()
-        #g.clear()
+        return g
+
+    def __bool__(self):
+        """Returns True if all screens can be reached from the start."""
+        self.generate_data()
+        g = self.nodes()
+        nodes = net.shortest_path(g,0).keys()  #TODO : Once we can change the first screen, the 0 will be that screen.
         if len(self.screens_ids) != len(nodes):
             return False
         return True
