@@ -3,7 +3,7 @@ from random import shuffle
 from random import shuffle
 from copy import deepcopy
 import networkx as net # version 2.5
-
+import matplotlib.pyplot as plt
 
 def exit_type_str(chiffre):
     exits_type = { "N":[4, 18, 20, 132, 146, 148],
@@ -114,10 +114,11 @@ class Exits:
         #net.draw(g, with_labels=True, node_color='yellow')
         # net.draw_planar(g, with_labels=True, node_color='yellow')
         # net.draw_spectral(g, with_labels=True, node_color='yellow')
-        #net.draw_spring(g, with_labels=True, node_color='yellow')
+        # net.draw_spring(g, with_labels=True, node_color='yellow')
+        #plt.savefig("Graph.png", format="PNG")
         nodes = net.shortest_path(g,0).keys()  #TODO : Onc ewe can change the first screen, the 0 will be that screen.
-        # plt.clf()
-        # g.clear()
+        #plt.clf()
+        #g.clear()
         if len(self.screens_ids) != len(nodes):
             return False
         return True
@@ -132,6 +133,8 @@ class Exits:
         exits = []
         for exi in range(self.data.screens[screen_id].num_exits):
             exits.append(one_exit(self.data.screens[screen_id].exits[exi]))
+        if isinstance(exit_id,int):
+            return exits[exit_id]
         return exits
 
     def __setitem__(self, screen_exit_id, new_exit):
@@ -173,6 +176,35 @@ class Exits:
                     current_exit.clear()
                     self[screen, current_id] = current_exit
         
+
+        def back_exit(screen_id, exit_type):
+            desired_direction = exit_type_str(exit_type)
+            tempo = next(x for x in all_exits if ((x.destination == room_to_index(id=screen_id)[1]) and (x.spawn == desired_direction)))
+            return tempo
+
+        def pairer(current_screen_id, exit_type, initial_exit):
+            dest_screen_id = room_to_index(tup=(self.world_i, initial_exit.destination))
+
+            for exi_id, exit in enumerate(self[dest_screen_id]):
+                current_dir = exit_type_str(self.data.screens[room_to_index(tup=(self.world_i, initial_exit.destination))].exits[exi_id].type)
+
+                if initial_exit.spawn == current_dir:
+                    try:
+                        return_exit = back_exit(current_screen_id, exit_type)
+                        self[dest_screen_id, exi_id] = return_exit
+                        all_exits.remove(return_exit)
+                    except StopIteration:
+                        break
+                    break
+
+
+
+
+
+
+
+
+
         def next_exit(exit_type):
             """Returns the correct exit to be set. it only checks if keep direction is True."""
             if keep_direction:
@@ -200,16 +232,17 @@ class Exits:
             all_exits = deepcopy(exits_pools)
             clear_exits()
             set_boss_exit()
-            # shuffle(all_exits)
+            shuffle(all_exits)
             for screen_id in self.screens_ids:
-                for exit_id, current_exit in enumerate(self[screen_id]):
+                for exit_id in range(len(self[screen_id])):
+                    current_exit = self[screen_id, exit_id]
                     if current_exit:
                         continue
                     new_exit = next_exit(self.exit_type(screen_id, exit_id))
                     self[screen_id, exit_id] = new_exit
                     all_exits.remove(new_exit)
                     if pair_exits:
-                        raise BaseException("On recommence ça >.<")
+                        pairer(screen_id, self.data.screens[screen_id].exits[exit_id].type, new_exit)
+
             if self:
                 break
-            raise BaseException("oops, not all reachable")
