@@ -100,20 +100,87 @@ class Exits:
         return f'{table}'
 
     def nodes(self):
+        def world_0_DE():
+            """Dead-ends for plank and shovel"""
+            if self.world_i == 0:
+                for B7, screen in enumerate(self.screens_ids):
+                    for sortie in self[screen]:
+                        if B7 == sortie.destination : continue
+                        if sortie.destination == 7 and sortie.spawn == "W":
+                            g.remove_edge(B7, 7)
+                            g.remove_edge(7, B7)
+                            net.add_path(g, [B7, B7])
+                        elif sortie.destination == 9 and sortie.spawn == "S":
+                            g.remove_edge(B7, 9)
+                            g.remove_edge(9, B7)
+                            net.add_path(g, [B7, B7])
+
+        def world_2_DE():
+            """Dead ends for fruits / gem in B7 = 8"""
+            if self.world_i == 2:
+                for B7, screen in enumerate(self.screens_ids):
+                    for sortie in self[screen]:
+                        if B7 == sortie.destination : continue
+                        if sortie.destination == 8 and sortie.spawn == "S":   # Works!
+                            g.remove_edge(B7, 8)
+                            g.remove_edge(8, B7)
+                            net.add_path(g, [B7, B7])
+
+                        if sortie.destination == 8 and sortie.spawn == "↗":
+                            try:
+                                g.remove_edge(B7, 8)
+                                g.remove_edge(8, B7)
+                                net.add_path(g, [B7, B7])
+                            except:  # Si on lève cette erreur, c'est à coup sûr que c'est 14.
+                                g.remove_edge(14, 8)
+                                net.add_path(g, [14, 14])
+
         # TODO :
-            # World 0 : Plank area and shovel area
-            # World 2 : Some of the castle's isolated dead ends
+            # World 1 : The infamous double hookshot screen.
+            # World 3 : There is an undirectionnal exit + the infamous exit in 0.
             # World 4 : Pirate moving platform.
-        self.generate_data()
         g = net.DiGraph()
-        for B7, exits in self.exits.items():
-            for one in exits.values():
-                net.add_path(g, [B7,one.destination])
+        for B7, screen in enumerate(self.screens_ids):
+            for sortie in self[screen]:
+
+                # World 1:
+
+
+
+
+
+                # World 2 : Bypass for 14 to 13.
+                    # Nomally it's 14 -> 13 -> Stair exit
+                    # Adjust for logic : 14 -> Stair exit
+                if self.world_i == 2:
+                    if B7 == 13: # Pièce de bille : For the bombable wall and the stair
+                        if sortie.destination == 14:
+                            continue  # No return because it's a wall and it must be uni
+                        if sortie.direction == "↗":
+                            continue # Don't set, because of the bypass
+                elif self.world_i == 2 and B7 == 14:  # For the bombable wall and the bypass
+                    if sortie.destination == 13:
+                        B7_13 = room_to_index(tup=(2,13))
+                        net.add_path(g, [B7, self[B7_13, 3].destination])  # Bypass for logic check
+                        continue
+
+                net.add_path(g, [B7, sortie.destination])
+
+        world_0_DE()
+        world_2_DE()
         return g
 
     def __bool__(self):
         """Returns True if all screens can be reached from the start."""
         self.generate_data()
+
+        if self[7,2].destination == 7 and self[7,2].spawn == "W":
+            raise BaseException("Did it work")
+            return False
+        if self[9, 1].destination == 9 and self[9, 1].spawn == "S":
+            return False
+
+
         g = self.nodes()
         nodes = net.shortest_path(g,0).keys()  #TODO : Once we can change the first screen, the 0 will be that screen.
         if len(self.screens_ids) != len(nodes):
@@ -195,13 +262,6 @@ class Exits:
                     break
 
 
-
-
-
-
-
-
-
         def next_exit(exit_type):
             """Returns the correct exit to be set. it only checks if keep direction is True."""
             if keep_direction:
@@ -219,6 +279,16 @@ class Exits:
                                     room_to_index(tup=(4,24))][self.world_i]
             self[van_screen_to_boss, 0] = boss_exit
             all_exits.remove(boss_exit)
+
+            """Manually set the breakable wall exit to avoid a softlock"""
+            if self.world_i == 2:
+                wall_exit = next(x for x in all_exits if (x.destination == 13 and x.spawn == "E"))
+                self[room_to_index(tup=(2,14)), 1] = wall_exit
+                all_exits.remove(wall_exit)
+
+                wall_exit = next(x for x in all_exits if (x.destination == 14 and x.spawn == "W"))
+                self[room_to_index(tup=(2,13)), 0] = wall_exit
+                all_exits.remove(wall_exit)
 
 
         if not randomize: return
