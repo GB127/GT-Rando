@@ -100,6 +100,7 @@ class Exits:
         return f'{table}'
 
     def nodes(self):
+        # TODO : REPLACE THESE FUNCTION IN THE LOOPS TO REDUCE LOOPAGE
         def world_0_DE():
             """Dead-ends for plank and shovel"""
             if self.world_i == 0:
@@ -136,34 +137,45 @@ class Exits:
                                 net.add_path(g, [14, 14])
 
         # TODO :
-            # World 1 : The infamous double hookshot screen.
             # World 3 : There is an undirectionnal exit + the infamous exit in 0.
             # World 4 : Pirate moving platform.
         g = net.DiGraph()
         for B7, screen in enumerate(self.screens_ids):
             for sortie in self[screen]:
 
-                # World 1:
-
-
-
-
+                # World 1: The infamous double hookshot screen. We do not want
+                    # To land here without hookshot. So I must assume that someone
+                    # Never grabs an item. To do so, I assume it's unidirect to the north.
+                if self.world_i == 1:
+                    if sortie.destination == 13 and sortie.spawn == "N":
+                        continue
 
                 # World 2 : Bypass for 14 to 13.
                     # Nomally it's 14 -> 13 -> Stair exit
                     # Adjust for logic : 14 -> Stair exit
-                if self.world_i == 2:
+                elif self.world_i == 2:
                     if B7 == 13: # Pièce de bille : For the bombable wall and the stair
                         if sortie.destination == 14:
                             continue  # No return because it's a wall and it must be uni
                         if sortie.direction == "↗":
                             continue # Don't set, because of the bypass
-                elif self.world_i == 2 and B7 == 14:  # For the bombable wall and the bypass
-                    if sortie.destination == 13:
-                        B7_13 = room_to_index(tup=(2,13))
-                        net.add_path(g, [B7, self[B7_13, 3].destination])  # Bypass for logic check
+                    if B7 == 14:  # For the bombable wall and the bypass
+                        if sortie.destination == 13:
+                            B7_13 = room_to_index(tup=(2,13))
+                            net.add_path(g, [B7, self[B7_13, 3].destination])  # Bypass for logic check
+                            continue
+
+                elif self.world_i == 3:
+                    if sortie.destination == 16 and sortie.spawn == "N":
+                        continue
+                    if sortie.destination == 17 and sortie.spawn == "N":
                         continue
 
+
+                elif self.world_i == 4: 
+                    # Make the platform unidirect! When reimplemented, will use a bool.
+                    if sortie.destination == 18 and sortie.spawn == "E":
+                        continue
                 net.add_path(g, [B7, sortie.destination])
 
         world_0_DE()
@@ -174,20 +186,45 @@ class Exits:
         """Returns True if all screens can be reached from the start."""
         self.generate_data()
 
-        if self[7,2].destination == 7 and self[7,2].spawn == "W":
-            raise BaseException("Did it work")
-            return False
-        if self[9, 1].destination == 9 and self[9, 1].spawn == "S":
-            return False
+        if self.world_i == 1:
+            if self[7,2].destination == 7 and self[7,2].spawn == "W":
+                raise BaseException("7 DEAD END : INACCESSIBLE ITEM, DID IT WORK?")
+                return False
+            if self[9, 1].destination == 9 and self[9, 1].spawn == "S":
+                raise BaseException("9 SHOVEL DEAD END : INACCESSIBLE ITEM, DID IT WORK?")
+                return False
+        # TODO : SAME FOR CASTLE
 
 
         g = self.nodes()
         nodes = net.shortest_path(g,0).keys()  #TODO : Once we can change the first screen, the 0 will be that screen.
         if len(self.screens_ids) != len(nodes):
             return False
+
+        
+        if self.world_i == 3:  # Make sure Room #1 is accessible from the start.
+            g.remove_edge(0, self[room_to_index(tup=(3,0)), 0].destination)
+            if 1 not in net.shortest_path(g,0).keys():  # TODO : Once we can change the starting room, change the 0 here.
+                return False
+
+        if self.world_i == 4:  # Make sure the gold key is required.
+            g.remove_node(20)
+            try:
+                net.shortest_path(g, 0, 25)
+                return False
+            except:
+                pass
+
+        if self.world_i == 4:  # Make sure we can come back, assuming we skip all items.
+            # À modifier avec un futur bool quand la plateforme sera réimplementé
+            try:
+                net.shortest_path(g,self[room_to_index(tup=(4, 18)),0].destination, 18)
+            except:  # Pas de chemin de retour.
+                return False
         return True
 
     def __getitem__(self, screen_exit_id):
+        # TODO : Use room_to_index here
         if isinstance(screen_exit_id, tuple):
             screen_id = screen_exit_id[0]
             exit_id = screen_exit_id[1]
@@ -290,6 +327,27 @@ class Exits:
                 self[room_to_index(tup=(2,13)), 0] = wall_exit
                 all_exits.remove(wall_exit)
 
+            # For the castle : 0 Always lead to south of 1.
+            if self.world_i == 2:
+                wall_exit = next(x for x in all_exits if (x.destination == 1 and x.spawn == "S"))
+                self[room_to_index(tup=(2,0)), 0] = wall_exit
+                all_exits.remove(wall_exit)
+
+                wall_exit = next(x for x in all_exits if (x.destination == 0 and x.spawn == "N"))
+                self[room_to_index(tup=(2,1)), 2] = wall_exit
+                all_exits.remove(wall_exit)
+
+
+
+            """Manually set the waterfall to always lead to "that" room."""
+            if self.world_i == 3:  # The waterfall always lead to the boss.
+                fall_exit = next(x for x in all_exits if (x.destination == 24 and x.spawn == "S"))
+                self[room_to_index(tup=(3,22)), 0] = fall_exit
+                all_exits.remove(fall_exit)
+
+                fall_exit = next(x for x in all_exits if (x.destination == 22 and x.spawn == "N"))
+                self[room_to_index(tup=(3,24)), 1] = fall_exit
+                all_exits.remove(fall_exit)
 
         if not randomize: return
         assert not move_boss, "Moving boss is not supported yet" # Comment this line when working on the move_boss.
@@ -310,6 +368,5 @@ class Exits:
                     all_exits.remove(new_exit)
                     if pair_exits:
                         pairer(screen_id, self.data.screens[screen_id].exits[exit_id].type, new_exit)
-
             if self:
                 break
