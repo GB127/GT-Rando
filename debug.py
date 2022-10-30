@@ -92,23 +92,41 @@ class World_debug(World):
 
 
 class Exits_debug(Exits):
-    def nodes(self, save:bool=False):
+    def nodes(self, save:bool=False,*, planar=False, spectral=False, spring=False):
         g = super().nodes()
         if save:
-            net.draw(g, with_labels=True, node_color='yellow')
-            net.draw_planar(g, with_labels=True, node_color='yellow')
-            net.draw_spectral(g, with_labels=True, node_color='yellow')
-            net.draw_spring(g, with_labels=True, node_color='yellow')
-            plt.savefig("Graph.png", format="PNG")
+            if planar:
+                net.draw_planar(g, with_labels=True, node_color='yellow')
+            elif spectral:
+                net.draw_spectral(g, with_labels=True, node_color='yellow')
+            elif spring:
+                net.draw_spring(g, with_labels=True, node_color='yellow')
+            else:
+                net.draw(g, with_labels=True, node_color='yellow')
+            plt.savefig(f"Graph-{self.world_i}.png", format="PNG")
             plt.clf()
             g.clear()
         return g
 
-
-if __name__ == "__main__":
+def randomize(worlds, preprint=False, postprint=False):
     with open("Vanilla.smc", "rb") as game:
         test = debug(game.read())
-        for x in range(1):
-            testing = test.Worlds[x].Exits
-            testing.nodes(save=True)
-            print(testing)
+        for x in worlds:
+            testing = test.Worlds[x]
+            if preprint: print(testing)
+            testing()  # Randomize exits and items
+            print(testing.Items)
+            if postprint: print(testing)
+        test.save()
+
+
+if __name__ == "__main__":
+    random.seed(0)  # Set the seed that fails
+    randomize([0])  # Randomize, then save.
+    # During the randomization, I set a print that prints the items and the fruits
+    # on each levels.
+        # I doubt my print is wrong because when I created the function, it produced a print
+        # that matches exactly the vanilla items.
+    # But when I go and play the game. The Gold key in 0,1 is now a hookshot somehow.
+    # The three items in 0,15 are completely missing.
+    # And finally, the bridge is not at 0,15, but somewhere else (I think it's at 0,11).
