@@ -74,7 +74,6 @@ class Items:
 
             items = item_pool()
             fruits = fruits_pool()
-
             if randomize_items:
                 shuffle(items)
             if randomize_fruits:
@@ -101,6 +100,7 @@ class Items:
                                 new_item = next(x for x in all_items if x in range(0x40, 0x47, 2))
                         self[screen, item_id] = new_item
                         all_items.remove(new_item)
+
             if bool(self):
                 break
 

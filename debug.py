@@ -121,7 +121,7 @@ def randomize(worlds, preprint=False, postprint=False):
 
 
 if __name__ == "__main__":
-    random.seed(0)  # Set the seed that fails
+    random.seed(2)  # Set the seed that fails
     randomize([0])  # Randomize, then save.
     # During the randomization, I set a print that prints the items and the fruits
     # on each levels.

@@ -14,14 +14,19 @@ class World():
         self.Items = Items(self.data, self.world_i, world_indexes(self.world_i))
 
     def __call__(self):
+        compte = 0
         while True:
+
             try:
+                compte += 1
                 self.Items(randomize_items=True, randomize_fruits=True, combine=True)
-                self.Exits(randomize=True)
+
                 [self.logic_0][self.world_i]()
                 break
             except:
                 pass
+            if compte == 9:
+                raise BaseException()
 
 
     def logic_0(self):
@@ -79,7 +84,6 @@ class World():
                     actions.append(unlock_door)
             return actions
 
-        self.Exits(randomize=True, pair_exits=True, keep_direction=True)
         g = self.Exits.nodes()
         preparation()
         used = []
