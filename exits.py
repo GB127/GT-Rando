@@ -54,17 +54,6 @@ class one_exit:
 
 
 class Exits:
-    def generate_data(self):
-        self.exits = {}
-        for B7, screen_id in enumerate(self.screens_ids):
-            tempo = {}
-            for exi in range(self.data.screens[screen_id].num_exits):
-                data = self.data.screens[screen_id].exits[exi]
-                tempo_exit = one_exit(data)
-                tempo[tempo_exit.direction] = tempo_exit
-            self.exits[B7] = tempo
-        return self.exits
-
     def __init__(self, data, world_i, screens_ids):
         self.data = data
         self.world_i = world_i
@@ -79,10 +68,18 @@ class Exits:
             self.data.screens[room_to_index(tup=(3, 1))].num_exits = 1
             self.data.screens[room_to_index(tup=(3, 1))].exits[0] = self.data.screens[room_to_index(tup=(3, 1))].exits[1]
 
-
-        self.generate_data()
-
     def __str__(self):
+        def generate_data():
+            self.exits = {}
+            for B7, screen_id in enumerate(self.screens_ids):
+                tempo = {}
+                for exi in range(self.data.screens[screen_id].num_exits):
+                    data = self.data.screens[screen_id].exits[exi]
+                    tempo_exit = one_exit(data)
+                    tempo[tempo_exit.direction] = tempo_exit
+                self.exits[B7] = tempo
+            return self.exits
+
         def str_screen(dictio):
             liste = []
             for direction, sortie in dictio.items():
@@ -91,7 +88,7 @@ class Exits:
         # Contruisons le tableau.
         table = ""
         count = 0  # Pour des sauts de lignes.
-        for B7, data in self.generate_data().items():
+        for B7, data in generate_data().items():
             count += 1
             table += f'{str(B7):>3} : {str_screen(data):45}'
             if count % 2 == 0:  # Si le tableau est trop large, réduire ce chiffre.
@@ -136,9 +133,6 @@ class Exits:
                                 g.remove_edge(14, 8)
                                 net.add_path(g, [14, 14])
 
-        # TODO :
-            # World 3 : There is an undirectionnal exit + the infamous exit in 0.
-            # World 4 : Pirate moving platform.
         g = net.DiGraph()
         for B7, screen in enumerate(self.screens_ids):
             for sortie in self[screen]:
@@ -165,7 +159,7 @@ class Exits:
                             net.add_path(g, [B7, self[B7_13, 3].destination])  # Bypass for logic check
                             continue
 
-                elif self.world_i == 3:
+                elif self.world_i == 3:  # Both puzzles that opens a door on North.
                     if sortie.destination == 16 and sortie.spawn == "N":
                         continue
                     if sortie.destination == 17 and sortie.spawn == "N":
@@ -184,8 +178,6 @@ class Exits:
 
     def __bool__(self):
         """Returns True if all screens can be reached from the start."""
-        self.generate_data()
-
         if self.world_i == 1:
             if self[7,2].destination == 7 and self[7,2].spawn == "W":
                 raise BaseException("7 DEAD END : INACCESSIBLE ITEM, DID IT WORK?")
@@ -253,9 +245,9 @@ class Exits:
         return self.data.screens[screen_id].exits[exit_id].type
 
     def __call__(self,  randomize:bool, 
-                        keep_direction=True,
-                        move_boss=False,
-                        pair_exits=True):
+                        keep_direction:bool=True,
+                        move_boss:bool=False,
+                        pair_exits:bool=True):
         """Randomize the exits.
             Args:
                 randomize (bool):  Activate the randomizer or not.
@@ -317,6 +309,7 @@ class Exits:
             self[van_screen_to_boss, 0] = boss_exit
             all_exits.remove(boss_exit)
 
+        def set_fixed_exits():
             """Manually set the breakable wall exit to avoid a softlock"""
             if self.world_i == 2:
                 wall_exit = next(x for x in all_exits if (x.destination == 13 and x.spawn == "E"))
@@ -327,7 +320,7 @@ class Exits:
                 self[room_to_index(tup=(2,13)), 0] = wall_exit
                 all_exits.remove(wall_exit)
 
-            # For the castle : 0 Always lead to south of 1.
+            # For the castle : 0 Always lead to south of 1. And vice versa.
             if self.world_i == 2:
                 wall_exit = next(x for x in all_exits if (x.destination == 1 and x.spawn == "S"))
                 self[room_to_index(tup=(2,0)), 0] = wall_exit
@@ -336,8 +329,6 @@ class Exits:
                 wall_exit = next(x for x in all_exits if (x.destination == 0 and x.spawn == "N"))
                 self[room_to_index(tup=(2,1)), 2] = wall_exit
                 all_exits.remove(wall_exit)
-
-
 
             """Manually set the waterfall to always lead to "that" room."""
             if self.world_i == 3:  # The waterfall always lead to the boss.
@@ -349,6 +340,29 @@ class Exits:
                 self[room_to_index(tup=(3,24)), 1] = fall_exit
                 all_exits.remove(fall_exit)
 
+
+
+        def set_locked_doors():
+            """Temporary function that will fix some exits that are locked on both sides. Once we can move locked doors,
+                this will disappear."""
+            if self.world_i == 0:
+                wall_exit = next(x for x in all_exits if (x.destination == 5 and x.spawn == "N"))
+                self[room_to_index(tup=(0,8)), 1] = wall_exit
+                all_exits.remove(wall_exit)
+
+                wall_exit = next(x for x in all_exits if (x.destination == 8 and x.spawn == "S"))
+                self[room_to_index(tup=(0,5)), 0] = wall_exit
+                all_exits.remove(wall_exit)
+            if self.world_i == 1:  # Fix the vanilla door that works on both side to the vanilla one.
+                wall_exit = next(x for x in all_exits if (x.destination == 12 and x.spawn == "S"))
+                self[room_to_index(tup=(1,10)), 0] = wall_exit
+                all_exits.remove(wall_exit)
+
+                wall_exit = next(x for x in all_exits if (x.destination == 10 and x.spawn == "N"))
+                self[room_to_index(tup=(1,12)), 1] = wall_exit
+                all_exits.remove(wall_exit)
+
+
         if not randomize: return
         assert not move_boss, "Moving boss is not supported yet" # Comment this line when working on the move_boss.
 
@@ -357,6 +371,8 @@ class Exits:
             all_exits = deepcopy(exits_pools)
             clear_exits()
             set_boss_exit()
+            set_fixed_exits()
+            set_locked_doors()
             shuffle(all_exits)
             for screen_id in self.screens_ids:
                 for exit_id in range(len(self[screen_id])):
