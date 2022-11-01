@@ -1,6 +1,10 @@
 class RandomizerError(BaseException):
     pass
 
+class LogicError(BaseException):
+    pass
+
+
 def world_indexes(world=None):
     """Returns the screen indexes of the provided world. If no world provided, returns all indexes."""
     if world or world==0:

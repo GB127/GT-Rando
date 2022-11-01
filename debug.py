@@ -1,4 +1,3 @@
-from pickle import FALSE
 from exits import Exits
 from gameclass import GT
 import random
@@ -7,6 +6,8 @@ from world import World
 import networkx as net # version 2.5
 import matplotlib.pyplot as plt
 from items import Items
+
+
 
 class debug(GT):
     def __init__(self, data):
@@ -115,18 +116,14 @@ def randomize(worlds, preprint=False, postprint=False):
             testing = test.Worlds[x]
             if preprint: print(testing)
             testing()  # Randomize exits and items
-            print(testing.Items)
-            if postprint: print(testing)
+            if postprint: print(testing.Items)
         test.save()
 
 
 if __name__ == "__main__":
-    random.seed(2)  # Set the seed that fails
-    randomize([0])  # Randomize, then save.
-    # During the randomization, I set a print that prints the items and the fruits
-    # on each levels.
-        # I doubt my print is wrong because when I created the function, it produced a print
-        # that matches exactly the vanilla items.
-    # But when I go and play the game. The Gold key in 0,1 is now a hookshot somehow.
-    # The three items in 0,15 are completely missing.
-    # And finally, the bridge is not at 0,15, but somewhere else (I think it's at 0,11).
+    random.seed(1)
+    compte = 0
+    for x in range(1):
+#        random.seed(x)  # Set the seed that fails
+        randomize([0], postprint=True)  # Randomize, then save.
+    print(compte)

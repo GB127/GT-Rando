@@ -83,10 +83,12 @@ class Items:
                 shuffle(all_items)
             return all_items
 
+
+        if not any([randomize_fruits, randomize_items]): return
+        if combine and not all([randomize_fruits, randomize_items]):
+            raise RandomizerError("The flag combine must be used with both randomize fruits and randomize items")
+
         while True:
-            if not any([randomize_fruits, randomize_items]): return
-            if combine and not all([randomize_fruits, randomize_items]):
-                raise RandomizerError("The flag combine must be used with both randomize fruits and randomize items")
             all_items = randomized_items()
             for screen in self.screens:
                 if self[screen]:
@@ -137,11 +139,6 @@ class Items:
         if Bridge in self[room_to_index(tup=(1,7))] and any([x in self[room_to_index(tup=(1,7))] for x in [GrayK, GoldK]]):
             # If plank is not accessible, need to check if Key is locked.
             raise BaseException(self)
-        if self[room_to_index(tup=(1,7)), 2] in [GrayK, GoldK, Bridge]:
-            # Check if the Blue gem location in (1,7) has a key or bridge.
-            # I did not check the hookshot, because there are 2 extra hookshot in the second world.
-            # And this location is the only item that requires the hookshot (and that is for a fruit).
-            return False
 
         # World 2:
         if self[room_to_index(tup=(2,6)), 2] in range(0x8, 0xF):

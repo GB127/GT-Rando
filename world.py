@@ -1,5 +1,6 @@
+from lib2to3.pytree import Base
 from os import access
-from generic import world_indexes, room_to_index
+from generic import RandomizerError, world_indexes, room_to_index, LogicError
 from items import Items
 from exits import Exits
 import matplotlib.pyplot as plt
@@ -20,18 +21,20 @@ class World():
             try:
                 compte += 1
                 self.Items(randomize_items=True, randomize_fruits=True, combine=True)
-
-                [self.logic_0][self.world_i]()
+                #self.Exits(randomize=True, pair_exits=True, keep_direction=True)
+                [self.logic_0, self.logic_1, self.logic_2, self.logic_3, self.logic_4][self.world_i]()
                 break
-            except:
+            except LogicError:  # We have a softlock. Redo.
                 pass
-            if compte == 9:
-                raise BaseException()
+            if compte == 100:
+                raise BaseException(f'{self.world_i} is trying to randomize, and it failed 100 times in a row.')
 
 
     def logic_0(self):
+        """Logic for World 0. There are 2 different progressions in this world.
+        """
         def preparation():
-                # remove locked door.
+            # remove locked door.
             g.remove_edge(8, 5)
             g.remove_edge(5, 8)
             # Plank
@@ -48,11 +51,10 @@ class World():
             for sortie in self[7]["exits"][:2]:
                 g.add_edge(7, sortie.destination)
                 g.add_edge(sortie.destination, 7)
-
             used.append(0xE)
 
         def available_items():
-            progression = {0xA : "Grey Key",0xB : "Gold Key", 0xE : "Bridge"}
+            progression = {0xA : "Grey Key", 0xE : "Bridge"}
 
             toreturn = []
             for screen in net.shortest_path(g, 0):
@@ -86,13 +88,47 @@ class World():
 
         g = self.Exits.nodes()
         preparation()
+
+
+
         used = []
 
         # With these two things, if both 2 passes, I then know for sure that all levels are accessible.
-        for _ in range(2):  # There is only two progression items. So I can simply do that.
-            available_actions()[0]()
+        for _ in range(2):
+            try:
+                available_actions()[0]()
+
+            except IndexError:
+                raise LogicError("We have a softlock.")
         g.clear()
 
+
+    def logic_1(self):
+        raise BaseException("Tempo")
+
+    def logic_2(self):
+        g = self.Exits.nodes()
+
+        net.draw(g, with_labels=True, node_color='yellow')
+        plt.savefig(f"Graph-{self.world_i}.png", format="PNG")
+        plt.clf()
+        g.clear()
+        raise BaseException(self.Exits)
+
+
+        
+        pass
+
+    def logic_3(self):
+        """By making sure in the exits class that the puzzle that opens the door in 
+            room 0 is accessible from the room 0, we effectively are making sure all
+            room are accessible, and thus, all items are accessible.
+            In summary, no logic needed.
+        """
+        pass
+
+    def logic_4(self):
+        pass
 
     def __getitem__(self, B7):
         return {"exits":self.Exits[room_to_index(tup=(self.world_i, B7))], "items":self.Items[B7]}
