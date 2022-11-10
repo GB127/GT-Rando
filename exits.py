@@ -1,7 +1,6 @@
-from generic import world_indexes, room_to_index, world_indexes
+from generic import room_to_index
 from random import shuffle
 from random import shuffle
-import matplotlib.pyplot as plt
 from copy import deepcopy
 import networkx as net # version 2.5
 

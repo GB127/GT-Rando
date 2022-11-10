@@ -1,7 +1,6 @@
-from generic import RandomizerError, world_indexes, room_to_index, LogicError
+from generic import world_indexes
 from items import Items
 from exits import Exits
-import matplotlib.pyplot as plt
 import networkx as net # version 2.5
 
 class World():
