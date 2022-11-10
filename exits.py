@@ -1,8 +1,11 @@
 from generic import world_indexes, room_to_index, world_indexes
 from random import shuffle
 from random import shuffle
+import matplotlib.pyplot as plt
 from copy import deepcopy
 import networkx as net # version 2.5
+
+from itertools import permutations
 
 def exit_type_str(chiffre):
     exits_type = { "N":[4, 18, 20, 132, 146, 148],
@@ -45,6 +48,7 @@ class one_exit:
 
     def __str__(self):
         return f'{self.destination} ({self.spawn})'
+
 
 
     def clear(self):
@@ -97,123 +101,96 @@ class Exits:
         return f'{table}'
 
     def nodes(self):
-        # TODO : REPLACE THESE FUNCTION IN THE LOOPS TO REDUCE LOOPAGE
-        def world_0_DE():
-            """Dead-ends for plank and shovel"""
-            if self.world_i == 0:
-                for B7, screen in enumerate(self.screens_ids):
-                    for sortie in self[screen]:
-                        if B7 == sortie.destination : continue
-                        if sortie.destination == 7 and sortie.spawn == "W":
-                            g.remove_edge(B7, 7)
-                            g.remove_edge(7, B7)
-                            net.add_path(g, [B7, B7])
-                        elif sortie.destination == 9 and sortie.spawn == "S":
-                            g.remove_edge(B7, 9)
-                            g.remove_edge(9, B7)
-                            net.add_path(g, [B7, B7])
-
-        def world_2_DE():
-            """Dead ends for fruits / gem in B7 = 8"""
-            if self.world_i == 2:
-                for B7, screen in enumerate(self.screens_ids):
-                    for sortie in self[screen]:
-                        if B7 == sortie.destination : continue
-                        if sortie.destination == 8 and sortie.spawn == "S":   # Works!
-                            g.remove_edge(B7, 8)
-                            g.remove_edge(8, B7)
-                            net.add_path(g, [B7, B7])
-
-                        if sortie.destination == 8 and sortie.spawn == "↗":
-                            try:
-                                g.remove_edge(B7, 8)
-                                g.remove_edge(8, B7)
-                                net.add_path(g, [B7, B7])
-                            except:  # Si on lève cette erreur, c'est à coup sûr que c'est 14.
-                                g.remove_edge(14, 8)
-                                net.add_path(g, [14, 14])
-
+        def apply_screen_exits(screen:int, exits_str):
+            #if screen == 80:
+            #    raise BaseException(exits_str)
+            screens_data = {
+                            7 :[(0, 1), (1,0)],  # 7 : W0 Plank Screen 
+                            9 :[(0, 2), (2, 0)],  # 9 : W0 Shovel Screen
+                            29:[(1,0)],  # W1 : Double hookshot : Need to start from left because of chance of softlocking.
+                            40:[(0,2), (2,0)],  # W2 : Corridor screen with fruits on south and gems on top
+                            45:[(1, 2), (2, 1), (0, 3), (3, 0)],  # W2 : Boulder screen with breakable wall on top right and stair
+                            74:[(1,0)],  # W3 : puzzle with 1 Enemy in center
+                            75:[(1,0)],  # W3 : Puzzle with a zig zag section
+                            80:[(2,0), (0,2), (1,2), (2,1)],  # W3 : Waterfall, to ease logic
+                            93:[(1, 0)],  # W4 : Puzzle that opens a door to the right
+                            97:[(0,1), (1,0), (1,2), (2,1)],  # W4 : Room with two hookshot spots. Not the cannon one
+                            99: [(0,1), (1, 0), (0, 2), (2,0)],  # W4 : Room with 2 buttons. This is to make logic easier.
+                            100:[(0, 2), (2,0), (2, 1), (1,2)],  #W5 : Room with the fire blower. This is to make logic easier.
+                            106:[(1, 0)], #W4 : Arrow platform room
+                            110:[(0,1), (1,0), (1,2), (2,1)]  # W4 : Wheel puzzle room
+                            }
+            try:
+                for sortie_1_id, sortie_2_id in screens_data[screen]:
+                    net.add_path(g, [exits_str[sortie_1_id], exits_str[sortie_2_id]])
+            except KeyError:
+                for sortie_1, sortie_2 in permutations(exits_str, 2):
+                    net.add_path(g, [sortie_1, sortie_2])
         g = net.DiGraph()
         for B7, screen in enumerate(self.screens_ids):
+            this_screen_exit = []
             for sortie in self[screen]:
-
-                # World 1: The infamous double hookshot screen. We do not want
-                    # To land here without hookshot. So I must assume that someone
-                    # Never grabs an item. To do so, I assume it's unidirect to the north.
-                if self.world_i == 1:
-                    if sortie.destination == 13 and sortie.spawn == "N":
-                        continue
-
-                # World 2 : Bypass for 14 to 13.
-                    # Nomally it's 14 -> 13 -> Stair exit
-                    # Adjust for logic : 14 -> Stair exit
-                elif self.world_i == 2:
-                    if B7 == 13: # Pièce de bille : For the bombable wall and the stair
-                        if sortie.destination == 14:
-                            continue  # No return because it's a wall and it must be uni
-                        if sortie.direction == "↗":
-                            continue # Don't set, because of the bypass
-                    if B7 == 14:  # For the bombable wall and the bypass
-                        if sortie.destination == 13:
-                            B7_13 = room_to_index(tup=(2,13))
-                            net.add_path(g, [B7, self[B7_13, 3].destination])  # Bypass for logic check
-                            continue
-
-                elif self.world_i == 3:  # Both puzzles that opens a door on North.
-                    if sortie.destination == 16 and sortie.spawn == "N":
-                        continue
-                    if sortie.destination == 17 and sortie.spawn == "N":
-                        continue
-
-
-                elif self.world_i == 4: 
-                    # Make the platform unidirect! When reimplemented, will use a bool.
-                    if sortie.destination == 18 and sortie.spawn == "E":
-                        continue
-                net.add_path(g, [B7, sortie.destination])
-
-        world_0_DE()
-        world_2_DE()
+                starting = f'{B7} ({sortie.direction})'
+                net.add_path(g, [starting, str(sortie)])
+                this_screen_exit.append(starting)
+            apply_screen_exits(screen, this_screen_exit)
         return g
 
     def __bool__(self):
-        """Returns True if all screens can be reached from the start."""
-        if self.world_i == 1:
-            if self[7,2].destination == 7 and self[7,2].spawn == "W":
-                raise BaseException("7 DEAD END : INACCESSIBLE ITEM, DID IT WORK?")
-                return False
-            if self[9, 1].destination == 9 and self[9, 1].spawn == "S":
-                raise BaseException("9 SHOVEL DEAD END : INACCESSIBLE ITEM, DID IT WORK?")
-                return False
-        # TODO : SAME FOR CASTLE
+        """Bool that checks if all exits are reachable."""
+        def B7s_tocouple():
+            """Check if some B7s are reachable after removing a specific link.
+            """
+            # TODO : Pirate arrow platform.
+            data = {58:(59, (str(self[58,0]),"0 (N)"), ("0 (N)", "1 (E)")), # World 3 : 0 locked door : see if puzzle reachable without going to north!
+                    80:(81, ("22 (S)", "22 (N)"), ('22 (S)', "23 (W)"))  # World 3 : Waterfall and the puzzle room!
+                        }
+            # data Format : {Screen : (Screen2, (Spawn1, Spawn2), (Exit1, Exit2))} 
+                # Screen1 : Screen where we need to stat the check.
+                # Screen2 : Destination screen we need to have on same world.
+                # Spawn1 & Spawn2 : Spawns on Screen1 we need to remove the link
+                # Exit1 & Exit2 : Exits to use to see if we can reach Exit2 from Exit1
+                    # NOTE : Exit1 is on Screen1
+            for screen_to_check, infos in data.items():
+                if screen_to_check in self.screens_ids:
+                    # Check if screen to pair is in the same world. (Currently, will always work).
+                        # If implemented, this will be moved elsewhere!
+                    B7_to_couple = infos[0]
+                    assert B7_to_couple in self.screens_ids, "Looks like we can randomize screens now? This is a failsafe check"
+                    copy_g = deepcopy(g)
+                    
+                    # Remove the link we need to remove.
+                    link_to_remove = infos[1]
+                    for exit1, exit2 in permutations(link_to_remove, 2):
+                        try:
+                            copy_g.remove_edge(exit1, exit2)
+                        except net.NetworkXError:  
+                        # This happens when we don't pair exits. With this, we simply only remove the
+                        # out.
+                            continue
 
+                    # See if we can reach the goal. Raises an error if unreachable.
+                    path_to_find = infos[2]
+                    net.shortest_path(copy_g, path_to_find[0], path_to_find[1])
 
+        def B7s_softlockable():
+            """Checks for screens that can be softlocked if entered the wrong way with no items."""
+                # World 1 : The double hookshot
+                # World 3 : The moving platform hookshot thing.
+            pass
         g = self.nodes()
-        nodes = net.shortest_path(g,0).keys()  #TODO : Once we can change the first screen, the 0 will be that screen.
-        if len(self.screens_ids) != len(nodes):
+        try:
+            B7s_tocouple()
+        # Check if all exits are accessible from the start.
+            return len(net.shortest_path(g, str("0 (N)"))) -1 == (len(self))  # -1 is because in the nodes we have the boss door that is not an exit spawn!
+        except net.NetworkXNoPath:
             return False
 
-        
-        if self.world_i == 3:  # Make sure Room #1 is accessible from the start.
-            g.remove_edge(0, self[room_to_index(tup=(3,0)), 0].destination)
-            if 1 not in net.shortest_path(g,0).keys():  # TODO : Once we can change the starting room, change the 0 here.
-                return False
-
-        if self.world_i == 4:  # Make sure the gold key is required.
-            g.remove_node(20)
-            try:
-                net.shortest_path(g, 0, 25)
-                return False
-            except:
-                pass
-
-        if self.world_i == 4:  # Make sure we can come back, assuming we skip all items.
-            # À modifier avec un futur bool quand la plateforme sera réimplementé
-            try:
-                net.shortest_path(g,self[room_to_index(tup=(4, 18)),0].destination, 18)
-            except:  # Pas de chemin de retour.
-                return False
-        return True
+    def __len__(self):
+        total = 0
+        for screen in self.screens_ids:
+            total += self.data.screens[screen].num_exits
+        return total
 
     def __getitem__(self, screen_exit_id):
         # TODO : Use room_to_index here
