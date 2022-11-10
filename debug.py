@@ -19,7 +19,7 @@ class debug(GT):
         super().save("debug.smc")
 
 class World_debug(World):
-    def screen(self, B7):
+    def screen_str(self, B7):
         def transform_byt_co(big_value):
             assert big_value <= 0x6bc and big_value >=0, "Byte value must be 0 to 0x6BC"
             assert big_value % 2 == 0, "Byte value must be pair, else it will appear gliched."
@@ -87,14 +87,67 @@ class World_debug(World):
     def __init__(self, data, world_i):
         self.world_i = world_i
         self.data = data
+        self.screens = world_indexes(self.world_i)
 
-        self.Exits = Exits_debug(self.data,self.world_i, world_indexes(self.world_i))
-        self.Items = Items(self.data, self.world_i, world_indexes(self.world_i))
+        self.Exits = Exits_debug(self.data,self.world_i, self.screens)
+        self.Items = Items_debug(self.data, self.world_i, self.screens)
+
+
+    def nodes(self,simplified=False, save:bool=False,*, planar=False, spectral=False, spring=False):
+        def filename():
+            string = f"Graph-{self.world_i}"
+            return string + ".png"
+
+        g = super().nodes()
+        if save:
+            color_map = []
+            for node in g:
+                if node[1] in ["Hookshot", "Grey Key", "Gold Key", "Bridge"]:
+                    color_map.append("lightgreen")
+                else:
+                    color_map.append("yellow")
+            net.draw(g, with_labels=True, node_color=color_map)
+            plt.savefig(filename(), format="PNG")
+            plt.clf()
+            g.clear()
+        return g
+
+
+
+
+class Items_debug(Items):
+    def nodes(self,exits, save:bool=False,*,simplified=False, planar=False, spectral=False, spring=False):
+        def filename():
+            string = f"Graph-{self.world_i}_items"
+            if simplified:
+                string += "_simplified"
+            return string + ".png"
+        g = super().nodes(exits)
+        if save:
+            color_map = []
+            for node in g:
+                if node[1] in ["Hookshot", "Grey Key", "Gold Key", "Bridge"]:
+                    color_map.append("lightgreen")
+                else:
+                    color_map.append("yellow")
+            net.draw(g, with_labels=True, node_color=color_map)
+            plt.savefig(filename(), format="PNG")
+            plt.clf()
+            g.clear()
+        return g
 
 
 class Exits_debug(Exits):
-    def nodes(self, save:bool=False,*, planar=False, spectral=False, spring=False):
-        g = super().nodes()
+    def nodes(self, save:bool=False,*,simplified=False, planar=False, spectral=False, spring=False):
+        def filename():
+            string = f"Graph-{self.world_i}_Exits"
+            if simplified:
+                string += "_simplified"
+            return string + ".png"
+        if simplified:
+            g = self.nodes_simplified()
+        else:
+            g = super().nodes()
         if save:
             if planar:
                 net.draw_planar(g, with_labels=True, node_color='yellow')
@@ -104,10 +157,19 @@ class Exits_debug(Exits):
                 net.draw_spring(g, with_labels=True, node_color='yellow')
             else:
                 net.draw(g, with_labels=True, node_color='yellow')
-            plt.savefig(f"Graph-{self.world_i}.png", format="PNG")
+            plt.savefig(filename(), format="PNG")
             plt.clf()
             g.clear()
         return g
+
+    def nodes_simplified(self):
+        g = net.DiGraph()
+        for B7, screen in enumerate(self.screens_ids):
+            for sortie in self[screen]:
+                net.add_path(g, [B7, sortie.destination])
+        return g
+
+
 
 def randomize(worlds, preprint=False, postprint=False):
     with open("Vanilla.smc", "rb") as game:
@@ -115,15 +177,11 @@ def randomize(worlds, preprint=False, postprint=False):
         for x in worlds:
             testing = test.Worlds[x]
             if preprint: print(testing)
-            testing()  # Randomize exits and items
-            if postprint: print(testing.Items)
+            testing.nodes(save=True)
+            if postprint: print(testing)
         test.save()
 
 
 if __name__ == "__main__":
-    random.seed(1)
-    compte = 0
-    for x in range(1):
-#        random.seed(x)  # Set the seed that fails
-        randomize([0], postprint=True)  # Randomize, then save.
-    print(compte)
+    for x in range(5):
+        randomize([x])  # Randomize, then save.
