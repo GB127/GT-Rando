@@ -1,5 +1,6 @@
 from generic import room_to_index, RandomizerError
 from random import shuffle
+import networkx as net # version 2.5
 
 class Items:
     def __init__(self, data, world_i, screens_ids):
@@ -105,6 +106,34 @@ class Items:
 
             if bool(self):
                 break
+
+    def nodes(self, sorties):
+        items_names = {0x8 : "Hookshot", 0xA : "Grey Key",0xB : "Gold Key", 0xE : "Bridge"}
+        items_screens = {7:("7 (W)",),  # W0 : plank 
+                        9:("9 (S)",),  # W0 : Shovel
+                        29:("13 (N)",),  # W1 : Item north of double hookshot.
+                        40:("8 (S)", "8 (S)", "8 (S)", "8 (S)", "8 (↗)", "8 (↗)"),  # W2 : Corridor with fruits and gem
+                        49:("17 (N)",),  # W3 : Screen with gray key in middle, item on the right behind hookshot
+                        53:("21 (W)", "21 (W)", "21 (↗)")  # W3 : movable platform and hookshot
+                        }#, 53, 55, 62, 65, 69, 77, 78, 90, 94, 95, 96, 97, 99, 100, 101, 102, 103, 104, 105, 106, 108, 109, 111
+        g = net.DiGraph()
+        for B7, screen in enumerate(self.screens):
+            if not self[screen]: continue
+            if screen in items_screens:
+                for spawn, item, id in zip(items_screens[screen], self[screen], range(len(self[screen]))):
+                    if item in items_names:
+                        g.add_edge(spawn, (B7, items_names[item], id))
+            else:
+                stringed = f'{B7} ({sorties[screen][0].direction})'
+                for id, item in enumerate(self[screen]):
+                    if item in items_names:
+                        g.add_edge(stringed, (B7, items_names[item], id))
+        return g
+
+
+
+
+
 
     def __bool__(self):
         """Some preliminary checks that we can do before even checking compatibility with
