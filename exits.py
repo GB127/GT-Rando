@@ -16,8 +16,6 @@ def exit_type_str(chiffre):
         if chiffre in exits_type[direction]:
             return direction
 
-
-
 class one_exit:
     opposite = {"N": "S",
                 "S": "N",
@@ -53,7 +51,6 @@ class one_exit:
     def clear(self):
         self.destination = 255
         self.xy = 255, 255
-
 
 
 class Exits:
@@ -100,7 +97,8 @@ class Exits:
         return f'{table}'
 
     def nodes(self):
-        def apply_screen_exits(screen:int, exits_str):
+        # TODO: Unidirectionnal exits
+        def apply_internal_links(screen:int, exits_str):
             #if screen == 80:
             #    raise BaseException(exits_str)
             screens_data = {
@@ -125,6 +123,16 @@ class Exits:
             except KeyError:
                 for sortie_1, sortie_2 in permutations(exits_str, 2):
                     net.add_path(g, [sortie_1, sortie_2])
+            # TODO : Fix something so that you don't link all spawn AND add this.
+            if screen == 23:
+                net.add_path(g, ["7 (S)", "7 (C)"])
+                net.add_path(g, ["7 (C)", "7 (S)"])
+            if screen == 42:
+                net.add_path(g, ["10 (E)", "10 (C)"])
+                net.add_path(g, ["10 (C)", "10 (E)"])
+                net.add_path(g, ["10 (N)", "10 (C)"])
+                net.add_path(g, ["10 (C)", "10 (N)"])
+
         g = net.DiGraph()
         for B7, screen in enumerate(self.screens_ids):
             this_screen_exit = []
@@ -132,7 +140,7 @@ class Exits:
                 starting = f'{B7} ({sortie.direction})'
                 net.add_path(g, [starting, str(sortie)])
                 this_screen_exit.append(starting)
-            apply_screen_exits(screen, this_screen_exit)
+            apply_internal_links(screen, this_screen_exit)
         return g
 
     def __bool__(self):
@@ -181,6 +189,7 @@ class Exits:
         try:
             B7s_tocouple()
         # Check if all exits are accessible from the start.
+        # TODO : Convert to check if all exit in the list so that I can add some nodes for some screens.
             return len(net.shortest_path(g, str("0 (N)"))) -1 == (len(self))  # -1 is because in the nodes we have the boss door that is not an exit spawn!
         except net.NetworkXNoPath:
             return False
@@ -219,6 +228,14 @@ class Exits:
 
     def exit_type(self, screen_id, exit_id):
         return self.data.screens[screen_id].exits[exit_id].type
+
+    def find(self, spawn):
+        for B7, screen in enumerate(self.screens_ids):
+            for exi in range(self.data.screens[screen].num_exits):
+                sortie = one_exit(self.data.screens[screen].exits[exi])
+                if str(sortie) == spawn:
+                    return f"{B7} ({sortie.direction})"
+
 
     def __call__(self,  randomize:bool, 
                         keep_direction:bool=True,
@@ -362,3 +379,16 @@ class Exits:
                         pairer(screen_id, self.data.screens[screen_id].exits[exit_id].type, new_exit)
             if self:
                 break
+
+
+    def __iter__(self):
+        toreturn = []
+        for screen in self.screens_ids:
+            for exi in range(self.data.screens[screen].num_exits):
+                sortie = one_exit(self.data.screens[screen].exits[exi])
+                toreturn.append(sortie)
+        return iter(toreturn)
+
+
+
+
