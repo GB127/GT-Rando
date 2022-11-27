@@ -24,7 +24,7 @@ class World():
     def __bool__(self):
         # World 0 : Vanilla Works
         # World 1 : Vanilla Works
-        # World 2 :
+        # World 2 : Vanilla Works, but it takes 40 min - 1 hour...
         # World 3 : Vanilla will work once we take care of the internal puzzles that makes some paths unidirect.
         # World 4 :
         def get_items(graphik, spawn) -> list:
@@ -35,55 +35,63 @@ class World():
                     items.append(access)
             return items
 
-        def get_locks(graphik,locks, spawn) -> list:
+        def get_locks(graphik,current_locks, spawn) -> list:
             """Get all accessible locks from a specified spawn."""
+            
+            
             accessible_locks = set()
-            for screen_lock in locks.values():
-                for lock, exits in screen_lock.items():
+            for screen_lock in current_locks.values():
+                for lock, exits in screen_lock:
                     for duo in exits:
                         for exit in duo:
+                            if isinstance(exit, tuple): continue  # Hack to avoid stupid items.
                             if exit in net.shortest_path(graphik, spawn):
                                 accessible_locks.add((lock, exit))
             return list(accessible_locks)
 
-        def use_lock(graphik, locks, lock, used):  # Returns the new graphic after using the item specified on the lock specified.!
+        def use_lock(graphik, current_locks, to_unlock, used):  # Returns the new graphic after using the item specified on the lock specified.!
             copy_g = deepcopy(graphik)
-
-            used_item = lock[0]
-            which_spawn = lock[1]
+            used_item = to_unlock[0]
+            which_spawn = to_unlock[1]
             which_screen = self.B7_screen(int(which_spawn[:-3]))
-            for lock, links in locks[which_screen].items():
-                if lock != used_item:
+
+            for which, screen_lock in enumerate(current_locks[which_screen]):
+                if screen_lock[0] != used_item:
                     continue
-                for edge in links:
+                if not any(to_unlock[1] in x for x in screen_lock[1]):
+                    continue  # Wrong lock. Next please.
+
+                for edge in screen_lock[1]:
                     copy_g.add_edge(*edge)
                 copy_g.remove_node(used)
-            del locks[self.B7_screen(int(which_spawn[:-3]))][used_item]
-
+                break
+            
+            del current_locks[self.B7_screen(int(which_spawn[:-3]))][which]
             if self.world_i == 0:
                 if which_screen == 5:
-                    del locks[8][used_item]
+                    del current_locks[8]
                 elif which_screen == 8:
-                    del locks[5][used_item]
+                    del current_locks[5]
             if self.world_i == 1:
                 if which_screen == 26:
-                    del locks[28][used_item]
+                    del current_locks[28]
                 elif which_screen == 28:
-                    del locks[26][used_item]
+                    del current_locks[26]
 
-
-            return copy_g, locks
+            return copy_g, current_locks
 
         def play(graph, spawn, locks):
             # Check if locks are accessible:
-            accessible_locks = get_locks(graph,locks, spawn)
+            accessible_locks = get_locks(graph,locks, spawn)  # Ok.
             accessible_items = get_items(graph, spawn)
+
+
             if not accessible_locks:  # Tout est supposément débarré.
                 accessible_spawn = net.shortest_path(graph, spawn).keys()
                 for sortie in self.Exits:
                     if str(sortie) not in accessible_spawn:
                         net.draw(graph, with_labels=True)
-                        plt.savefig("recursive_bug.png", format="PNG")
+                        plt.savefig("recursive_spawn_bug.png", format="PNG")
                         plt.clf()
                         raise LogicError(f"{sortie} not accessible")
                 #raise BaseException("Tout est accessible!")
@@ -119,8 +127,6 @@ class World():
 
     def nodes(self):
         # Add something for internal puzzles. Like in the cave.
-
-
         g = net.compose(self.Exits.nodes(), self.Items.nodes(self.Exits))
         net.draw(g, with_labels=True)
         plt.savefig("recursive_world1bug.png", format="PNG")
