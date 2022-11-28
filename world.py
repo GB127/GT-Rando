@@ -137,11 +137,23 @@ class World():
 
 
     def nodes(self):
+        def internal_puzzles():
+            """At this point, all screen should be reachable from the start.
+                So I can just relink all the exits of the said screens.
+            """
+            data = [74,  # One of the puzzles in Cave
+                        75,  # One of the puzzles in Cave
+                        93,  # Puzzle in pirate
+                        110,  # W4 : Wheel puzzle room
+                    ]
+            for screen in self.screens:
+                if screen not in data: continue
+                for sortie_1, sortie_2 in permutations([f'{room_to_index(id=screen)[1]} ({x.direction})' for x in self.Exits[screen]], 2):
+                    net.add_path(g, [sortie_1, sortie_2])
+
         # Add something for internal puzzles. Like in the cave.
         g = net.compose(self.Exits.nodes(), self.Items.nodes(self.Exits))
-        net.draw(g, with_labels=True)
-        plt.savefig("recursive_world1bug.png", format="PNG")
-        plt.clf()
+        internal_puzzles()
         for x in self.Doors.nodes(self.Exits, self.Items).edges():
             g.remove_edge(x[0], x[1])
         return g
