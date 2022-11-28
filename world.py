@@ -17,8 +17,19 @@ class World():
         self.Doors = Doors(self.data, self.world_i, self.screens)
 
     def __call__(self):
+        count = 0
+        while True:
         self.Exits(randomize=True, keep_direction=True, pair_exits=True)
         self.Items(randomize_items=True)
+            if count == 1000:
+                raise LogicError("Looks like it can't find anything...")
+            try:
+                bool(self)
+                break
+            except LogicError:
+                print("restarting...")
+                count += 1
+        print("Finished randomizing!")
 
 
     def __bool__(self):
