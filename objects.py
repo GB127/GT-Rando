@@ -1,5 +1,5 @@
 import random
-from generic import world_indexes, room_to_index, RandomizerError
+from generic import room_to_index, RandomizerError
 from random import shuffle
 from copy import deepcopy
 
@@ -72,7 +72,7 @@ class Grabbables:
 
 class Versions:
     def __init__(self, data):
-        self.versions = [0 for _ in world_indexes()]
+        self.versions = [0 for _ in range(114)]
         self.data = data
 
     def __call__(self, world_by_world=False, room_by_room=False, game_by_game=False):

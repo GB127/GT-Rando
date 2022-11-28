@@ -1,6 +1,6 @@
 from patch import *
 from objects import Versions, Grabbables
-from generic import world_indexes, room_to_index, RandomizerError
+from generic import room_to_index, RandomizerError
 from world import World
 
 class GT:
@@ -11,6 +11,15 @@ class GT:
             ,0x20,0x50,0x72,0x6F,0xBC,0xFF,0xBC,0xFF,0xBC,0xFF,0xB4,0xFF,0xBC,0xFF,0xB8,0xFF,0x20,0x4D,0x2E,0x20,0xBC,0xFF,0xBC,0xFF,0xBC,0xFF,0xBC,0xFF,0xB0,0xFF,0xBC,0xFF
             ])
     def __init__(self, data):
+        def world_indexes(world:int):
+            """Returns the screen indexes of the provided world"""
+            assert 0 <= world <= 4, "World must be 0, 1, 2, 3 or 4"
+            id_per_world =   [0, 16, 32, 58, 88, 114]
+            return range(id_per_world[world], id_per_world[world+1])
+
+        
+        
+        
         """Game data. Attributes:
             Versions
             Grabbables
@@ -78,10 +87,10 @@ class GT:
 
         # This is the workable data
         self.data = self.data_complete.contents.game
-        self.Versions = Versions(self.data)  # TODO : Versions Data for J2 and J3
-        self.Grabbables = Grabbables(self.data)  # WORKS, NOTHING TO DO.
+        #self.Versions = Versions(self.data)  # TODO : Versions Data for J2 and J3
+        #self.Grabbables = Grabbables(self.data)  # WORKS, NOTHING TO DO.
 
-        self.Worlds = [World(self.data, x) for x in range(5)]
+        self.Worlds = [World(self.data, x, world_indexes(x)) for x in range(5)]
             # A world has ITEMS and EXITS attribute
 
 

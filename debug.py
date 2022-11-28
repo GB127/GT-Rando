@@ -2,7 +2,7 @@ from exits import Exits
 from gameclass import GT
 from locks import Locks
 import random
-from generic import world_indexes, room_to_index
+from generic import room_to_index
 from world import World
 import networkx as net # version 2.5
 import matplotlib.pyplot as plt
@@ -10,9 +10,15 @@ from items import Items
 
 class debug(GT):
     def __init__(self, data):
+        def world_indexes(world:int):
+            """Returns the screen indexes of the provided world"""
+            assert 0 <= world <= 4, "World must be 0, 1, 2, 3 or 4"
+            id_per_world =   [0, 16, 32, 58, 88, 114]
+            return range(id_per_world[world], id_per_world[world+1])
+
         super().__init__(data)
         del self.Worlds
-        self.Worlds = [World_debug(self.data, x) for x in range(5)]
+        self.Worlds = [World_debug(self.data, x, world_indexes(x)) for x in range(5)]
 
     def save(self):
         super().save("debug.smc")
@@ -85,10 +91,10 @@ class World_debug(World):
         print("\n".join(string_list))
         print(boundary_bottom)
 
-    def __init__(self, data, world_i):
+    def __init__(self, data, world_i, screens_ids):
         self.world_i = world_i
         self.data = data
-        self.screens = world_indexes(self.world_i)
+        self.screens = screens_ids
 
         self.Exits = Exits_debug(self.data,self.world_i, self.screens)
         self.Items = Items_debug(self.data, self.world_i, self.screens)
@@ -221,6 +227,7 @@ if __name__ == "__main__":
         # Exits
         # Items
         # World
+        # Objects : To restart when seedy is done.
 
 
 
