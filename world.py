@@ -2,7 +2,7 @@ from generic import world_indexes, LogicError, room_to_index
 from items import Items
 import matplotlib.pyplot as plt
 from exits import Exits
-from doors import Doors
+from locks import Locks
 from copy import deepcopy
 import networkx as net # version 2.5
 from itertools import permutations
@@ -15,7 +15,7 @@ class World():
 
         self.Exits = Exits(self.data,self.world_i,self.screens)
         self.Items = Items(self.data, self.world_i, self.screens)
-        self.Doors = Doors(self.data, self.world_i, self.screens)
+        self.Doors = Locks(self.data, self.world_i, self.screens, self.Exits, self.Items)
 
     def __call__(self):
         count = 0
@@ -151,7 +151,7 @@ class World():
         # Add something for internal puzzles. Like in the cave.
         g = net.compose(self.Exits.nodes(), self.Items.nodes(self.Exits))
         internal_puzzles()
-        for x in self.Doors.nodes(self.Exits, self.Items).edges():
+        for x in self.Doors.nodes().edges():
             g.remove_edge(x[0], x[1])
         return g
 

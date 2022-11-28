@@ -1,6 +1,6 @@
 from exits import Exits
 from gameclass import GT
-from doors import Doors
+from locks import Locks
 import random
 from generic import world_indexes, room_to_index
 from world import World
@@ -92,7 +92,7 @@ class World_debug(World):
 
         self.Exits = Exits_debug(self.data,self.world_i, self.screens)
         self.Items = Items_debug(self.data, self.world_i, self.screens)
-        self.Doors = Doors_debug(self.data, self.world_i, self.screens)
+        self.Doors = Locks_debug(self.data, self.world_i, self.screens, self.Exits, self.Items)
 
     def nodes(self, save:bool=False):
         def filename():
@@ -116,14 +116,14 @@ class World_debug(World):
         print(f"World {self.world_i} nodes saved!")
         return g
 
-class Doors_debug(Doors):
-    def nodes(self,exits,items , save:bool=False,*,simplified=False):
+class Locks_debug(Locks):
+    def nodes(self, save:bool=False,*,simplified=False):
         def filename():
             string = f"graph/doors/Graph-{self.world_i}_new"
             if simplified:
                 string += "_simplified"
             return string + ".png"
-        g = super().nodes(exits, items)
+        g = super().nodes()
         color_map = []
         label_map = {}
 
@@ -216,7 +216,7 @@ def randomize(worlds, preprint=False, postprint=False):
 
 
 if __name__ == "__main__":
-    for x in [0,1,3,4]:
+    for x in [0]:
         randomize([x])  # Randomize, then save.
     #with open("Vanilla.smc", "rb") as game:
     #    test = debug(game.read())
