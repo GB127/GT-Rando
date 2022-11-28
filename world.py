@@ -1,10 +1,11 @@
-from generic import world_indexes, LogicError
+from generic import world_indexes, LogicError, room_to_index
 from items import Items
 import matplotlib.pyplot as plt
 from exits import Exits
 from doors import Doors
 from copy import deepcopy
 import networkx as net # version 2.5
+from itertools import permutations
 
 class World():
     def __init__(self, data, world_i):
@@ -19,8 +20,8 @@ class World():
     def __call__(self):
         count = 0
         while True:
-        self.Exits(randomize=True, keep_direction=True, pair_exits=True)
-        self.Items(randomize_items=True)
+            self.Exits(randomize=True, keep_direction=True, pair_exits=True)
+            self.Items(randomize_items=True)
             if count == 1000:
                 raise LogicError("Looks like it can't find anything...")
             try:
@@ -36,8 +37,8 @@ class World():
         # World 0 : Vanilla Works
         # World 1 : Vanilla Works
         # World 2 : Vanilla Works, but it takes 40 min - 1 hour...
-        # World 3 : Vanilla will work once we take care of the internal puzzles that makes some paths unidirect.
-        # World 4 :
+        # World 3 : Vanilla works
+        # World 4 : Vanilla works, but I expect some softlocks because I did not check everything.
         def get_items(graphik, spawn) -> list:
             """Get all accessible items from specified spawn."""
             items = []
@@ -48,8 +49,6 @@ class World():
 
         def get_locks(graphik,current_locks, spawn) -> list:
             """Get all accessible locks from a specified spawn."""
-            
-            
             accessible_locks = set()
             for screen_lock in current_locks.values():
                 for lock, exits in screen_lock:
@@ -95,8 +94,6 @@ class World():
             # Check if locks are accessible:
             accessible_locks = get_locks(graph,locks, spawn)  # Ok.
             accessible_items = get_items(graph, spawn)
-
-
             if not accessible_locks:  # Tout est supposément débarré.
                 accessible_spawn = net.shortest_path(graph, spawn).keys()
                 for sortie in self.Exits:
