@@ -2,46 +2,20 @@ from generic import room_to_index, RandomizerError
 from random import shuffle
 import networkx as net # version 2.5
 
+Fruits = range(0x40, 0x47, 2)
+Usables = range(0x8, 0xF)
+prog_names = {0x8 : "Hookshot", 0xA : "Gray Key",0xB : "Gold Key", 0xE : "Bridge"}
+items_names = {0x8 : "Hookshot", 0x9 : "Candle  ", 0xA : "Grey Key",0xB : "Gold Key", 0xC :"Shovel  ", 0xD : "Bell    ", 0xE : "Bridge  "}
+fruits_names = {0x40 : "Cherry  ", 0x42: "Banana  ", 0x44 : "Red Gem ", 0x46 : "Blue Gem"}
+
+
 class Items:
     def __init__(self, data, world_i, screens_ids):
         self.data = data
         self.world_i = world_i
         self.screens = screens_ids
 
-    def __getitem__(self, screen_item_id):
-        if isinstance(screen_item_id, tuple):
-            screen_id = screen_item_id[0]
-            item_id = screen_item_id[1]
-        else:
-            screen_id = screen_item_id
-            item_id = None
-        items = []
-        num_objets = self.data.screens[screen_id].num_class_2_sprites
-        for objet_id in range(num_objets):
-            objet_type = self.data.screens[screen_id].class_2_sprites[objet_id].type
-            if objet_type in range(0x8, 0xF) or objet_type in range(0x40, 0x47, 2):
-                items += [objet_type]
-        if isinstance(item_id, int):
-            return items[item_id]
-        else:
-            return items
-
-
-    def __setitem__(self, tupl, new_item):
-        screen_id, item_id = tupl
-
-        num_objets = self.data.screens[screen_id].num_class_2_sprites
-        for objet_id in range(num_objets):
-            objet_type = self.data.screens[screen_id].class_2_sprites[objet_id].type
-            if objet_type in range(0x8, 0xF) or objet_type in range(0x40, 0x47, 2):
-                if item_id == 0:
-                    self.data.screens[screen_id].class_2_sprites[objet_id].type = new_item
-                    break
-                item_id -= 1
-
     def __str__(self):
-        items_names = {0x8 : "Hookshot", 0x9 : "Candle  ", 0xA : "Grey Key",0xB : "Gold Key", 0xC :"Shovel  ", 0xD : "Bell    ", 0xE : "Bridge  "}
-        fruits_names = {0x40 : "Cherry  ", 0x42: "Banana  ", 0x44 : "Red Gem ", 0x46 : "Blue Gem"}
         table_str = ""
         for B7, screen in enumerate(self.screens):
             tempo_items = ""
@@ -55,7 +29,49 @@ class Items:
         line = "-" * 100
         return f'{table_str}{line}'
 
+    def __getitem__(self, screen_item_id):
+        """Usage guide:
+            self[screen_id] => [screen's items]
+            self[screen_id, index] => Return [screen's items][index]
+        """
+        def get_all_items(screen_id):
+            """Get all items that are fruits or usable."""
+            items = []
+            num_objets = self.data.screens[screen_id].num_class_2_sprites
+            for objet_id in range(num_objets):
+                objet_type = self.data.screens[screen_id].class_2_sprites[objet_id].type
+                if objet_type in Usables or objet_type in Fruits:
+                    items += [objet_type]
+            return items
+
+        if isinstance(screen_item_id, tuple): 
+            return get_all_items(screen_item_id[0])[screen_item_id[1]]
+        else: 
+            return get_all_items(screen_item_id)
+
+    def __setitem__(self, id_index:tuple, new_item):
+        """Usage guide: self[screen_id, index] = new_item.
+            new_item must be in Fruits or Usables
+        """
+        assert new_item in Fruits or new_item in Usables, "New item must be a fruit or a usable."
+        
+        screen_id, item_id = id_index
+        qty_objets = self.data.screens[screen_id].num_class_2_sprites
+        for objet_id in range(qty_objets):
+            objet_type = self.data.screens[screen_id].class_2_sprites[objet_id].type
+            if objet_type in Usables or objet_type in Fruits:
+                if item_id == 0:
+                    self.data.screens[screen_id].class_2_sprites[objet_id].type = new_item
+                    break
+                item_id -= 1
+
     def __call__(self, randomize_items=False, randomize_fruits=False, combine=False):
+        """Randomize the items.
+                Args:
+                    randomize_items (bool) : Shuffle Usable items.
+                    randomize_fruits (bool): Shuffles Fruits.
+                    combine (bool) : Combine fruits and items pools. Currently, doesn't work.
+        """
         def randomized_items():
             def item_pool():
                 items = []
@@ -84,6 +100,7 @@ class Items:
                 shuffle(all_items)
             return all_items
 
+        assert not combine, f"Currently, combining pools doesn't work. The randomization works, but the game doesn't."
 
         if not any([randomize_fruits, randomize_items]): return
         if combine and not all([randomize_fruits, randomize_items]):
@@ -104,45 +121,14 @@ class Items:
                         self[screen, item_id] = new_item
                         all_items.remove(new_item)
 
-            if bool(self):
+            if bool(self):  # Minimal checks to ensure we don't lock progression items.
                 break
-
-    def nodes(self, sorties):
-        items_names = {0x8 : "Hookshot", 0xA : "Gray Key",0xB : "Gold Key", 0xE : "Bridge"}
-        items_screens = {7:("7 (W)",),  # W0 : plank 
-                        9:("9 (S)",),  # W0 : Shovel
-                        23:("7 (C)", "7 (C)", " 7 (C)"),  # W1 : Hookshot + plank
-                        29:("13 (N)",),  # W1 : Item north of double hookshot.
-                        40:("8 (S)", "8 (S)", "8 (S)", "8 (S)", "8 (↗)", "8 (↗)"),  # W2 : Corridor with fruits and gem
-                        42:("10 (N)", "10 (N)", "10 (N)"),  # W2 : Plank Room. Fix all to north since it's easier for logic from north.
-                        49:("17 (N)",),  # W3 : Screen with gray key in middle, item on the right behind hookshot
-                        53:("21 (W)", "21 (W)", "21 (↗)")  # W3 : movable platform and hookshot
-                        }#, 53, 55, 62, 65, 69, 77, 78, 90, 94, 95, 96, 97, 99, 100, 101, 102, 103, 104, 105, 106, 108, 109, 111
-        g = net.DiGraph()
-        for B7, screen in enumerate(self.screens):
-            if not self[screen]: continue
-            if screen in items_screens:
-                for spawn, item, id in zip(items_screens[screen], self[screen], range(len(self[screen]))):
-                    if item in items_names:
-                        g.add_edge(spawn, (B7, items_names[item], id))
-            else:
-                stringed = f'{B7} ({sorties[screen][0].direction})'
-                for id, item in enumerate(self[screen]):
-                    if item in items_names:
-                        g.add_edge(stringed, (B7, items_names[item], id))
-
-        return g
-
-
-
-
-
 
     def __bool__(self):
         """Some preliminary checks that we can do before even checking compatibility with
-            exits by assuming all exits are always reachable and have infinite items
-            Returns True if, , all items are accessible.
-            Returns False if there is some inaccessible items"""
+            exits by assuming all exits are always reachable and have infinite items.
+            Returns True if, , all progressive items.
+            Returns False if there are some inaccessible progression items"""
         GrayK = 0xA
         GoldK = 0xB
         Bridge = 0xE
@@ -182,3 +168,32 @@ class Items:
         if any([x in self[room_to_index(tup=(4,12))] for x in [GrayK, GoldK]]):
             return False
         return True
+
+    def nodes(self, sorties):
+        """Returns diGraph of each items' location. Needs exits for now."""
+
+        # If not in items_data, then it can be tied to any spawnm and thus will assume it's tied to the first spawn of the screen.
+        items_data = {7:("7 (W)",),  # W0 : plank 
+                        9:("9 (S)",),  # W0 : Shovel
+                        23:("7 (C)", "7 (C)", " 7 (C)"),  # W1 : Hookshot + plank
+                        29:("13 (N)",),  # W1 : Item north of double hookshot.
+                        40:("8 (S)", "8 (S)", "8 (S)", "8 (S)", "8 (↗)", "8 (↗)"),  # W2 : Corridor with fruits and gem
+                        42:("10 (N)", "10 (N)", "10 (N)"),  # W2 : Plank Room. Fix all to north since it's easier for logic from north.
+                        49:("17 (N)",),  # W3 : Screen with gray key in middle, item on the right behind hookshot
+                        53:("21 (W)", "21 (W)", "21 (↗)")  # W3 : movable platform and hookshot
+                        }
+        
+        g = net.DiGraph()
+        for B7, screen_id in enumerate(self.screens):
+            if not self[screen_id]: continue  # No items.
+            if screen_id in items_data:  # Special items to link to specific spawns.
+                for spawn, item, id in zip(items_data[screen_id], self[screen_id], range(len(self[screen_id]))):
+                    if item in prog_names:
+                        g.add_edge(spawn, (B7, prog_names[item], id))
+            else:  # We can link to any spawn.
+                stringed = f'{B7} ({sorties[screen_id][0].direction})'
+                for id, item in enumerate(self[screen_id]):
+                    if item in prog_names:
+                        g.add_edge(stringed, (B7, prog_names[item], id))
+        return g
+

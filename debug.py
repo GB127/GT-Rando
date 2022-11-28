@@ -225,9 +225,10 @@ if __name__ == "__main__":
     # Rework :
         # Locks : Done!
         # Exits
-        # Items
+        # Items : Done! The issues are on github.
         # World
         # Objects : To restart when seedy is done.
+        # Debug
 
 
 

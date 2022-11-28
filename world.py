@@ -17,6 +17,10 @@ class World():
         self.Items = Items(self.data, self.world_i, self.screens)
         self.Doors = Locks(self.data, self.world_i, self.screens, self.Exits, self.Items)
 
+    def __getitem__(self, screen:int):
+        """self[screen_id] = {"exits": [All Exits], "items": [All items]}"""
+        return {"exits":self.Exits[screen], "items":self.Items[screen]}
+
     def __call__(self):
         count = 0
         while True:
@@ -31,7 +35,6 @@ class World():
                 print("restarting...")
                 count += 1
         print("Finished randomizing!")
-
 
     def __bool__(self):
         # World 0 : Vanilla Works
@@ -128,15 +131,10 @@ class World():
         play(g, "0 (N)", initial_locks)
         return True
 
-
-    def B7_screen(self, B7):
-        return self.screens[B7]
-
-
     def nodes(self):
         def internal_puzzles():
-            """At this point, all screen should be reachable from the start.
-                So I can just relink all the exits of the said screens.
+            """At this moment, the exits layout passed the check and all exits should be reachable from the first spawn.
+                This function relinks all the exits of the said screens.
             """
             data = [74,  # One of the puzzles in Cave
                         75,  # One of the puzzles in Cave
@@ -148,13 +146,13 @@ class World():
                 for sortie_1, sortie_2 in permutations([f'{room_to_index(id=screen)[1]} ({x.direction})' for x in self.Exits[screen]], 2):
                     net.add_path(g, [sortie_1, sortie_2])
 
-        # Add something for internal puzzles. Like in the cave.
         g = net.compose(self.Exits.nodes(), self.Items.nodes(self.Exits))
         internal_puzzles()
         for x in self.Doors.nodes().edges():
             g.remove_edge(x[0], x[1])
         return g
 
+    def B7_screen(self, B7:int):
+        """Convert B7 to screen_id."""
+        return self.screens[B7]
 
-    def __getitem__(self, screen):
-        return {"exits":self.Exits[screen], "items":self.Items[screen]}

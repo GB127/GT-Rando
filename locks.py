@@ -43,7 +43,6 @@ class Locks():
             if screen in self.screens:
                 self.world_locks[screen] = all_locks[screen]
 
-
     def nodes(self):
         """Returns: Digraph containing all locks."""
         locks_graph = net.DiGraph()
