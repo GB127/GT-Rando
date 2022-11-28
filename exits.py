@@ -110,7 +110,6 @@ class Exits:
                             74:[(1,0)],  # W3 : puzzle with 1 Enemy in center
                             75:[(1,0)],  # W3 : Puzzle with a zig zag section
                             80:[(2,0), (0,2), (1,2), (2,1)],  # W3 : Waterfall, to ease logic
-
                             93:[(1, 0)],  # W4 : Puzzle that opens a door to the right
                             97:[(0,1), (1,0), (1,2), (2,1)],  # W4 : Room with two hookshot spots. Not the cannon one
                             99: [(0,1), (1, 0), (0, 2), (2,0)],  # W4 : Room with 2 buttons. This is to make logic easier.
