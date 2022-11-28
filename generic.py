@@ -28,3 +28,6 @@ def room_to_index(tup=None, id=None):
                 return (4 - world, id - borne)
     elif id == 0:
         return (0,0)
+
+if __name__ == "__main__":
+    print(room_to_index(tup=(4,5)))
