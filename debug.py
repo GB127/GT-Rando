@@ -216,6 +216,14 @@ def randomize(worlds, preprint=False, postprint=False):
 
 
 if __name__ == "__main__":
+    # Rework :
+        # Locks : Done!
+        # Exits
+        # Items
+        # World
+
+
+
     for x in [0]:
         randomize([x])  # Randomize, then save.
     #with open("Vanilla.smc", "rb") as game:
