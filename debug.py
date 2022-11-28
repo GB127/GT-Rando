@@ -1,13 +1,12 @@
 from exits import Exits
 from gameclass import GT
+from doors import Doors
 import random
 from generic import world_indexes, room_to_index
 from world import World
 import networkx as net # version 2.5
 import matplotlib.pyplot as plt
 from items import Items
-
-
 
 class debug(GT):
     def __init__(self, data):
@@ -17,6 +16,8 @@ class debug(GT):
 
     def save(self):
         super().save("debug.smc")
+
+
 
 class World_debug(World):
     def screen_str(self, B7):
@@ -91,82 +92,114 @@ class World_debug(World):
 
         self.Exits = Exits_debug(self.data,self.world_i, self.screens)
         self.Items = Items_debug(self.data, self.world_i, self.screens)
+        self.Doors = Doors_debug(self.data, self.world_i, self.screens)
 
-
-    def nodes(self,simplified=False, save:bool=False,*, planar=False, spectral=False, spring=False):
+    def nodes(self, save:bool=False):
         def filename():
-            string = f"Graph-{self.world_i}"
+            string = f"graph/Graph-{self.world_i}"
             return string + ".png"
-
         g = super().nodes()
-        if save:
-            color_map = []
-            for node in g:
-                if node[1] in ["Hookshot", "Grey Key", "Gold Key", "Bridge"]:
-                    color_map.append("lightgreen")
-                else:
-                    color_map.append("yellow")
-            net.draw(g, with_labels=True, node_color=color_map)
-            plt.savefig(filename(), format="PNG")
-            plt.clf()
-            g.clear()
+        color_map = []
+        label_map = {}
+        for node in g:
+            if node[1] in ["Hookshot", "Grey Key", "Gold Key", "Bridge"]:
+                color_map.append("lightgreen")
+            else:
+                color_map.append("yellow")
+            if isinstance(node, tuple):
+                label_map[node] = node[1]
+            else:
+                label_map[node] = node
+        #net.draw(g, with_labels=True,labels=label_map, node_color=color_map)
+        #plt.savefig(filename(), format="PNG")
+        #plt.clf()
+        print(f"World {self.world_i} nodes saved!")
         return g
 
+class Doors_debug(Doors):
+    def nodes(self,exits,items , save:bool=False,*,simplified=False):
+        def filename():
+            string = f"graph/doors/Graph-{self.world_i}_new"
+            if simplified:
+                string += "_simplified"
+            return string + ".png"
+        g = super().nodes(exits, items)
+        color_map = []
+        label_map = {}
 
+        for node in g:
+            if node[1] in ["Hookshot", "Gray Key", "Gold Key", "Bridge"]:
+                color_map.append("lightgreen")
+            else:
+                color_map.append("yellow")
 
+            if isinstance(node, tuple):
+                label_map[node] = node[1]
+            else:
+                label_map[node] = node
+
+        net.draw(g, pos=net.planar_layout(g),labels=label_map, with_labels=True, node_color=color_map)
+        plt.savefig(filename(), format="PNG")
+        plt.clf()
+        print(f"Doors {self.world_i} nodes saved!")
+        return g
 
 class Items_debug(Items):
-    def nodes(self,exits, save:bool=False,*,simplified=False, planar=False, spectral=False, spring=False):
+    def nodes(self,exits, *,simplified=False):
         def filename():
-            string = f"Graph-{self.world_i}_items"
+            string = f"graph/items/Graph-{self.world_i}"
             if simplified:
                 string += "_simplified"
             return string + ".png"
         g = super().nodes(exits)
-        if save:
-            color_map = []
-            for node in g:
-                if node[1] in ["Hookshot", "Grey Key", "Gold Key", "Bridge"]:
-                    color_map.append("lightgreen")
-                else:
-                    color_map.append("yellow")
-            net.draw(g, with_labels=True, node_color=color_map)
-            plt.savefig(filename(), format="PNG")
-            plt.clf()
-            g.clear()
+        color_map = []
+        label_map = {}
+        for node in g:
+            # Color map
+            if node[1] in ["Hookshot", "Gray Key", "Gold Key", "Bridge"]:
+                color_map.append("lightgreen")
+            else:
+                color_map.append("yellow")
+
+            if isinstance(node, tuple):
+                label_map[node] = node[1]
+            else:
+                label_map[node] = node
+
+        net.draw(g, pos=net.circular_layout(g),labels=label_map, with_labels=True, node_color=color_map)
+        plt.savefig(filename(), format="PNG")
+        plt.clf()
+        print(f"Items {self.world_i} nodes saved!")
         return g
 
 
 class Exits_debug(Exits):
-    def nodes(self, save:bool=False,*,simplified=False, planar=False, spectral=False, spring=False):
+    def nodes(self, *,simplified=False):
         def filename():
-            string = f"Graph-{self.world_i}_Exits"
+            string = f"graph/exits/Graph-{self.world_i}"
             if simplified:
                 string += "_simplified"
             return string + ".png"
-        if simplified:
-            g = self.nodes_simplified()
-        else:
-            g = super().nodes()
-        if save:
-            if planar:
-                net.draw_planar(g, with_labels=True, node_color='yellow')
-            elif spectral:
-                net.draw_spectral(g, with_labels=True, node_color='yellow')
-            elif spring:
-                net.draw_spring(g, with_labels=True, node_color='yellow')
-            else:
-                net.draw(g, with_labels=True, node_color='yellow')
-            plt.savefig(filename(), format="PNG")
-            plt.clf()
-            g.clear()
+        g = super().nodes()
+        net.draw(g,pos=net.spring_layout(g), with_labels=True, node_color='yellow')
+        plt.savefig(filename(), format="PNG")
+        plt.clf()
+        self.nodes_simplified()
+        print(f"Exits {self.world_i} nodes saved!")
         return g
 
     def nodes_simplified(self):
+        def filename():
+            string = f"graph/exits/Graph-{self.world_i}_simplified"
+            return string + ".png"
+
         g = net.DiGraph()
         for B7, screen in enumerate(self.screens_ids):
             for sortie in self[screen]:
                 net.add_path(g, [B7, sortie.destination])
+        net.draw(g,pos=net.spring_layout(g), with_labels=True, node_color='yellow')
+        plt.savefig(filename(), format="PNG")
+        plt.clf()
         return g
 
 
@@ -177,11 +210,18 @@ def randomize(worlds, preprint=False, postprint=False):
         for x in worlds:
             testing = test.Worlds[x]
             if preprint: print(testing)
-            testing.nodes(save=True)
+            bool(testing)
             if postprint: print(testing)
         test.save()
 
 
 if __name__ == "__main__":
-    for x in range(5):
+    for x in [0,1,3,4]:
         randomize([x])  # Randomize, then save.
+    #with open("Vanilla.smc", "rb") as game:
+    #    test = debug(game.read())
+    #    for x in [3]:
+    #        testing = test.Worlds[x]
+    #        testing()
+    #        print(testing.Items)
+    #    test.save()
