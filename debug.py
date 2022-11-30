@@ -1,6 +1,7 @@
 from exits import Exits
 from gameclass import GT
 from locks import Locks
+from copy import deepcopy
 import random
 from generic import room_to_index
 from world import World
@@ -24,8 +25,16 @@ class debug(GT):
         super().save("debug.smc")
 
 
-
 class World_debug(World):
+    def __init__(self, data, world_i, screens_ids):
+        self.world_i = world_i
+        self.data = data
+        self.screens = screens_ids
+
+        self.Exits = Exits_debug(self.data,self.world_i, self.screens)
+        self.Items = Items_debug(self.data, self.world_i, self.screens)
+        self.Doors = Locks_debug(self.data, self.world_i, self.screens, self.Exits, self.Items)
+
     def screen_str(self, B7):
         def transform_byt_co(big_value):
             assert big_value <= 0x6bc and big_value >=0, "Byte value must be 0 to 0x6BC"
@@ -91,20 +100,8 @@ class World_debug(World):
         print("\n".join(string_list))
         print(boundary_bottom)
 
-    def __init__(self, data, world_i, screens_ids):
-        self.world_i = world_i
-        self.data = data
-        self.screens = screens_ids
-
-        self.Exits = Exits_debug(self.data,self.world_i, self.screens)
-        self.Items = Items_debug(self.data, self.world_i, self.screens)
-        self.Doors = Locks_debug(self.data, self.world_i, self.screens, self.Exits, self.Items)
-
-    def nodes(self, save:bool=False):
-        def filename():
-            string = f"graph/Graph-{self.world_i}"
-            return string + ".png"
-        g = super().nodes()
+    def save_nodes(self):
+        g = self.nodes()
         color_map = []
         label_map = {}
         for node in g:
@@ -116,47 +113,34 @@ class World_debug(World):
                 label_map[node] = node[1]
             else:
                 label_map[node] = node
-        #net.draw(g, with_labels=True,labels=label_map, node_color=color_map)
-        #plt.savefig(filename(), format="PNG")
-        #plt.clf()
-        print(f"World {self.world_i} nodes saved!")
-        return g
+        net.draw(g, with_labels=True,labels=label_map, node_color=color_map)
+        plt.savefig(f'World {self.world_i} World Graph saved!', format="PNG")
+        plt.clf()
+
 
 class Locks_debug(Locks):
-    def nodes(self, save:bool=False,*,simplified=False):
-        def filename():
-            string = f"graph/doors/Graph-{self.world_i}_new"
-            if simplified:
-                string += "_simplified"
-            return string + ".png"
+    def save_nodes(self):
         g = super().nodes()
         color_map = []
         label_map = {}
-
         for node in g:
             if node[1] in ["Hookshot", "Gray Key", "Gold Key", "Bridge"]:
                 color_map.append("lightgreen")
             else:
                 color_map.append("yellow")
-
             if isinstance(node, tuple):
                 label_map[node] = node[1]
             else:
                 label_map[node] = node
 
         net.draw(g, pos=net.planar_layout(g),labels=label_map, with_labels=True, node_color=color_map)
-        plt.savefig(filename(), format="PNG")
+        plt.savefig(f'graph/Locks {self.world_i}.png', format="PNG")
         plt.clf()
-        print(f"Doors {self.world_i} nodes saved!")
-        return g
+        print(f"Locks {self.world_i} nodes saved!")
+
 
 class Items_debug(Items):
-    def nodes(self,exits, *,simplified=False):
-        def filename():
-            string = f"graph/items/Graph-{self.world_i}"
-            if simplified:
-                string += "_simplified"
-            return string + ".png"
+    def save_nodes(self,exits):
         g = super().nodes(exits)
         color_map = []
         label_map = {}
@@ -172,29 +156,27 @@ class Items_debug(Items):
             else:
                 label_map[node] = node
 
-        net.draw(g, pos=net.circular_layout(g),labels=label_map, with_labels=True, node_color=color_map)
-        plt.savefig(filename(), format="PNG")
+        net.draw(g, pos=net.circular_layout(g), with_labels=True, node_color=color_map, labels=label_map)
+        plt.savefig(f'graph/Items {self.world_i}.png', format="PNG")
         plt.clf()
         print(f"Items {self.world_i} nodes saved!")
         return g
 
 
 class Exits_debug(Exits):
-    def nodes(self, *,simplified=False):
-        def filename():
-            string = f"graph/exits/Graph-{self.world_i}"
-            if simplified:
-                string += "_simplified"
-            return string + ".png"
+    def save_nodes(self, screens=None):
         g = super().nodes()
+        if screens:
+            for node in deepcopy(g.nodes):
+                if int(node[:2]) not in screens:
+                    g.remove_node(node)
         net.draw(g,pos=net.spring_layout(g), with_labels=True, node_color='yellow')
-        plt.savefig(filename(), format="PNG")
+        plt.savefig(f"graph/Exits {self.world_i}.png", format="PNG")
         plt.clf()
-        self.nodes_simplified()
         print(f"Exits {self.world_i} nodes saved!")
         return g
 
-    def nodes_simplified(self):
+    def save_nodes_simplified(self):
         def filename():
             string = f"graph/exits/Graph-{self.world_i}_simplified"
             return string + ".png"
@@ -209,35 +191,11 @@ class Exits_debug(Exits):
         return g
 
 
+if __name__ == "__main__":
+    # raise BaseException(room_to_index(tup=(4,2)))
 
-def randomize(worlds, preprint=False, postprint=False):
+    world_id = 1
     with open("Vanilla.smc", "rb") as game:
         test = debug(game.read())
-        for x in worlds:
-            testing = test.Worlds[x]
-            if preprint: print(testing)
-            bool(testing)
-            if postprint: print(testing)
-        test.save()
-
-
-if __name__ == "__main__":
-    # Rework :
-        # Locks : Done!
-        # Exits
-        # Items : Done! The issues are on github.
-        # World
-        # Objects : To restart when seedy is done.
-        # Debug
-
-
-
-    for x in [0]:
-        randomize([x])  # Randomize, then save.
-    #with open("Vanilla.smc", "rb") as game:
-    #    test = debug(game.read())
-    #    for x in [3]:
-    #        testing = test.Worlds[x]
-    #        testing()
-    #        print(testing.Items)
-    #    test.save()
+        testing_e = test.Worlds[world_id].Exits
+        testing_e.save_nodes([12, 13,14])
