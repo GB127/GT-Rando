@@ -331,14 +331,10 @@ class Exits:
             return False
 
     def nodes(self):
-        # TODO: Unidirectionnal exits
         def apply_internal_links(screen:int, exits_str):
-            #if screen == 80:
-            #    raise BaseException(exits_str)
             screens_data = {
                             7 :[(0, 1), (1,0)],  # 7 : W0 Plank Screen 
                             9 :[(0, 2), (2, 0)],  # 9 : W0 Shovel Screen
-                            29:[(1,0)],  # W1 : Double hookshot : Need to start from left because of chance of softlocking.
                             40:[(0,2), (2,0)],  # W2 : Corridor screen with fruits on south and gems on top
                             45:[(1, 2), (2, 1), (0, 3), (3, 0)],  # W2 : Boulder screen with breakable wall on top right and stair
                             74:[(1,0)],  # W3 : puzzle with 1 Enemy in center
@@ -347,25 +343,26 @@ class Exits:
                             93:[(1, 0)],  # W4 : Puzzle that opens a door to the right
                             97:[(0,1), (1,0), (1,2), (2,1)],  # W4 : Room with two hookshot spots. Not the cannon one
                             99: [(0,1), (1, 0), (0, 2), (2,0)],  # W4 : Room with 2 buttons. This is to make logic easier.
-                            100:[(0, 2), (2,0), (2, 1), (1,2)],  #W4 : Room with the fire blower. This is to make logic easier.
+                            100:[(0, 2), (2,0), (2, 1), (1,2), (0, 1)],  #W4 : Room with the fire blower.
                             106:[(1, 0)], #W4 : Arrow platform room
                             110:[(0,1), (1,0), (1,2), (2,1)]  # W4 : Wheel puzzle room
                             }
-            try:
+            screens_c = [23,  #W1 Hookshot + plank screen 
+                        29, # W1 double hookshot
+                        42, # Castle double plank
+                        109 # Pirate double hookshot & canons 
+                        ]
+            if screen in screens_data:
                 for sortie_1_id, sortie_2_id in screens_data[screen]:
                     net.add_path(g, [exits_str[sortie_1_id], exits_str[sortie_2_id]])
-            except KeyError:
+            elif screen in screens_c:
+                center_spawn = f'{int(exits_str[0][:2])} (C)'
+                for spawn in exits_str:
+                    net.add_path(g, [spawn, center_spawn])
+                    net.add_path(g, [center_spawn, spawn])
+            else:
                 for sortie_1, sortie_2 in permutations(exits_str, 2):
                     net.add_path(g, [sortie_1, sortie_2])
-            # TODO : Fix something so that you don't link all spawn AND add this.
-            if screen == 23:
-                net.add_path(g, ["7 (S)", "7 (C)"])
-                net.add_path(g, ["7 (C)", "7 (S)"])
-            if screen == 42:
-                net.add_path(g, ["10 (E)", "10 (C)"])
-                net.add_path(g, ["10 (C)", "10 (E)"])
-                net.add_path(g, ["10 (N)", "10 (C)"])
-                net.add_path(g, ["10 (C)", "10 (N)"])
 
         g = net.DiGraph()
         for B7, screen in enumerate(self.screens_ids):
