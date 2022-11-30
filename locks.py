@@ -7,7 +7,9 @@ class Locks():
         self.world_i = world_i
         self.screens = screens
 
-        items_names = {0x8 : "Hookshot", 0xA : "Gray Key",0xB : "Gold Key", 0xE : "Bridge"}
+        items_names = {0x8 : "Hookshot", 0x9 : "Candle  ", 0xA : "Gray Key",0xB : "Gold Key", 0xC :"Shovel", 0xD : "Bell", 0xE : "Bridge"}
+        fruits_names = {0x40 : "Cherry  ", 0x42: "Banana  ", 0x44 : "Red Gem ", 0x46 : "Blue Gem"}
+
         all_locks = {  # [lock, links]
                         5: [    ["Gray Key", [("5 (N)","8 (S)"), ("8 (S)", "5 (N)")]]],                    
                         8:  [   ["Gray Key", [("8 (S)","5 (N)"), ("5 (N)","8 (S)") ]]],
@@ -47,7 +49,6 @@ class Locks():
                         97: [   ["Hookshot", [("9 (↗)", "9 (W)"), ("9 (W)", "9 (↗)") ]],
                                 ["Hookshot", [("9 (N)", "9 (W)"), ("9 (W)", "9 (N)") ]]
                             ],  # W4 : Double hookshot screen that don't have canons
-                        
                         100:[   ["Hookshot", [("12 (S)", "12 (N)"), ("12 (N)", "12 (S)")]],
                                 ["Gray Key", [("12 (N)", exits.find("12 (N)")),]]
                             ],  # W4 : Firebreather screen

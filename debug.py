@@ -35,6 +35,10 @@ class World_debug(World):
         self.Items = Items_debug(self.data, self.world_i, self.screens)
         self.Doors = Locks_debug(self.data, self.world_i, self.screens, self.Exits, self.Items)
 
+    def __call__(self):
+        super().__call__()
+        self.Doors = Locks_debug(self.data, self.world_i, self.screens, self.Exits, self.Items)
+
     def screen_str(self, B7):
         def transform_byt_co(big_value):
             assert big_value <= 0x6bc and big_value >=0, "Byte value must be 0 to 0x6BC"
@@ -100,10 +104,24 @@ class World_debug(World):
         print("\n".join(string_list))
         print(boundary_bottom)
 
-    def save_nodes(self):
+    def save_nodes(self, screens=None):
         g = self.nodes()
         color_map = []
         label_map = {}
+        
+        if screens:
+            for node in deepcopy(g.nodes):
+                if node[:2] == "OO": 
+                    g.remove_node(node)
+                elif isinstance(node, str) and int(node[:2]) not in screens:
+                    g.remove_node(node)
+            g.remove_nodes_from(list(net.isolates(g)))
+        
+        for node in deepcopy(g.nodes):
+            if isinstance(node, tuple) and node[1] in ["Red Gem", "Cherry", "Blue Gem"]:
+                g.remove_node(node)
+
+
         for node in g:
             if node[1] in ["Hookshot", "Grey Key", "Gold Key", "Bridge"]:
                 color_map.append("lightgreen")
@@ -114,7 +132,7 @@ class World_debug(World):
             else:
                 label_map[node] = node
         net.draw(g, with_labels=True,labels=label_map, node_color=color_map)
-        plt.savefig(f'World {self.world_i} World Graph saved!', format="PNG")
+        plt.savefig(f'graph/World {self.world_i}.png', format="PNG")
         plt.clf()
 
 
@@ -142,6 +160,15 @@ class Locks_debug(Locks):
 class Items_debug(Items):
     def save_nodes(self,exits):
         g = super().nodes(exits)
+
+        for node in deepcopy(g.nodes):
+            if isinstance(node, tuple):
+                if node[1] not in ["Hookshot", "Gray Key", "Gold Key", "Bridge"]:
+                    g.remove_node(node)
+
+        g.remove_nodes_from(list(net.isolates(g)))
+
+
         color_map = []
         label_map = {}
         for node in g:
@@ -191,11 +218,22 @@ class Exits_debug(Exits):
         return g
 
 
+    def adjacent_screens(self,*B7s):
+        toreturn = set()
+        for B7 in B7s:
+            toadd = {B7}
+            for sortie in self[room_to_index(tup=(self.world_i, B7))]:
+                toadd.add(sortie.destination)
+            toreturn = toreturn.union(toadd)
+        print(toreturn)
+        return toreturn
+
 if __name__ == "__main__":
     # raise BaseException(room_to_index(tup=(4,2)))
-
+    random.seed(0)
     world_id = 1
+    # Banana - Red Diamond - Cherry - Banana - Cherry
     with open("Vanilla.smc", "rb") as game:
         test = debug(game.read())
-        testing_e = test.Worlds[world_id].Exits
-        testing_e.save_nodes([12, 13,14])
+        testing = test.Worlds[world_id]
+        testing()
