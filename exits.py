@@ -282,14 +282,12 @@ class Exits:
     def __bool__(self):
         """Bool that checks if all exits are reachable."""
         def B7s_tocouple():
-            """Check if some B7s are reachable after removing a specific link.
-            """
-            # TODO : Pirate arrow platform.
+            """Check for the Cave puzzle (because it's the only B7s that are progression)."""
             data = {58:(59, (str(self[58,0]),"0 (N)"), ("0 (N)", "1 (E)")), # World 3 : 0 locked door : see if puzzle reachable without going to north!
                     80:(81, ("22 (S)", "22 (N)"), ('22 (S)', "23 (W)"))  # World 3 : Waterfall and the puzzle room!
                         }
             # data Format : {Screen : (Screen2, (Spawn1, Spawn2), (Exit1, Exit2))} 
-                # Screen1 : Screen where we need to stat the check.
+                # Screen1 : Screen where we need to start the check.
                 # Screen2 : Destination screen we need to have on same world.
                 # Spawn1 & Spawn2 : Spawns on Screen1 we need to remove the link
                 # Exit1 & Exit2 : Exits to use to see if we can reach Exit2 from Exit1
@@ -316,11 +314,6 @@ class Exits:
                     path_to_find = infos[2]
                     net.shortest_path(copy_g, path_to_find[0], path_to_find[1])
 
-        def B7s_softlockable():
-            """Checks for screens that can be softlocked if entered the wrong way with no items."""
-                # World 1 : The double hookshot
-                # World 3 : The moving platform hookshot thing.
-            pass
         g = self.nodes()
         try:
             B7s_tocouple()
