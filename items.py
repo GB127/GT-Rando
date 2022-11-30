@@ -180,7 +180,13 @@ class Items:
                         40:("8 (S)", "8 (S)", "8 (S)", "8 (S)", "8 (↗)", "8 (↗)"),  # W2 : Corridor with fruits and gem
                         42:("10 (N)", "10 (N)", "10 (N)"),  # W2 : Plank Room. Fix all to north since it's easier for logic from north.
                         49:("17 (N)",),  # W3 : Screen with gray key in middle, item on the right behind hookshot
-                        53:("21 (W)", "21 (W)", "21 (↗)")  # W3 : movable platform and hookshot
+                        53:("21 (W)", "21 (W)", "21 (↗)"),  # W3 : movable platform and hookshot
+                        90:("2 (W)",),  # W4 : Giant hole at start of pirate.
+                        97:("8 (↗)",),
+                        99:("11 (S)", "11 (N)"),
+                        106:("18 (E)",),
+                        108:("20 (↗)",),
+                        109:("21 (C)", "21 (C)", "21 (S)", "21 (S)")
                         }
         
         g = net.DiGraph()
