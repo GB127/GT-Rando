@@ -22,26 +22,13 @@ class World():
         return {"exits":self.Exits[screen], "items":self.Items[screen]}
 
     def __call__(self):
-        count = 0
-        while True:
-            self.Exits(randomize=True, keep_direction=True, pair_exits=True)
-            self.Items(randomize_items=True)
-            if count == 1000:
-                raise LogicError("Looks like it can't find anything...")
-            try:
-                bool(self)
-                break
-            except LogicError:
-                print("restarting...")
-                count += 1
-        print("Finished randomizing!")
+        self.Exits(randomize=True, keep_direction=True, pair_exits=True)
+        self.Items(randomize_items=True, randomize_fruits=True)
+        self.Doors = Locks(self.data, self.world_i, self.screens, self.Exits, self.Items)
+        print("finished randomizing!")
+
 
     def __bool__(self):
-        # World 0 : Vanilla Works
-        # World 1 : Vanilla Works
-        # World 2 : Vanilla Works, but it takes 40 min - 1 hour...
-        # World 3 : Vanilla works
-        # World 4 : Vanilla works, but I expect some softlocks because I did not check everything.
         def get_items(graphik, spawn) -> list:
             """Get all accessible items from specified spawn."""
             items = []
@@ -132,7 +119,7 @@ class World():
         return True
 
     def nodes(self):
-        def internal_puzzles():
+        def clear_internal_puzzles():
             """At this moment, the exits layout passed the check and all exits should be reachable from the first spawn.
                 This function relinks all the exits of the said screens.
             """
@@ -147,7 +134,7 @@ class World():
                     net.add_path(g, [sortie_1, sortie_2])
 
         g = net.compose(self.Exits.nodes(), self.Items.nodes(self.Exits))
-        internal_puzzles()
+        clear_internal_puzzles()
         for x in self.Doors.nodes().edges():
             g.remove_edge(x[0], x[1])
         return g
