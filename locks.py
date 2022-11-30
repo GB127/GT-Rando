@@ -12,6 +12,8 @@ class Locks():
                         5: [    ["Gray Key", [("5 (N)","8 (S)"), ("8 (S)", "5 (N)")]]],                    
                         8:  [   ["Gray Key", [("8 (S)","5 (N)"), ("5 (N)","8 (S)") ]]],
                         7:  [   ["Bridge" ,[("7 (N)", "7 (S)"), ("7 (S)", "7 (N)")]]],
+                        12: [   ["Gold Key", [("12 (N)", "14 (S)")]]
+                        ],
                         23: [   ["Hookshot", [("7 (S)", "7 (C)"), ("7 (C)", "7 (S)")]],
                                 ["Bridge", [("7 (C)", (7, items_names[items[23,0]], 0)), ("7 (C)", (7, items_names[items[23,1]], 1))]]
                             ],
@@ -20,6 +22,11 @@ class Locks():
                             ], # W1 door just before the worst puzzle
                         26: [   ["Gray Key", [("10 (N)", "12 (S)")]]], # W1 door on the water screen.
                         28: [   ["Gray Key", [("12 (S)", "10 (N)")]]], # W1 door on screen north of the water screen.
+                        29: [   ["Hookshot", [("13 (W)", "13 (C)"), ("13 (C)", "13 (W)")]],
+                                ["Hookshot", [("13 (N)", "13 (C)"), ("13 (C)", "13 (N)")]],
+                            ],  # W1 : Double Hookshot.
+                        30: [   ["Gold Key", [("14 (N)", "15 (S)")]]
+                            ],
                         35: [   ["Gray Key", [("3 (N)",  exits.find("3 (N)")),]]],  # W2 : Screen with holes
                         42: [   ["Bridge", [("10 (E)", "10 (C)"),("10 (C)", "10 (E)")]],
                                 ["Bridge", [("10 (N)",(10, items_names[items[42,0]] , 0))]]],  # W2 : Double bridge screen
@@ -32,12 +39,24 @@ class Locks():
                         53: [   ["Hookshot", [("21 (W)", "21 (↗)"), ("21 (↗)", "21 (W)")]],
                                 ["Gray Key", [("21 (W)",  exits.find("21 (W)"),),]]
                             ],  # W2 : moving platform!
+                        56: [   ["Gold Key", [("24 (N)", "25 (S)")]]
+                        ],
                         80: [   ["Hookshot", [("22 (N)", "24 (S)"), ("24 (S)", "22 (N)")]]],  # Waterfall
-                        100:[   ["Hookshot", [("12 (N)", "12 (S)"), ("12 (S)", "12 (N)")]],
+
+                        90: [   ["Hookshot", [("2 (W)", "2 (↗)"),("2 (↗)", "2 (W)")]]],  # 4-2 : Hookshot the big hole
+                        97: [   ["Hookshot", [("9 (↗)", "9 (W)"), ("9 (W)", "9 (↗)") ]],
+                                ["Hookshot", [("9 (N)", "9 (W)"), ("9 (W)", "9 (N)") ]]
+                            ],  # W4 : Double hookshot screen that don't have canons
+                        
+                        100:[   ["Hookshot", [("12 (S)", "12 (N)"), ("12 (N)", "12 (S)")]],
                                 ["Gray Key", [("12 (N)", exits.find("12 (N)")),]]
-                            ]  # W4 : Firebreather screen
+                            ],  # W4 : Firebreather screen
+                        108: [   ["Gold Key", [("20 (W)", "20 (↗)")]]
+                        ],
+                        109:[   ["Hookshot", [("21 (↗)", "21 (C)"), ("21 (C)", "21 (↗)")]],
+                                ["Hookshot", [("21 (S)", "21 (C)"), ("21 (C)", "21 (S)")]]
+                            ]
                     }
-        
         self.world_locks = {}
         for screen in all_locks:
             if screen in self.screens:
