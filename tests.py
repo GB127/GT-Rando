@@ -8,9 +8,7 @@ def test_bool_Worlds_vanilla(world_id):
             2: Take way too long.
             3: Works
             4: Works, takes a little bit too long"""
-    if world_id in [1, 2, 4]:
-        print(f"World bool : Needs to take care of doors that are locked on one side only.")
-    if world_id in [2,4]:
+    if world_id in [1,2,4]:
         print(f"World bool: works, but takes too long because of hookshots.")
         return
     with open("Vanilla.smc", "rb") as game:
