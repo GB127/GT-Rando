@@ -88,6 +88,7 @@ class World():
             if self.world_i == 1:
                 if which_screen == 26:
                     del current_locks[28]
+                    copy_g.add_edge("12 (S)", "10 (N)")
                 elif which_screen == 28:
                     del current_locks[26]
 
@@ -105,7 +106,7 @@ class World():
                         plt.savefig("recursive_spawn_bug.png", format="PNG")
                         plt.clf()
                         raise LogicError(f"{sortie} not accessible")
-                #raise BaseException("Tout est accessible!")
+                # Tout est accessible!"
             else: # Il reste encore des trucs à débarrer.
                 if not accessible_items:
                     raise LogicError(f"Il n'y a plus d'objets disponibles.")
@@ -127,7 +128,6 @@ class World():
         g = self.nodes()
         initial_locks = deepcopy(self.Doors.world_locks)
 
-        print("Starting the recursion...")
         play(g, "0 (N)", initial_locks)
         return True
 

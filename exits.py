@@ -160,7 +160,7 @@ class Exits:
                 for current_id, current_exit in enumerate(self[screen]):
                     current_exit.clear()
                     self[screen, current_id] = current_exit
-        
+
 
         def back_exit(screen_id, exit_type):
             desired_direction = exit_type_str(exit_type)
@@ -317,7 +317,7 @@ class Exits:
         g = self.nodes()
         try:
             B7s_tocouple()
-        # Check if all exits are accessible from the start.
+            # Check if all exits are accessible from the start.
             return all([str(x) in net.shortest_path(g, str("0 (N)")) for x in self])
         except net.NetworkXNoPath:
             return False
