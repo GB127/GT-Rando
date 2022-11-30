@@ -318,8 +318,7 @@ class Exits:
         try:
             B7s_tocouple()
         # Check if all exits are accessible from the start.
-        # TODO : Convert to check if all exit in the list so that I can add some nodes for some screens.
-            return len(net.shortest_path(g, str("0 (N)"))) -1 == (len(self))  # -1 is because in the nodes we have the boss door that is not an exit spawn!
+            return all([str(x) in net.shortest_path(g, str("0 (N)")) for x in self])
         except net.NetworkXNoPath:
             return False
 
